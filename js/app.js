@@ -1,33 +1,36 @@
-/* =========================================================
-   TEKNIVO - MARKETPLACE APP
-   ========================================================= */
+"use strict";
 
-const config = window.TEKNIVO_CONFIG;
 
-let supabaseClient = null;
+/* =====================================================
+   TEKNIVO - APP
+===================================================== */
+
+const config = window.TEKNIVO_CONFIG || {};
+
+let db = null;
 
 if (
-    config &&
+    window.supabase &&
     config.SUPABASE_URL &&
     config.SUPABASE_PUBLISHABLE_KEY
 ) {
-    supabaseClient = supabase.createClient(
+    db = window.supabase.createClient(
         config.SUPABASE_URL,
         config.SUPABASE_PUBLISHABLE_KEY
     );
 }
 
 
-/* =========================================================
+/* =====================================================
    KATEGORİLER
-   ========================================================= */
+===================================================== */
 
 const categories = [
     ["📱", "Telefon"],
     ["💻", "Laptop"],
     ["🖥️", "Masaüstü PC"],
     ["🎮", "Oyun Konsolu"],
-    ["🧠", "Ekran Kartı"],
+    ["🎮", "Ekran Kartı"],
     ["⚙️", "İşlemci"],
     ["💾", "RAM / SSD"],
     ["🖥️", "Monitör"],
@@ -40,75 +43,79 @@ const categories = [
 ];
 
 
-function renderCategories() {
+/* =====================================================
+   DOM
+===================================================== */
 
-    const element =
-        document.getElementById("categories");
+const grid =
+    document.getElementById("listingGrid");
 
-    if (!element) return;
+const count =
+    document.getElementById("listingCount");
 
-    element.innerHTML = `
-        <button
-            class="category active"
-            data-category=""
-        >
-            <span class="category-icon">▦</span>
-            <span class="category-name">Tümü</span>
-        </button>
+const searchInput =
+    document.getElementById("searchInput");
 
-        ${
-            categories.map(category => `
-                <button
-                    class="category"
-                    data-category="${escapeHtml(category[1])}"
-                >
-                    <span class="category-icon">
-                        ${category[0]}
-                    </span>
+const searchBtn =
+    document.getElementById("searchBtn");
 
-                    <span class="category-name">
-                        ${escapeHtml(category[1])}
-                    </span>
-                </button>
-            `).join("")
-        }
-    `;
+const categoryFilter =
+    document.getElementById("categoryFilter");
 
-    document
-        .querySelectorAll(".category")
-        .forEach(button => {
+const cityFilter =
+    document.getElementById("cityFilter");
 
-            button.addEventListener(
-                "click",
-                () => {
+const minPrice =
+    document.getElementById("minPrice");
 
-                    document
-                        .querySelectorAll(".category")
-                        .forEach(item =>
-                            item.classList.remove("active")
-                        );
+const maxPrice =
+    document.getElementById("maxPrice");
 
-                    button.classList.add("active");
+const sortSelect =
+    document.getElementById("sortSelect");
 
-                    loadListings(
-                        button.dataset.category || ""
-                    );
+const applyFilters =
+    document.getElementById("applyFilters");
 
-                }
-            );
+const clearFilters =
+    document.getElementById("clearFilters");
 
-        });
+const mobileFilterBtn =
+    document.getElementById("mobileFilterBtn");
+
+const filters =
+    document.getElementById("filters");
+
+
+/* =====================================================
+   ESCAPE
+===================================================== */
+
+function escapeHtml(value = "") {
+
+    return String(value).replace(
+        /[&<>"']/g,
+        char => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+        }[char])
+    );
 }
 
 
-/* =========================================================
-   PARA
-   ========================================================= */
+/* =====================================================
+   PRICE
+===================================================== */
 
-function formatPrice(price) {
+function formatPrice(value) {
 
-    if (price === null || price === undefined) {
-        return "Fiyat belirtilmemiş";
+    const number = Number(value);
+
+    if (!Number.isFinite(number)) {
+        return "Fiyat yok";
     }
 
     return new Intl.NumberFormat(
@@ -118,108 +125,215 @@ function formatPrice(price) {
             currency: "TRY",
             maximumFractionDigits: 0
         }
-    ).format(price);
-
+    ).format(number);
 }
 
 
-/* =========================================================
-   HTML GÜVENLİĞİ
-   ========================================================= */
+/* =====================================================
+   DATE
+===================================================== */
 
-function escapeHtml(value = "") {
+function formatDate(value) {
 
-    return String(value).replace(
-        /[&<>"']/g,
-        character => {
+    if (!value) return "";
 
-            const map = {
-                "&": "&amp;",
-                "<": "&lt;",
-                ">": "&gt;",
-                '"': "&quot;",
-                "'": "&#039;"
-            };
+    const date = new Date(value);
 
-            return map[character];
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   TARİH
-   ========================================================= */
-
-function formatDate(date) {
-
-    if (!date) return "";
-
-    const d = new Date(date);
-
-    if (Number.isNaN(d.getTime())) {
+    if (Number.isNaN(date.getTime())) {
         return "";
     }
 
-    const now = new Date();
-
-    const diff =
-        Math.floor(
-            (now - d) / 1000
-        );
-
-    if (diff < 60) {
-        return "Az önce";
-    }
-
-    if (diff < 3600) {
-        return `${Math.floor(diff / 60)} dk önce`;
-    }
-
-    if (diff < 86400) {
-        return `${Math.floor(diff / 3600)} saat önce`;
-    }
-
-    if (diff < 604800) {
-        return `${Math.floor(diff / 86400)} gün önce`;
-    }
-
-    return d.toLocaleDateString(
+    return new Intl.DateTimeFormat(
         "tr-TR",
         {
-            day: "numeric",
-            month: "short"
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric"
         }
-    );
-
+    ).format(date);
 }
 
 
-/* =========================================================
-   İLANLARI GETİR
-   ========================================================= */
+/* =====================================================
+   CATEGORY UI
+===================================================== */
 
-async function loadListings(category = "") {
+function renderCategories() {
 
-    const grid =
-        document.getElementById("listingGrid");
+    const element =
+        document.getElementById("categories");
+
+    if (!element) return;
+
+    element.innerHTML =
+        categories.map(item => {
+
+            return `
+                <button
+                    class="category"
+                    onclick="filterCategory('${escapeHtml(item[1])}')"
+                    type="button"
+                >
+                    <span>${item[0]}</span>
+                    ${escapeHtml(item[1])}
+                </button>
+            `;
+
+        }).join("");
+}
+
+
+/* =====================================================
+   IMAGE
+===================================================== */
+
+function getImage(item) {
+
+    if (
+        !item.listing_images ||
+        !item.listing_images.length
+    ) {
+        return null;
+    }
+
+    const images =
+        [...item.listing_images].sort(
+            (a, b) =>
+                (Number(a.sort_order) || 0) -
+                (Number(b.sort_order) || 0)
+        );
+
+    return images[0]?.image_url || null;
+}
+
+
+/* =====================================================
+   CARD
+===================================================== */
+
+function createCard(item) {
+
+    const image = getImage(item);
+
+    const imageHTML = image
+
+        ? `
+            <img
+                src="${escapeHtml(image)}"
+                alt="${escapeHtml(item.title)}"
+                loading="lazy"
+            >
+        `
+
+        : `
+            <div class="no-image">
+                <span class="no-image-icon">📦</span>
+                Fotoğraf yok
+            </div>
+        `;
+
+
+    const brandModel = [
+        item.brand,
+        item.model
+    ]
+        .filter(Boolean)
+        .join(" · ");
+
+
+    return `
+        <article
+            class="listing-card"
+            onclick="openListing('${escapeHtml(item.id)}')"
+        >
+
+            <div class="listing-image">
+                ${imageHTML}
+            </div>
+
+            <div class="listing-content">
+
+                <div class="listing-category">
+                    ${escapeHtml(item.category || "Teknoloji")}
+                </div>
+
+                <div class="listing-title">
+                    ${escapeHtml(item.title || "İsimsiz ilan")}
+                </div>
+
+                ${
+                    brandModel
+                        ? `
+                            <div class="listing-brand">
+                                ${escapeHtml(brandModel)}
+                            </div>
+                        `
+                        : ""
+                }
+
+                <div class="listing-price">
+                    ${formatPrice(item.price)}
+                </div>
+
+                <div class="listing-info">
+
+                    <span>
+                        📍 ${escapeHtml(
+                            item.city || "Konum yok"
+                        )}
+                    </span>
+
+                    <span>
+                        ${escapeHtml(
+                            item.condition || ""
+                        )}
+                    </span>
+
+                </div>
+
+            </div>
+
+        </article>
+    `;
+}
+
+
+/* =====================================================
+   GET CONDITIONS
+===================================================== */
+
+function getConditions() {
+
+    return [
+        ...document.querySelectorAll(
+            ".condition-filter:checked"
+        )
+    ].map(input => input.value);
+}
+
+
+/* =====================================================
+   LOAD LISTINGS
+===================================================== */
+
+async function loadListings() {
 
     if (!grid) return;
 
 
-    /* SUPABASE KONTROL */
-
-    if (!supabaseClient) {
+    if (!db) {
 
         grid.innerHTML = `
             <div class="loading">
-                <strong>Supabase bağlantısı bulunamadı.</strong>
-                <br><br>
-                <small>
+
+                <strong>
+                    Supabase bağlantısı bulunamadı.
+                </strong>
+
+                <p>
                     js/config.js dosyanı kontrol et.
-                </small>
+                </p>
+
             </div>
         `;
 
@@ -227,30 +341,38 @@ async function loadListings(category = "") {
     }
 
 
-    /* LOADING */
-
     grid.innerHTML = `
         <div class="loading">
+            <div class="spinner"></div>
             İlanlar yükleniyor...
         </div>
     `;
 
 
-    /* ARAMA */
-
-    const searchElement =
-        document.getElementById("searchInput");
-
     const search =
-        searchElement
-            ? searchElement.value.trim()
-            : "";
+        searchInput?.value.trim() || "";
 
+    const category =
+        categoryFilter?.value || "";
 
-    /* SORGULAMA */
+    const city =
+        cityFilter?.value.trim() || "";
+
+    const min =
+        minPrice?.value || "";
+
+    const max =
+        maxPrice?.value || "";
+
+    const conditions =
+        getConditions();
+
+    const sort =
+        sortSelect?.value || "newest";
+
 
     let query =
-        supabaseClient
+        db
             .from("listings")
             .select(`
                 id,
@@ -258,57 +380,147 @@ async function loadListings(category = "") {
                 category,
                 brand,
                 model,
+                condition,
                 price,
                 city,
-                condition,
-                created_at,
                 views,
+                created_at,
                 listing_images (
                     image_url,
                     sort_order
                 )
             `)
-            .eq(
-                "status",
-                "active"
-            )
-            .order(
-                "created_at",
-                {
-                    ascending: false
-                }
-            )
-            .limit(40);
+            .eq("status", "active");
 
 
-    /* KATEGORİ */
+    /* CATEGORY */
 
     if (category) {
+        query = query.eq(
+            "category",
+            category
+        );
+    }
 
-        query =
-            query.eq(
-                "category",
-                category
-            );
+
+    /* CITY */
+
+    if (city) {
+        query = query.ilike(
+            "city",
+            `%${city}%`
+        );
+    }
+
+
+    /* PRICE */
+
+    if (min) {
+        query = query.gte(
+            "price",
+            Number(min)
+        );
+    }
+
+    if (max) {
+        query = query.lte(
+            "price",
+            Number(max)
+        );
+    }
+
+
+    /* CONDITION */
+
+    if (conditions.length === 1) {
+
+        query = query.eq(
+            "condition",
+            conditions[0]
+        );
+
+    } else if (conditions.length > 1) {
+
+        query = query.in(
+            "condition",
+            conditions
+        );
 
     }
 
 
-    /* ARAMA */
+    /* SEARCH */
 
     if (search) {
 
-        const safeSearch =
+        const safe =
             search
-                .replace(/,/g, "")
-                .replace(/[()]/g, "");
+                .replace(/,/g, " ")
+                .replace(/[()]/g, " ")
+                .trim();
 
-        query =
-            query.or(
-                `title.ilike.%${safeSearch}%,brand.ilike.%${safeSearch}%,model.ilike.%${safeSearch}%`
+        if (safe) {
+
+            query = query.or(
+                [
+                    `title.ilike.%${safe}%`,
+                    `brand.ilike.%${safe}%`,
+                    `model.ilike.%${safe}%`,
+                    `category.ilike.%${safe}%`,
+                    `city.ilike.%${safe}%`
+                ].join(",")
             );
 
+        }
+
     }
+
+
+    /* SORT */
+
+    if (sort === "price-low") {
+
+        query = query.order(
+            "price",
+            {
+                ascending: true,
+                nullsFirst: false
+            }
+        );
+
+    } else if (sort === "price-high") {
+
+        query = query.order(
+            "price",
+            {
+                ascending: false,
+                nullsFirst: false
+            }
+        );
+
+    } else if (sort === "popular") {
+
+        query = query.order(
+            "views",
+            {
+                ascending: false,
+                nullsFirst: false
+            }
+        );
+
+    } else {
+
+        query = query.order(
+            "created_at",
+            {
+                ascending: false
+            }
+        );
+
+    }
+
+
+    query = query.limit(60);
 
 
     const {
@@ -316,8 +528,6 @@ async function loadListings(category = "") {
         error
     } = await query;
 
-
-    /* HATA */
 
     if (error) {
 
@@ -328,253 +538,199 @@ async function loadListings(category = "") {
 
         grid.innerHTML = `
             <div class="loading">
-                <strong>İlanlar yüklenemedi.</strong>
-                <br><br>
-                <small>
+
+                <strong>
+                    İlanlar yüklenemedi.
+                </strong>
+
+                <p>
                     ${escapeHtml(error.message)}
-                </small>
+                </p>
+
             </div>
         `;
 
         return;
     }
 
-
-    /* İLAN YOK */
 
     if (!data || data.length === 0) {
 
+        if (count) {
+            count.textContent =
+                "0 ilan bulundu";
+        }
+
         grid.innerHTML = `
             <div class="loading">
-                <strong>Henüz ilan bulunamadı.</strong>
 
-                <br><br>
+                <div style="font-size:45px">
+                    🔎
+                </div>
 
-                <a
-                    href="/ilan-ver.html"
-                    style="
-                        color:#635bff;
-                        font-weight:800;
-                    "
-                >
-                    İlk ilanı sen ver →
-                </a>
+                <strong>
+                    İlan bulunamadı
+                </strong>
+
+                <p>
+                    Filtrelerini veya arama kelimeni değiştirmeyi dene.
+                </p>
+
             </div>
         `;
-
-        updateCount(0);
 
         return;
     }
 
 
-    /* SAYI */
+    if (count) {
 
-    updateCount(data.length);
+        count.textContent =
+            `${data.length} ilan bulundu`;
 
-
-    /* KARTLAR */
-
-    grid.innerHTML =
-        data
-            .map(createListingCard)
-            .join("");
-
-}
-
-
-/* =========================================================
-   İLAN SAYISI
-   ========================================================= */
-
-function updateCount(count) {
-
-    const element =
-        document.getElementById(
-            "listingCount"
-        );
-
-    if (!element) return;
-
-    element.textContent =
-        `${count} ilan`;
-
-}
-
-
-/* =========================================================
-   RESİM
-   ========================================================= */
-
-function getListingImage(item) {
-
-    if (
-        !item.listing_images ||
-        !item.listing_images.length
-    ) {
-        return null;
     }
 
-    const sorted =
-        [...item.listing_images]
-            .sort(
-                (a, b) =>
-                    (a.sort_order || 0) -
-                    (b.sort_order || 0)
+
+    grid.innerHTML =
+        data.map(createCard).join("");
+}
+
+
+/* =====================================================
+   CATEGORY
+===================================================== */
+
+function filterCategory(category) {
+
+    if (categoryFilter) {
+        categoryFilter.value =
+            category;
+    }
+
+    document
+        .querySelectorAll(".category")
+        .forEach(button => {
+
+            button.classList.remove(
+                "active"
             );
 
-    return sorted[0]?.image_url || null;
+        });
 
+
+    const buttons =
+        document.querySelectorAll(
+            ".category"
+        );
+
+    buttons.forEach(button => {
+
+        if (
+            button.textContent
+                .trim()
+                .includes(category)
+        ) {
+            button.classList.add(
+                "active"
+            );
+        }
+
+    });
+
+
+    loadListings();
+
+    window.scrollTo({
+        top:
+            document.querySelector(
+                ".market"
+            )?.offsetTop - 80 || 0,
+
+        behavior: "smooth"
+    });
 }
 
 
-/* =========================================================
-   İLAN KARTI
-   ========================================================= */
+/* =====================================================
+   SEARCH
+===================================================== */
 
-function createListingCard(item) {
+function searchListings() {
 
-    const image =
-        getListingImage(item);
+    loadListings();
 
+    window.scrollTo({
+        top:
+            document.querySelector(
+                ".market"
+            )?.offsetTop - 80 || 0,
 
-    const imageHTML =
-        image
-
-        ?
-
-        `
-            <img
-                src="${escapeHtml(image)}"
-                alt="${escapeHtml(item.title)}"
-                loading="lazy"
-            >
-        `
-
-        :
-
-        `
-            <div class="no-image">
-                <span>📦</span>
-                Fotoğraf yok
-            </div>
-        `;
-
-
-    const brandModel =
-        [
-            item.brand,
-            item.model
-        ]
-        .filter(Boolean)
-        .join(" ");
-
-
-    return `
-
-        <article
-            class="listing-card"
-            data-category="${escapeHtml(
-                item.category || ""
-            )}"
-            onclick="openListing('${escapeHtml(item.id)}')"
-        >
-
-            <div class="listing-image">
-
-                ${imageHTML}
-
-            </div>
-
-
-            <div class="listing-content">
-
-                <div class="listing-category">
-
-                    ${escapeHtml(
-                        item.category || "Teknoloji"
-                    )}
-
-                </div>
-
-
-                <h3 class="listing-title">
-
-                    ${escapeHtml(
-                        item.title
-                    )}
-
-                </h3>
-
-
-                ${
-                    brandModel
-
-                    ?
-
-                    `
-                    <div class="listing-model">
-                        ${escapeHtml(
-                            brandModel
-                        )}
-                    </div>
-                    `
-
-                    :
-
-                    ""
-                }
-
-
-                <div class="listing-price">
-
-                    ${formatPrice(
-                        item.price
-                    )}
-
-                </div>
-
-
-                <div class="listing-info">
-
-                    <span>
-                        📍
-                        ${escapeHtml(
-                            item.city ||
-                            "Şehir belirtilmedi"
-                        )}
-                    </span>
-
-                    <span>
-                        ${escapeHtml(
-                            item.condition ||
-                            ""
-                        )}
-                    </span>
-
-                </div>
-
-
-                <div class="listing-date">
-
-                    ${formatDate(
-                        item.created_at
-                    )}
-
-                </div>
-
-            </div>
-
-        </article>
-
-    `;
-
+        behavior: "smooth"
+    });
 }
 
 
-/* =========================================================
-   İLAN DETAYI
-   ========================================================= */
+/* =====================================================
+   CLEAR
+===================================================== */
+
+function clearAllFilters() {
+
+    if (searchInput)
+        searchInput.value = "";
+
+    if (categoryFilter)
+        categoryFilter.value = "";
+
+    if (cityFilter)
+        cityFilter.value = "";
+
+    if (minPrice)
+        minPrice.value = "";
+
+    if (maxPrice)
+        maxPrice.value = "";
+
+    document
+        .querySelectorAll(
+            ".condition-filter"
+        )
+        .forEach(input => {
+            input.checked = false;
+        });
+
+    if (sortSelect)
+        sortSelect.value = "newest";
+
+
+    document
+        .querySelectorAll(".category")
+        .forEach(button => {
+            button.classList.remove(
+                "active"
+            );
+        });
+
+
+    const first =
+        document.querySelector(
+            ".category"
+        );
+
+    if (first) {
+        first.classList.add(
+            "active"
+        );
+    }
+
+
+    loadListings();
+}
+
+
+/* =====================================================
+   DETAIL
+===================================================== */
 
 function openListing(id) {
 
@@ -582,81 +738,106 @@ function openListing(id) {
 
     window.location.href =
         `/ilan.html?id=${encodeURIComponent(id)}`;
+}
+
+
+/* =====================================================
+   EVENTS
+===================================================== */
+
+if (searchBtn) {
+
+    searchBtn.addEventListener(
+        "click",
+        searchListings
+    );
 
 }
 
 
-/* =========================================================
-   ARAMA
-   ========================================================= */
+if (searchInput) {
 
-function searchListings() {
+    searchInput.addEventListener(
+        "keydown",
+        event => {
 
-    loadListings();
-
-}
-
-
-/* =========================================================
-   ENTER İLE ARAMA
-   ========================================================= */
-
-function setupSearch() {
-
-    const input =
-        document.getElementById(
-            "searchInput"
-        );
-
-    const button =
-        document.getElementById(
-            "searchBtn"
-        );
-
-
-    if (button) {
-
-        button.addEventListener(
-            "click",
-            searchListings
-        );
-
-    }
-
-
-    if (input) {
-
-        input.addEventListener(
-            "keydown",
-            event => {
-
-                if (
-                    event.key === "Enter"
-                ) {
-
-                    searchListings();
-
-                }
-
+            if (
+                event.key === "Enter"
+            ) {
+                searchListings();
             }
-        );
 
-    }
+        }
+    );
 
 }
 
 
-/* =========================================================
-   BAŞLANGIÇ
-   ========================================================= */
+if (applyFilters) {
+
+    applyFilters.addEventListener(
+        "click",
+        () => {
+
+            loadListings();
+
+            if (filters) {
+                filters.classList.remove(
+                    "open"
+                );
+            }
+
+        }
+    );
+
+}
+
+
+if (clearFilters) {
+
+    clearFilters.addEventListener(
+        "click",
+        clearAllFilters
+    );
+
+}
+
+
+if (sortSelect) {
+
+    sortSelect.addEventListener(
+        "change",
+        loadListings
+    );
+
+}
+
+
+if (mobileFilterBtn) {
+
+    mobileFilterBtn.addEventListener(
+        "click",
+        () => {
+
+            filters?.classList.toggle(
+                "open"
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
     () => {
 
         renderCategories();
-
-        setupSearch();
 
         loadListings();
 
