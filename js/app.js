@@ -1,8 +1,8 @@
 "use strict";
 
-
 /* =====================================================
    TEKNIVO - APP
+   AL / SAT / KİRALA
 ===================================================== */
 
 const config = window.TEKNIVO_CONFIG || {};
@@ -19,7 +19,6 @@ if (
         config.SUPABASE_PUBLISHABLE_KEY
     );
 }
-
 
 /* =====================================================
    KATEGORİLER
@@ -39,9 +38,10 @@ const categories = [
     ["📷", "Kamera"],
     ["⌚", "Akıllı Saat"],
     ["📱", "Tablet"],
+    ["📽️", "Projeksiyon"],
+    ["🎤", "Mikrofon"],
     ["🔌", "Diğer"]
 ];
-
 
 /* =====================================================
    DOM
@@ -86,6 +86,8 @@ const mobileFilterBtn =
 const filters =
     document.getElementById("filters");
 
+const listingTypeFilter =
+    document.getElementById("listingTypeFilter");
 
 /* =====================================================
    ESCAPE
@@ -105,7 +107,6 @@ function escapeHtml(value = "") {
     );
 }
 
-
 /* =====================================================
    PRICE
 ===================================================== */
@@ -115,7 +116,7 @@ function formatPrice(value) {
     const number = Number(value);
 
     if (!Number.isFinite(number)) {
-        return "Fiyat yok";
+        return "Fiyat belirtilmemiş";
     }
 
     return new Intl.NumberFormat(
@@ -127,7 +128,6 @@ function formatPrice(value) {
         }
     ).format(number);
 }
-
 
 /* =====================================================
    DATE
@@ -152,7 +152,6 @@ function formatDate(value) {
         }
     ).format(date);
 }
-
 
 /* =====================================================
    CATEGORY UI
@@ -182,7 +181,6 @@ function renderCategories() {
         }).join("");
 }
 
-
 /* =====================================================
    IMAGE
 ===================================================== */
@@ -206,6 +204,119 @@ function getImage(item) {
     return images[0]?.image_url || null;
 }
 
+/* =====================================================
+   LISTING TYPE
+===================================================== */
+
+function getListingType(item) {
+
+    return (
+        item.listing_type ||
+        item.type ||
+        "sale"
+    ).toLowerCase();
+}
+
+/* =====================================================
+   TYPE BADGE
+===================================================== */
+
+function createTypeBadge(item) {
+
+    const type =
+        getListingType(item);
+
+    if (type === "rent") {
+
+        return `
+            <span class="listing-type-badge rent">
+                KİRALIK
+            </span>
+        `;
+
+    }
+
+    return `
+        <span class="listing-type-badge sale">
+            SATILIK
+        </span>
+    `;
+}
+
+/* =====================================================
+   PRICE HTML
+===================================================== */
+
+function createPriceHTML(item) {
+
+    const type =
+        getListingType(item);
+
+    if (type === "rent") {
+
+        const daily =
+            Number(item.daily_price);
+
+        const weekly =
+            Number(item.weekly_price);
+
+        if (
+            Number.isFinite(daily) &&
+            daily > 0
+        ) {
+
+            return `
+                <div class="listing-price">
+                    ${formatPrice(daily)}
+                </div>
+
+                <div class="rental-price">
+                    / gün
+                    ${
+                        Number.isFinite(weekly) &&
+                        weekly > 0
+                            ? ` · ${formatPrice(weekly)} / hafta`
+                            : ""
+                    }
+                </div>
+            `;
+
+        }
+
+        /*
+         * Günlük fiyat girilmemişse
+         * normal price alanını kullan.
+         */
+
+        if (
+            Number.isFinite(Number(item.price)) &&
+            Number(item.price) > 0
+        ) {
+
+            return `
+                <div class="listing-price">
+                    ${formatPrice(item.price)}
+                </div>
+
+                <div class="rental-price">
+                    / gün
+                </div>
+            `;
+        }
+
+        return `
+            <div class="listing-price">
+                Fiyat sorunuz
+            </div>
+        `;
+    }
+
+    return `
+        <div class="listing-price">
+            ${formatPrice(item.price)}
+        </div>
+    `;
+}
 
 /* =====================================================
    CARD
@@ -213,25 +324,26 @@ function getImage(item) {
 
 function createCard(item) {
 
-    const image = getImage(item);
+    const image =
+        getImage(item);
+
+    const type =
+        getListingType(item);
 
     const imageHTML = image
-
         ? `
             <img
                 src="${escapeHtml(image)}"
-                alt="${escapeHtml(item.title)}"
+                alt="${escapeHtml(item.title || "Teknoloji ürünü")}"
                 loading="lazy"
             >
         `
-
         : `
             <div class="no-image">
                 <span class="no-image-icon">📦</span>
                 Fotoğraf yok
             </div>
         `;
-
 
     const brandModel = [
         item.brand,
@@ -240,52 +352,86 @@ function createCard(item) {
         .filter(Boolean)
         .join(" · ");
 
+    const deposit =
+        Number(item.deposit);
+
+    const depositHTML =
+        type === "rent" &&
+        Number.isFinite(deposit) &&
+        deposit > 0
+            ? `
+                <div
+                    style="
+                        font-size:12px;
+                        color:#777;
+                        margin-top:5px;
+                    "
+                >
+                    Depozito: ${formatPrice(deposit)}
+                </div>
+            `
+            : "";
 
     return `
         <article
             class="listing-card"
+            data-type="${escapeHtml(type)}"
             onclick="openListing('${escapeHtml(item.id)}')"
         >
 
             <div class="listing-image">
+
                 ${imageHTML}
+
             </div>
 
             <div class="listing-content">
 
+                ${createTypeBadge(item)}
+
                 <div class="listing-category">
-                    ${escapeHtml(item.category || "Teknoloji")}
+                    ${escapeHtml(
+                        item.category ||
+                        "Teknoloji"
+                    )}
                 </div>
 
                 <div class="listing-title">
-                    ${escapeHtml(item.title || "İsimsiz ilan")}
+                    ${escapeHtml(
+                        item.title ||
+                        "İsimsiz ilan"
+                    )}
                 </div>
 
                 ${
                     brandModel
                         ? `
                             <div class="listing-brand">
-                                ${escapeHtml(brandModel)}
+                                ${escapeHtml(
+                                    brandModel
+                                )}
                             </div>
                         `
                         : ""
                 }
 
-                <div class="listing-price">
-                    ${formatPrice(item.price)}
-                </div>
+                ${createPriceHTML(item)}
+
+                ${depositHTML}
 
                 <div class="listing-info">
 
                     <span>
                         📍 ${escapeHtml(
-                            item.city || "Konum yok"
+                            item.city ||
+                            "Konum yok"
                         )}
                     </span>
 
                     <span>
                         ${escapeHtml(
-                            item.condition || ""
+                            item.condition ||
+                            ""
                         )}
                     </span>
 
@@ -297,9 +443,8 @@ function createCard(item) {
     `;
 }
 
-
 /* =====================================================
-   GET CONDITIONS
+   CONDITIONS
 ===================================================== */
 
 function getConditions() {
@@ -308,9 +453,10 @@ function getConditions() {
         ...document.querySelectorAll(
             ".condition-filter:checked"
         )
-    ].map(input => input.value);
+    ].map(
+        input => input.value
+    );
 }
-
 
 /* =====================================================
    LOAD LISTINGS
@@ -319,7 +465,6 @@ function getConditions() {
 async function loadListings() {
 
     if (!grid) return;
-
 
     if (!db) {
 
@@ -340,14 +485,15 @@ async function loadListings() {
         return;
     }
 
-
     grid.innerHTML = `
         <div class="loading">
+
             <div class="spinner"></div>
+
             İlanlar yükleniyor...
+
         </div>
     `;
-
 
     const search =
         searchInput?.value.trim() || "";
@@ -368,8 +514,16 @@ async function loadListings() {
         getConditions();
 
     const sort =
-        sortSelect?.value || "newest";
+        sortSelect?.value ||
+        "newest";
 
+    const listingType =
+        listingTypeFilter?.value || "";
+
+
+    /* =================================================
+       QUERY
+    ================================================= */
 
     let query =
         db
@@ -385,71 +539,118 @@ async function loadListings() {
                 city,
                 views,
                 created_at,
+                listing_type,
+                daily_price,
+                weekly_price,
+                deposit,
                 listing_images (
                     image_url,
                     sort_order
                 )
             `)
-            .eq("status", "active");
+            .eq(
+                "status",
+                "active"
+            );
 
 
-    /* CATEGORY */
+    /* =================================================
+       SATILIK / KİRALIK
+    ================================================= */
+
+    if (
+        listingType === "sale" ||
+        listingType === "rent"
+    ) {
+
+        query =
+            query.eq(
+                "listing_type",
+                listingType
+            );
+    }
+
+
+    /* =================================================
+       CATEGORY
+    ================================================= */
 
     if (category) {
-        query = query.eq(
-            "category",
-            category
-        );
+
+        query =
+            query.eq(
+                "category",
+                category
+            );
     }
 
 
-    /* CITY */
+    /* =================================================
+       CITY
+    ================================================= */
 
     if (city) {
-        query = query.ilike(
-            "city",
-            `%${city}%`
-        );
+
+        query =
+            query.ilike(
+                "city",
+                `%${city}%`
+            );
     }
 
 
-    /* PRICE */
+    /* =================================================
+       PRICE
+    ================================================= */
 
     if (min) {
-        query = query.gte(
-            "price",
-            Number(min)
-        );
+
+        query =
+            query.gte(
+                "price",
+                Number(min)
+            );
     }
 
     if (max) {
-        query = query.lte(
-            "price",
-            Number(max)
-        );
+
+        query =
+            query.lte(
+                "price",
+                Number(max)
+            );
     }
 
 
-    /* CONDITION */
+    /* =================================================
+       CONDITION
+    ================================================= */
 
-    if (conditions.length === 1) {
+    if (
+        conditions.length === 1
+    ) {
 
-        query = query.eq(
-            "condition",
-            conditions[0]
-        );
+        query =
+            query.eq(
+                "condition",
+                conditions[0]
+            );
 
-    } else if (conditions.length > 1) {
+    } else if (
+        conditions.length > 1
+    ) {
 
-        query = query.in(
-            "condition",
-            conditions
-        );
-
+        query =
+            query.in(
+                "condition",
+                conditions
+            );
     }
 
 
-    /* SEARCH */
+    /* =================================================
+       SEARCH
+    ================================================= */
 
     if (search) {
 
@@ -461,73 +662,92 @@ async function loadListings() {
 
         if (safe) {
 
-            query = query.or(
-                [
-                    `title.ilike.%${safe}%`,
-                    `brand.ilike.%${safe}%`,
-                    `model.ilike.%${safe}%`,
-                    `category.ilike.%${safe}%`,
-                    `city.ilike.%${safe}%`
-                ].join(",")
-            );
-
+            query =
+                query.or(
+                    [
+                        `title.ilike.%${safe}%`,
+                        `brand.ilike.%${safe}%`,
+                        `model.ilike.%${safe}%`,
+                        `category.ilike.%${safe}%`,
+                        `city.ilike.%${safe}%`
+                    ].join(",")
+                );
         }
-
     }
 
 
-    /* SORT */
+    /* =================================================
+       SORT
+    ================================================= */
 
-    if (sort === "price-low") {
+    if (
+        sort === "price-low"
+    ) {
 
-        query = query.order(
-            "price",
-            {
-                ascending: true,
-                nullsFirst: false
-            }
-        );
+        query =
+            query.order(
+                "price",
+                {
+                    ascending: true,
+                    nullsFirst: false
+                }
+            );
 
-    } else if (sort === "price-high") {
+    } else if (
+        sort === "price-high"
+    ) {
 
-        query = query.order(
-            "price",
-            {
-                ascending: false,
-                nullsFirst: false
-            }
-        );
+        query =
+            query.order(
+                "price",
+                {
+                    ascending: false,
+                    nullsFirst: false
+                }
+            );
 
-    } else if (sort === "popular") {
+    } else if (
+        sort === "popular"
+    ) {
 
-        query = query.order(
-            "views",
-            {
-                ascending: false,
-                nullsFirst: false
-            }
-        );
+        query =
+            query.order(
+                "views",
+                {
+                    ascending: false,
+                    nullsFirst: false
+                }
+            );
 
     } else {
 
-        query = query.order(
-            "created_at",
-            {
-                ascending: false
-            }
-        );
-
+        query =
+            query.order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
     }
 
 
-    query = query.limit(60);
+    query =
+        query.limit(60);
 
+
+    /* =================================================
+       EXECUTE
+    ================================================= */
 
     const {
         data,
         error
     } = await query;
 
+
+    /* =================================================
+       ERROR
+    ================================================= */
 
     if (error) {
 
@@ -544,7 +764,9 @@ async function loadListings() {
                 </strong>
 
                 <p>
-                    ${escapeHtml(error.message)}
+                    ${escapeHtml(
+                        error.message
+                    )}
                 </p>
 
             </div>
@@ -554,9 +776,17 @@ async function loadListings() {
     }
 
 
-    if (!data || data.length === 0) {
+    /* =================================================
+       EMPTY
+    ================================================= */
+
+    if (
+        !data ||
+        data.length === 0
+    ) {
 
         if (count) {
+
             count.textContent =
                 "0 ilan bulundu";
         }
@@ -564,7 +794,12 @@ async function loadListings() {
         grid.innerHTML = `
             <div class="loading">
 
-                <div style="font-size:45px">
+                <div
+                    style="
+                        font-size:45px;
+                        margin-bottom:10px;
+                    "
+                >
                     🔎
                 </div>
 
@@ -583,18 +818,26 @@ async function loadListings() {
     }
 
 
+    /* =================================================
+       COUNT
+    ================================================= */
+
     if (count) {
 
         count.textContent =
             `${data.length} ilan bulundu`;
-
     }
 
 
-    grid.innerHTML =
-        data.map(createCard).join("");
-}
+    /* =================================================
+       RENDER
+    ================================================= */
 
+    grid.innerHTML =
+        data
+            .map(createCard)
+            .join("");
+}
 
 /* =====================================================
    CATEGORY
@@ -603,12 +846,15 @@ async function loadListings() {
 function filterCategory(category) {
 
     if (categoryFilter) {
+
         categoryFilter.value =
             category;
     }
 
     document
-        .querySelectorAll(".category")
+        .querySelectorAll(
+            ".category"
+        )
         .forEach(button => {
 
             button.classList.remove(
@@ -616,7 +862,6 @@ function filterCategory(category) {
             );
 
         });
-
 
     const buttons =
         document.querySelectorAll(
@@ -630,13 +875,13 @@ function filterCategory(category) {
                 .trim()
                 .includes(category)
         ) {
+
             button.classList.add(
                 "active"
             );
         }
 
     });
-
 
     loadListings();
 
@@ -645,11 +890,9 @@ function filterCategory(category) {
             document.querySelector(
                 ".market"
             )?.offsetTop - 80 || 0,
-
         behavior: "smooth"
     });
 }
-
 
 /* =====================================================
    SEARCH
@@ -664,11 +907,9 @@ function searchListings() {
             document.querySelector(
                 ".market"
             )?.offsetTop - 80 || 0,
-
         behavior: "smooth"
     });
 }
-
 
 /* =====================================================
    CLEAR
@@ -681,6 +922,9 @@ function clearAllFilters() {
 
     if (categoryFilter)
         categoryFilter.value = "";
+
+    if (listingTypeFilter)
+        listingTypeFilter.value = "";
 
     if (cityFilter)
         cityFilter.value = "";
@@ -696,7 +940,9 @@ function clearAllFilters() {
             ".condition-filter"
         )
         .forEach(input => {
+
             input.checked = false;
+
         });
 
     if (sortSelect)
@@ -704,11 +950,15 @@ function clearAllFilters() {
 
 
     document
-        .querySelectorAll(".category")
+        .querySelectorAll(
+            ".category"
+        )
         .forEach(button => {
+
             button.classList.remove(
                 "active"
             );
+
         });
 
 
@@ -718,15 +968,67 @@ function clearAllFilters() {
         );
 
     if (first) {
+
         first.classList.add(
             "active"
         );
     }
 
 
+    /* Üstteki Tümü / Satılık / Kiralık */
+
+    document
+        .querySelectorAll(
+            ".trade-btn"
+        )
+        .forEach(button => {
+
+            button.classList.remove(
+                "active"
+            );
+
+        });
+
+
+    const allTrade =
+        document.querySelector(
+            '.trade-btn[data-type="all"]'
+        );
+
+    if (allTrade) {
+
+        allTrade.classList.add(
+            "active"
+        );
+    }
+
+
+    const rentalInfo =
+        document.getElementById(
+            "rentalInfo"
+        );
+
+    if (rentalInfo) {
+
+        rentalInfo.style.display =
+            "none";
+    }
+
+
+    const listingTitle =
+        document.getElementById(
+            "listingTitle"
+        );
+
+    if (listingTitle) {
+
+        listingTitle.textContent =
+            "Yeni İlanlar";
+    }
+
+
     loadListings();
 }
-
 
 /* =====================================================
    DETAIL
@@ -740,7 +1042,6 @@ function openListing(id) {
         `/ilan.html?id=${encodeURIComponent(id)}`;
 }
 
-
 /* =====================================================
    EVENTS
 ===================================================== */
@@ -751,7 +1052,6 @@ if (searchBtn) {
         "click",
         searchListings
     );
-
 }
 
 
@@ -764,12 +1064,12 @@ if (searchInput) {
             if (
                 event.key === "Enter"
             ) {
+
                 searchListings();
             }
 
         }
     );
-
 }
 
 
@@ -782,6 +1082,7 @@ if (applyFilters) {
             loadListings();
 
             if (filters) {
+
                 filters.classList.remove(
                     "open"
                 );
@@ -789,7 +1090,6 @@ if (applyFilters) {
 
         }
     );
-
 }
 
 
@@ -799,7 +1099,6 @@ if (clearFilters) {
         "click",
         clearAllFilters
     );
-
 }
 
 
@@ -809,7 +1108,6 @@ if (sortSelect) {
         "change",
         loadListings
     );
-
 }
 
 
@@ -825,9 +1123,198 @@ if (mobileFilterBtn) {
 
         }
     );
-
 }
 
+
+if (listingTypeFilter) {
+
+    listingTypeFilter.addEventListener(
+        "change",
+        loadListings
+    );
+}
+
+/* =====================================================
+   ÜST SATILIK / KİRALIK BUTONLARI
+===================================================== */
+
+document
+    .querySelectorAll(
+        ".trade-btn"
+    )
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                const type =
+                    this.dataset.type;
+
+                document
+                    .querySelectorAll(
+                        ".trade-btn"
+                    )
+                    .forEach(btn => {
+
+                        btn.classList.remove(
+                            "active"
+                        );
+
+                    });
+
+                this.classList.add(
+                    "active"
+                );
+
+
+                if (listingTypeFilter) {
+
+                    listingTypeFilter.value =
+                        type === "all"
+                            ? ""
+                            : type;
+
+                }
+
+
+                const rentalInfo =
+                    document.getElementById(
+                        "rentalInfo"
+                    );
+
+                const listingTitle =
+                    document.getElementById(
+                        "listingTitle"
+                    );
+
+
+                if (
+                    type === "rent"
+                ) {
+
+                    if (rentalInfo) {
+
+                        rentalInfo.style.display =
+                            "block";
+                    }
+
+                    if (listingTitle) {
+
+                        listingTitle.textContent =
+                            "Kiralık İlanlar";
+                    }
+
+                } else if (
+                    type === "sale"
+                ) {
+
+                    if (rentalInfo) {
+
+                        rentalInfo.style.display =
+                            "none";
+                    }
+
+                    if (listingTitle) {
+
+                        listingTitle.textContent =
+                            "Satılık İlanlar";
+                    }
+
+                } else {
+
+                    if (rentalInfo) {
+
+                        rentalInfo.style.display =
+                            "none";
+                    }
+
+                    if (listingTitle) {
+
+                        listingTitle.textContent =
+                            "Yeni İlanlar";
+                    }
+                }
+
+
+                loadListings();
+
+            }
+        );
+
+    });
+
+/* =====================================================
+   URL TYPE
+===================================================== */
+
+function loadTypeFromURL() {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    const type =
+        params.get("type");
+
+    if (
+        type !== "rent" &&
+        type !== "sale"
+    ) {
+        return;
+    }
+
+
+    if (listingTypeFilter) {
+
+        listingTypeFilter.value =
+            type;
+    }
+
+
+    document
+        .querySelectorAll(
+            ".trade-btn"
+        )
+        .forEach(button => {
+
+            button.classList.toggle(
+                "active",
+                button.dataset.type ===
+                type
+            );
+
+        });
+
+
+    const listingTitle =
+        document.getElementById(
+            "listingTitle"
+        );
+
+    if (listingTitle) {
+
+        listingTitle.textContent =
+            type === "rent"
+                ? "Kiralık İlanlar"
+                : "Satılık İlanlar";
+    }
+
+
+    const rentalInfo =
+        document.getElementById(
+            "rentalInfo"
+        );
+
+    if (rentalInfo) {
+
+        rentalInfo.style.display =
+            type === "rent"
+                ? "block"
+                : "none";
+    }
+}
 
 /* =====================================================
    START
@@ -839,7 +1326,29 @@ document.addEventListener(
 
         renderCategories();
 
+        loadTypeFromURL();
+
         loadListings();
 
     }
 );
+
+
+/* =====================================================
+   GLOBAL
+===================================================== */
+
+window.filterCategory =
+    filterCategory;
+
+window.openListing =
+    openListing;
+
+window.loadListings =
+    loadListings;
+
+window.searchListings =
+    searchListings;
+
+window.clearAllFilters =
+    clearAllFilters;
