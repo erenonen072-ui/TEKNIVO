@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>TEKNIVO - Teknoloji Alışveriş Pazaryeri</title>
+    <title>TEKNIVO | Teknoloji Al & Sat</title>
 
     <meta
         name="description"
-        content="TEKNIVO ile telefon, laptop, bilgisayar, ekran kartı, konsol ve diğer teknoloji ürünlerini keşfet, al ve sat."
+        content="TEKNIVO teknoloji pazaryeri. Telefon, laptop, bilgisayar, ekran kartı, konsol ve daha fazlasını keşfet."
     >
 
     <link rel="stylesheet" href="/style.css">
@@ -19,27 +19,25 @@
 
 <body>
 
-<!-- =====================================================
-     HEADER
-===================================================== -->
+<!-- HEADER -->
 
-<header class="top-header">
+<header class="header">
 
     <div class="header-inner">
 
         <a href="/" class="logo">
             TEKNIVO
+            <i></i>
         </a>
 
-        <div class="search-box">
+        <div class="search">
 
-            <span class="search-icon">⌕</span>
+            <span>⌕</span>
 
             <input
-                type="text"
                 id="searchInput"
-                placeholder="İlan, marka, model veya kategori ara"
-                autocomplete="off"
+                type="search"
+                placeholder="Telefon, laptop, marka veya model ara..."
             >
 
             <button id="searchBtn">
@@ -48,32 +46,34 @@
 
         </div>
 
-        <nav class="header-actions">
+        <div class="header-buttons">
 
-            <a href="giris.html" class="login-btn">
+            <a href="giris.html" class="login">
                 Giriş Yap
             </a>
 
-            <a href="ilan-ver.html" class="sell-btn">
+            <a href="ilan-ver.html" class="sell">
                 + İlan Ver
             </a>
 
-        </nav>
+        </div>
 
     </div>
 
 </header>
 
 
-<!-- =====================================================
-     CATEGORY BAR
-===================================================== -->
+<!-- CATEGORY -->
 
-<section class="category-bar">
+<div class="category-wrapper">
 
     <div class="category-inner">
 
-        <button class="category-all active" onclick="filterCategory('')">
+        <button
+            class="category active"
+            onclick="filterCategory('')"
+        >
+            <span>✦</span>
             Tümü
         </button>
 
@@ -81,71 +81,61 @@
 
     </div>
 
-</section>
+</div>
 
 
-<!-- =====================================================
-     MAIN
-===================================================== -->
+<!-- MAIN -->
 
-<main class="main-container">
+<main>
 
-    <!-- ÜST TANITIM -->
+    <!-- INTRO -->
 
-    <section class="market-intro">
+    <section class="intro">
 
-        <div>
-            <div class="intro-small">
-                TEKNOLOJİ PAZARYERİ
-            </div>
+        <div class="intro-text">
+
+            <small>TEKNOLOJİ PAZARYERİ</small>
 
             <h1>
-                Teknolojini keşfet.
-                <span>Al veya sat.</span>
+                Aradığın teknoloji<br>
+                <strong>burada.</strong>
             </h1>
 
             <p>
-                Telefonlardan bilgisayarlara, ekran kartlarından oyun konsollarına
-                kadar teknoloji ilanlarını tek yerde keşfet.
+                Telefon, bilgisayar, oyun konsolu ve teknoloji ürünlerini
+                keşfet. Kullanmadığın ürünleri kolayca satışa çıkar.
             </p>
+
         </div>
 
-        <a href="ilan-ver.html" class="intro-sell">
-            Ücretsiz ilan ver
+        <a href="ilan-ver.html" class="intro-button">
+            Ücretsiz İlan Ver
             <span>→</span>
         </a>
 
     </section>
 
 
-    <!-- =================================================
-         MARKETPLACE
-    ================================================= -->
+    <!-- MARKET -->
 
-    <section class="marketplace">
+    <section class="market">
 
         <!-- FILTER -->
 
         <aside class="filters" id="filters">
 
-            <div class="filter-header">
+            <div class="filter-title">
 
                 <strong>Filtrele</strong>
 
-                <button
-                    type="button"
-                    id="clearFilters"
-                    class="clear-btn"
-                >
+                <button id="clearFilters">
                     Temizle
                 </button>
 
             </div>
 
 
-            <!-- KATEGORİ -->
-
-            <div class="filter-section">
+            <div class="filter">
 
                 <label>Kategori</label>
 
@@ -155,104 +145,57 @@
                         Tüm kategoriler
                     </option>
 
-                    <option value="Telefon">
-                        Telefon
-                    </option>
-
-                    <option value="Laptop">
-                        Laptop
-                    </option>
-
-                    <option value="Masaüstü PC">
-                        Masaüstü PC
-                    </option>
-
-                    <option value="Ekran Kartı">
-                        Ekran Kartı
-                    </option>
-
-                    <option value="İşlemci">
-                        İşlemci
-                    </option>
-
-                    <option value="RAM / SSD">
-                        RAM / SSD
-                    </option>
-
-                    <option value="Monitör">
-                        Monitör
-                    </option>
-
-                    <option value="Klavye / Mouse">
-                        Klavye / Mouse
-                    </option>
-
-                    <option value="Kulaklık">
-                        Kulaklık
-                    </option>
-
-                    <option value="Tablet">
-                        Tablet
-                    </option>
-
-                    <option value="Akıllı Saat">
-                        Akıllı Saat
-                    </option>
-
-                    <option value="Kamera">
-                        Kamera
-                    </option>
-
-                    <option value="Oyun Konsolu">
-                        Oyun Konsolu
-                    </option>
-
-                    <option value="Diğer">
-                        Diğer teknoloji
-                    </option>
+                    <option>Telefon</option>
+                    <option>Laptop</option>
+                    <option>Masaüstü PC</option>
+                    <option>Ekran Kartı</option>
+                    <option>İşlemci</option>
+                    <option>RAM / SSD</option>
+                    <option>Monitör</option>
+                    <option>Klavye / Mouse</option>
+                    <option>Kulaklık</option>
+                    <option>Tablet</option>
+                    <option>Akıllı Saat</option>
+                    <option>Kamera</option>
+                    <option>Oyun Konsolu</option>
+                    <option>Diğer</option>
 
                 </select>
 
             </div>
 
 
-            <!-- ŞEHİR -->
+            <div class="filter">
 
-            <div class="filter-section">
-
-                <label>Konum</label>
+                <label>Şehir</label>
 
                 <input
-                    type="text"
                     id="cityFilter"
-                    placeholder="Şehir ara"
+                    type="text"
+                    placeholder="Örn. Batman"
                 >
 
             </div>
 
 
-            <!-- FİYAT -->
+            <div class="filter">
 
-            <div class="filter-section">
+                <label>Fiyat Aralığı</label>
 
-                <label>Fiyat</label>
-
-                <div class="price-inputs">
+                <div class="prices">
 
                     <input
-                        type="number"
                         id="minPrice"
-                        placeholder="Min"
-                        min="0"
+                        type="number"
+                        placeholder="Min ₺"
                     >
 
                     <span>—</span>
 
                     <input
-                        type="number"
                         id="maxPrice"
-                        placeholder="Maks"
-                        min="0"
+                        type="number"
+                        placeholder="Max ₺"
                     >
 
                 </div>
@@ -260,55 +203,43 @@
             </div>
 
 
-            <!-- DURUM -->
+            <div class="filter">
 
-            <div class="filter-section">
+                <label>Ürün Durumu</label>
 
-                <label>Ürün durumu</label>
-
-                <label class="check-row">
-
+                <label class="checkbox">
                     <input
                         type="checkbox"
+                        class="condition-filter"
                         value="Sıfır"
-                        class="condition-filter"
                     >
-
-                    <span>Sıfır</span>
-
+                    Sıfır
                 </label>
 
-                <label class="check-row">
-
+                <label class="checkbox">
                     <input
                         type="checkbox"
+                        class="condition-filter"
                         value="İkinci El"
-                        class="condition-filter"
                     >
-
-                    <span>İkinci el</span>
-
+                    İkinci El
                 </label>
 
-                <label class="check-row">
-
+                <label class="checkbox">
                     <input
                         type="checkbox"
-                        value="Az Kullanılmış"
                         class="condition-filter"
+                        value="Az Kullanılmış"
                     >
-
-                    <span>Az kullanılmış</span>
-
+                    Az Kullanılmış
                 </label>
 
             </div>
 
 
             <button
-                type="button"
-                class="apply-filter"
                 id="applyFilters"
+                class="apply"
             >
                 Filtreleri Uygula
             </button>
@@ -316,11 +247,11 @@
         </aside>
 
 
-        <!-- PRODUCTS -->
+        <!-- LISTINGS -->
 
-        <section class="products-area">
+        <section class="listings">
 
-            <div class="products-top">
+            <div class="listing-header">
 
                 <div>
 
@@ -328,23 +259,19 @@
                         Yeni İlanlar
                     </h2>
 
-                    <div
-                        id="listingCount"
-                        class="listing-count"
-                    >
+                    <p id="listingCount">
                         İlanlar yükleniyor...
-                    </div>
+                    </p>
 
                 </div>
 
-
-                <div class="products-actions">
+                <div class="sort-area">
 
                     <button
-                        class="mobile-filter-btn"
                         id="mobileFilterBtn"
+                        class="mobile-filter"
                     >
-                        ☰ Filtrele
+                        ☰ Filtre
                     </button>
 
                     <select id="sortSelect">
@@ -354,11 +281,11 @@
                         </option>
 
                         <option value="price-low">
-                            Fiyat: düşükten yükseğe
+                            Fiyat düşükten yükseğe
                         </option>
 
                         <option value="price-high">
-                            Fiyat: yüksekten düşüğe
+                            Fiyat yüksekten düşüğe
                         </option>
 
                         <option value="popular">
@@ -372,14 +299,13 @@
             </div>
 
 
-            <!-- İLANLAR -->
-
             <div
                 id="listingGrid"
                 class="listing-grid"
             >
 
                 <div class="loading">
+                    <div class="spinner"></div>
                     İlanlar yükleniyor...
                 </div>
 
@@ -392,25 +318,24 @@
 </main>
 
 
-<!-- =====================================================
-     FOOTER
-===================================================== -->
+<!-- FOOTER -->
 
-<footer class="footer">
+<footer>
 
     <div class="footer-inner">
 
-        <div class="footer-brand">
+        <div>
 
-            <strong>TEKNIVO</strong>
+            <a href="/" class="footer-logo">
+                TEKNIVO
+            </a>
 
             <p>
-                Teknoloji almanın ve satmanın
-                daha kolay yolu.
+                Teknolojini sat.<br>
+                Yenisine geç.
             </p>
 
         </div>
-
 
         <div class="footer-links">
 
@@ -434,11 +359,8 @@
 
     </div>
 
-
-    <div class="footer-bottom">
-
-        © 2026 TEKNIVO · Tüm hakları saklıdır.
-
+    <div class="copyright">
+        © 2026 TEKNIVO
     </div>
 
 </footer>
