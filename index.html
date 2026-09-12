@@ -13,23 +13,36 @@
 
     <link rel="stylesheet" href="/style.css">
 
+    <!-- SUPABASE -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/js/config.js"></script>
+
+    <!-- CLERK -->
+    <script
+        defer
+        crossorigin="anonymous"
+        data-clerk-publishable-key="pk_test_ZW5vdWdoLXN0dXJnZW9uLTIwNDEuY2xlcmsuYWNjb3VudHMuZGV2JA"
+        src="https://oceanic-capybara-20.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js">
+    </script>
 </head>
 
 <body>
 
-<!-- HEADER -->
+<!-- =========================
+     HEADER
+========================= -->
 
 <header class="header">
 
     <div class="header-inner">
 
+        <!-- LOGO -->
         <a href="/" class="logo">
             TEKNIVO
             <i></i>
         </a>
 
+        <!-- SEARCH -->
         <div class="search">
 
             <span>⌕</span>
@@ -46,11 +59,16 @@
 
         </div>
 
+        <!-- AUTH BUTTONS -->
         <div class="header-buttons">
 
-            <a href="giris.html" class="login">
-                Giriş Yap
-            </a>
+            <div id="clerk-auth-area">
+
+                <a href="giris.html" class="login">
+                    Giriş Yap
+                </a>
+
+            </div>
 
             <a href="ilan-ver.html" class="sell">
                 + İlan Ver
@@ -63,7 +81,9 @@
 </header>
 
 
-<!-- CATEGORY -->
+<!-- =========================
+     CATEGORY
+========================= -->
 
 <div class="category-wrapper">
 
@@ -84,7 +104,9 @@
 </div>
 
 
-<!-- MAIN -->
+<!-- =========================
+     MAIN
+========================= -->
 
 <main>
 
@@ -94,7 +116,9 @@
 
         <div class="intro-text">
 
-            <small>TEKNOLOJİ PAZARYERİ</small>
+            <small>
+                TEKNOLOJİ PAZARYERİ
+            </small>
 
             <h1>
                 Aradığın teknoloji<br>
@@ -122,11 +146,16 @@
 
         <!-- FILTER -->
 
-        <aside class="filters" id="filters">
+        <aside
+            class="filters"
+            id="filters"
+        >
 
             <div class="filter-title">
 
-                <strong>Filtrele</strong>
+                <strong>
+                    Filtrele
+                </strong>
 
                 <button id="clearFilters">
                     Temizle
@@ -135,9 +164,13 @@
             </div>
 
 
+            <!-- CATEGORY -->
+
             <div class="filter">
 
-                <label>Kategori</label>
+                <label>
+                    Kategori
+                </label>
 
                 <select id="categoryFilter">
 
@@ -145,29 +178,74 @@
                         Tüm kategoriler
                     </option>
 
-                    <option>Telefon</option>
-                    <option>Laptop</option>
-                    <option>Masaüstü PC</option>
-                    <option>Ekran Kartı</option>
-                    <option>İşlemci</option>
-                    <option>RAM / SSD</option>
-                    <option>Monitör</option>
-                    <option>Klavye / Mouse</option>
-                    <option>Kulaklık</option>
-                    <option>Tablet</option>
-                    <option>Akıllı Saat</option>
-                    <option>Kamera</option>
-                    <option>Oyun Konsolu</option>
-                    <option>Diğer</option>
+                    <option>
+                        Telefon
+                    </option>
+
+                    <option>
+                        Laptop
+                    </option>
+
+                    <option>
+                        Masaüstü PC
+                    </option>
+
+                    <option>
+                        Ekran Kartı
+                    </option>
+
+                    <option>
+                        İşlemci
+                    </option>
+
+                    <option>
+                        RAM / SSD
+                    </option>
+
+                    <option>
+                        Monitör
+                    </option>
+
+                    <option>
+                        Klavye / Mouse
+                    </option>
+
+                    <option>
+                        Kulaklık
+                    </option>
+
+                    <option>
+                        Tablet
+                    </option>
+
+                    <option>
+                        Akıllı Saat
+                    </option>
+
+                    <option>
+                        Kamera
+                    </option>
+
+                    <option>
+                        Oyun Konsolu
+                    </option>
+
+                    <option>
+                        Diğer
+                    </option>
 
                 </select>
 
             </div>
 
 
+            <!-- CITY -->
+
             <div class="filter">
 
-                <label>Şehir</label>
+                <label>
+                    Şehir
+                </label>
 
                 <input
                     id="cityFilter"
@@ -178,9 +256,13 @@
             </div>
 
 
+            <!-- PRICE -->
+
             <div class="filter">
 
-                <label>Fiyat Aralığı</label>
+                <label>
+                    Fiyat Aralığı
+                </label>
 
                 <div class="prices">
 
@@ -190,7 +272,9 @@
                         placeholder="Min ₺"
                     >
 
-                    <span>—</span>
+                    <span>
+                        —
+                    </span>
 
                     <input
                         id="maxPrice"
@@ -203,39 +287,56 @@
             </div>
 
 
+            <!-- CONDITION -->
+
             <div class="filter">
 
-                <label>Ürün Durumu</label>
+                <label>
+                    Ürün Durumu
+                </label>
 
                 <label class="checkbox">
+
                     <input
                         type="checkbox"
                         class="condition-filter"
                         value="Sıfır"
                     >
+
                     Sıfır
+
                 </label>
 
+
                 <label class="checkbox">
+
                     <input
                         type="checkbox"
                         class="condition-filter"
                         value="İkinci El"
                     >
+
                     İkinci El
+
                 </label>
 
+
                 <label class="checkbox">
+
                     <input
                         type="checkbox"
                         class="condition-filter"
                         value="Az Kullanılmış"
                     >
+
                     Az Kullanılmış
+
                 </label>
 
             </div>
 
+
+            <!-- APPLY -->
 
             <button
                 id="applyFilters"
@@ -247,7 +348,9 @@
         </aside>
 
 
-        <!-- LISTINGS -->
+        <!-- =========================
+             LISTINGS
+        ========================= -->
 
         <section class="listings">
 
@@ -265,6 +368,7 @@
 
                 </div>
 
+
                 <div class="sort-area">
 
                     <button
@@ -273,6 +377,7 @@
                     >
                         ☰ Filtre
                     </button>
+
 
                     <select id="sortSelect">
 
@@ -305,8 +410,11 @@
             >
 
                 <div class="loading">
+
                     <div class="spinner"></div>
+
                     İlanlar yükleniyor...
+
                 </div>
 
             </div>
@@ -318,7 +426,9 @@
 </main>
 
 
-<!-- FOOTER -->
+<!-- =========================
+     FOOTER
+========================= -->
 
 <footer>
 
@@ -326,7 +436,10 @@
 
         <div>
 
-            <a href="/" class="footer-logo">
+            <a
+                href="/"
+                class="footer-logo"
+            >
                 TEKNIVO
             </a>
 
@@ -336,6 +449,7 @@
             </p>
 
         </div>
+
 
         <div class="footer-links">
 
@@ -359,14 +473,116 @@
 
     </div>
 
+
     <div class="copyright">
+
         © 2026 TEKNIVO
+
     </div>
 
 </footer>
 
 
+<!-- =========================
+     SUPABASE APP
+========================= -->
+
 <script src="/js/app.js"></script>
+
+
+<!-- =========================
+     CLERK
+========================= -->
+
+<script>
+
+window.addEventListener("load", async function () {
+
+    try {
+
+        /*
+         * Clerk'in yüklenmesini bekle
+         */
+
+        await Clerk.load();
+
+
+        /*
+         * Auth alanını bul
+         */
+
+        const authArea =
+            document.getElementById("clerk-auth-area");
+
+
+        if (!authArea) {
+            return;
+        }
+
+
+        /*
+         * Kullanıcı giriş yaptıysa
+         */
+
+        if (Clerk.isSignedIn) {
+
+            authArea.innerHTML = `
+                <div
+                    id="clerk-user-button"
+                    style="
+                        display:flex;
+                        align-items:center;
+                        min-height:40px;
+                    "
+                ></div>
+            `;
+
+
+            /*
+             * Kullanıcı menüsünü göster
+             */
+
+            Clerk.mountUserButton(
+                document.getElementById(
+                    "clerk-user-button"
+                )
+            );
+
+        }
+
+
+        /*
+         * Kullanıcı giriş yapmadıysa
+         */
+
+        else {
+
+            authArea.innerHTML = `
+                <a
+                    href="giris.html"
+                    class="login"
+                >
+                    Giriş Yap
+                </a>
+            `;
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "TEKNIVO Clerk hatası:",
+            error
+        );
+
+    }
+
+});
+
+</script>
+
 
 </body>
 </html>
