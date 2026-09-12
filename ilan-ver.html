@@ -5,50 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>TEKNIVO - İlan Ver</title>
+
     <meta
         name="description"
         content="TEKNIVO'da teknoloji ürününü sat veya kiraya ver."
     >
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
 
+    <!-- SUPABASE -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+    <!-- CLERK -->
+    <script
+        defer
+        crossorigin="anonymous"
+        data-clerk-publishable-key="pk_test_ZW5vdWdoLXN0dXJnZW9uLTIwNDEuY2xlcmsuYWNjb3VudHMuZGV2JA"
+        src="https://oceanic-capybara-20.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js">
+    </script>
+
     <style>
+
         * {
             box-sizing: border-box;
         }
 
         body {
+            margin: 0;
             background: #f6f7fb;
+            color: #171717;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
         .listing-page {
             min-height: 100vh;
-            padding: 45px 20px 70px;
+            padding: 40px 16px 70px;
         }
 
         .listing-container {
             width: 100%;
-            max-width: 760px;
+            max-width: 780px;
             margin: auto;
         }
 
-        /* ÜST */
-
-        .listing-top {
-            margin-bottom: 25px;
-        }
+        /* =========================
+           ÜST
+        ========================== */
 
         .back-link {
             display: inline-flex;
             align-items: center;
             gap: 7px;
-            color: #666;
             text-decoration: none;
+            color: #666;
             font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
         }
 
         .back-link:hover {
@@ -56,60 +68,62 @@
         }
 
         .page-title {
-            font-size: 32px;
-            font-weight: 800;
-            letter-spacing: -0.7px;
-            color: #111827;
             margin: 0;
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: -1px;
         }
 
         .page-subtitle {
-            margin: 8px 0 0;
-            color: #6b7280;
+            color: #777;
             font-size: 15px;
+            margin: 8px 0 25px;
         }
 
-        /* KART */
+        /* =========================
+           KART
+        ========================== */
 
         .listing-card {
             background: #fff;
             border: 1px solid #e5e7eb;
             border-radius: 24px;
             padding: 30px;
-            box-shadow: 0 10px 35px rgba(15, 23, 42, 0.06);
-        }
-
-        .section-title {
-            font-size: 17px;
-            font-weight: 800;
-            color: #111827;
-            margin: 0 0 16px;
+            box-shadow: 0 15px 45px rgba(0,0,0,.06);
         }
 
         .form-section {
             margin-bottom: 28px;
         }
 
-        /* SATIŞ / KİRALAMA */
+        .section-title {
+            font-size: 17px;
+            font-weight: 900;
+            margin: 0 0 15px;
+        }
 
-        .type-buttons {
+        /* =========================
+           SATILIK / KİRALIK
+        ========================== */
+
+        .type-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
         }
 
         .type-button {
-            border: 2px solid #e5e7eb;
             background: #fff;
+            border: 2px solid #e5e7eb;
             border-radius: 15px;
-            padding: 16px;
+            padding: 17px;
             cursor: pointer;
             text-align: left;
             transition: .2s ease;
         }
 
         .type-button:hover {
-            border-color: #c7c9ff;
+            border-color: #c9c6ff;
             transform: translateY(-1px);
         }
 
@@ -119,26 +133,27 @@
         }
 
         .type-icon {
-            font-size: 22px;
             display: block;
-            margin-bottom: 6px;
+            font-size: 23px;
+            margin-bottom: 7px;
         }
 
         .type-name {
             display: block;
-            color: #111827;
-            font-weight: 800;
+            font-weight: 900;
             font-size: 15px;
         }
 
         .type-description {
             display: block;
-            color: #737373;
+            color: #777;
             font-size: 12px;
             margin-top: 4px;
         }
 
-        /* FORM */
+        /* =========================
+           FORM
+        ========================== */
 
         .form-grid {
             display: grid;
@@ -151,14 +166,14 @@
         }
 
         .field {
-            margin-bottom: 2px;
+            margin-bottom: 3px;
         }
 
         .field-label {
             display: block;
             font-size: 13px;
-            font-weight: 700;
-            color: #374151;
+            font-weight: 800;
+            color: #333;
             margin-bottom: 7px;
         }
 
@@ -168,178 +183,257 @@
 
         .form-input {
             width: 100%;
-            padding: 14px 15px;
+            height: 48px;
+            padding: 0 14px;
             border: 1px solid #dfe2e8;
             border-radius: 12px;
-            background: #fff;
-            color: #111827;
-            font-size: 15px;
-            font-family: inherit;
             outline: none;
-            transition: .2s ease;
-        }
-
-        .form-input::placeholder {
-            color: #9ca3af;
+            background: #fff;
+            color: #171717;
+            font-size: 14px;
+            font-family: inherit;
+            transition: .2s;
         }
 
         .form-input:focus {
             border-color: #635bff;
-            box-shadow: 0 0 0 3px rgba(99, 91, 255, .09);
-        }
-
-        select.form-input {
-            cursor: pointer;
+            box-shadow: 0 0 0 3px rgba(99,91,255,.08);
         }
 
         textarea.form-input {
-            resize: vertical;
+            height: auto;
             min-height: 150px;
+            padding: 14px;
+            resize: vertical;
             line-height: 1.6;
         }
 
-        /* KİRALAMA ALANLARI */
+        /* =========================
+           FİYAT
+        ========================== */
 
-        .rental-fields {
-            display: none;
-            margin-top: 16px;
-            padding: 18px;
-            border-radius: 16px;
-            background: #f8f8ff;
-            border: 1px solid #e8e7ff;
-        }
-
-        .rental-fields.show {
-            display: block;
-        }
-
-        .rental-title {
-            font-size: 14px;
-            font-weight: 800;
-            color: #4338ca;
-            margin-bottom: 14px;
-        }
-
-        .rental-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
-        }
-
-        .price-input-wrap {
+        .price-box {
             position: relative;
         }
 
-        .price-input-wrap .form-input {
-            padding-right: 55px;
+        .price-box .form-input {
+            padding-right: 50px;
         }
 
         .price-unit {
             position: absolute;
-            right: 13px;
+            right: 14px;
             top: 50%;
             transform: translateY(-50%);
             color: #777;
             font-size: 12px;
-            font-weight: 700;
-            pointer-events: none;
+            font-weight: 800;
         }
 
-        /* BİLGİ */
+        /* =========================
+           KİRALIK
+        ========================== */
+
+        .rental-box {
+            display: none;
+            background: #f8f8ff;
+            border: 1px solid #e6e4ff;
+            border-radius: 17px;
+            padding: 18px;
+            margin-bottom: 28px;
+        }
+
+        .rental-box.show {
+            display: block;
+        }
+
+        .rental-heading {
+            color: #4c45c9;
+            font-weight: 900;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .rental-grid {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 12px;
+        }
+
+        /* =========================
+           FOTOĞRAF
+        ========================== */
+
+        .photo-upload {
+            border: 2px dashed #d7d9e0;
+            border-radius: 17px;
+            padding: 28px 20px;
+            text-align: center;
+            cursor: pointer;
+            background: #fafafa;
+            transition: .2s;
+        }
+
+        .photo-upload:hover {
+            border-color: #635bff;
+            background: #faf9ff;
+        }
+
+        .photo-upload-icon {
+            font-size: 35px;
+            margin-bottom: 8px;
+        }
+
+        .photo-upload-title {
+            font-weight: 900;
+            font-size: 15px;
+        }
+
+        .photo-upload-text {
+            color: #888;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        #photos {
+            display: none;
+        }
+
+        .photo-preview {
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .preview-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #eee;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .preview-number {
+            position: absolute;
+            left: 6px;
+            top: 6px;
+            background: rgba(0,0,0,.7);
+            color: #fff;
+            padding: 4px 7px;
+            border-radius: 7px;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .photo-note {
+            color: #999;
+            font-size: 11px;
+            margin-top: 9px;
+        }
+
+        /* =========================
+           BİLGİ
+        ========================== */
 
         .info-box {
             display: flex;
-            gap: 12px;
-            padding: 15px;
-            border-radius: 14px;
+            gap: 11px;
+            padding: 14px;
             background: #f5f7ff;
-            border: 1px solid #e4e7ff;
+            border: 1px solid #e2e6ff;
+            border-radius: 13px;
             color: #555;
-            font-size: 13px;
+            font-size: 12px;
             line-height: 1.5;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
-        .info-icon {
-            font-size: 19px;
-            flex-shrink: 0;
-        }
-
-        /* BUTON */
+        /* =========================
+           BUTON
+        ========================== */
 
         .publish-button {
             width: 100%;
+            height: 52px;
             border: 0;
-            border-radius: 14px;
-            padding: 16px 20px;
+            border-radius: 13px;
             background: #635bff;
             color: white;
-            font-size: 16px;
-            font-weight: 800;
-            font-family: inherit;
+            font-size: 15px;
+            font-weight: 900;
             cursor: pointer;
-            transition: .2s ease;
+            transition: .2s;
         }
 
         .publish-button:hover {
-            background: #554cf0;
+            background: #5148e5;
             transform: translateY(-1px);
-            box-shadow: 0 8px 20px rgba(99, 91, 255, .22);
+            box-shadow: 0 9px 25px rgba(99,91,255,.2);
         }
 
         .publish-button:disabled {
-            opacity: .65;
-            cursor: not-allowed;
+            opacity: .6;
+            cursor: wait;
             transform: none;
             box-shadow: none;
         }
 
-        /* MESAJ */
+        /* =========================
+           MESAJ
+        ========================== */
 
         #message {
             display: none;
-            margin: 15px 0 0;
-            padding: 12px 14px;
-            border-radius: 11px;
-            font-size: 14px;
-            line-height: 1.4;
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            line-height: 1.5;
         }
 
         #message.show {
             display: block;
         }
 
-        #message.success {
-            background: #ecfdf3;
-            border: 1px solid #bbf7d0;
-            color: #15803d;
+        #message.error {
+            background: #fff1f1;
+            color: #c62828;
+            border: 1px solid #ffd0d0;
         }
 
-        #message.error {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #dc2626;
+        #message.success {
+            background: #effcf3;
+            color: #218838;
+            border: 1px solid #c9efd2;
         }
 
         #message.info {
             background: #eff6ff;
-            border: 1px solid #bfdbfe;
             color: #2563eb;
+            border: 1px solid #bfdbfe;
         }
-
-        /* ALT */
 
         .privacy-note {
             text-align: center;
-            color: #9ca3af;
-            font-size: 12px;
+            color: #999;
+            font-size: 11px;
             line-height: 1.5;
-            margin-top: 18px;
+            margin-top: 15px;
         }
 
-        /* MOBİL */
+        /* =========================
+           MOBİL
+        ========================== */
 
-        @media (max-width: 650px) {
+        @media(max-width:650px) {
 
             .listing-page {
                 padding: 25px 12px 50px;
@@ -347,7 +441,7 @@
 
             .listing-card {
                 padding: 20px;
-                border-radius: 19px;
+                border-radius: 20px;
             }
 
             .page-title {
@@ -362,33 +456,16 @@
                 grid-column: auto;
             }
 
-            .type-buttons {
-                grid-template-columns: 1fr 1fr;
-            }
-
             .rental-grid {
                 grid-template-columns: 1fr;
             }
+
+            .photo-preview {
+                grid-template-columns: repeat(3,1fr);
+            }
+
         }
 
-        @media (max-width: 430px) {
-
-            .type-button {
-                padding: 13px;
-            }
-
-            .type-description {
-                display: none;
-            }
-
-            .type-icon {
-                font-size: 19px;
-            }
-
-            .type-name {
-                font-size: 14px;
-            }
-        }
     </style>
 </head>
 
@@ -398,35 +475,32 @@
 
     <div class="listing-container">
 
-        <!-- ÜST -->
-        <div class="listing-top">
+        <a href="/" class="back-link">
+            ← Ana sayfaya dön
+        </a>
 
-            <a href="/" class="back-link">
-                ← Ana sayfaya dön
-            </a>
+        <h1 class="page-title">
+            İlanını oluştur
+        </h1>
 
-            <h1 class="page-title">
-                İlanını oluştur
-            </h1>
-
-            <p class="page-subtitle">
-                Teknoloji ürününü sat veya kiraya ver.
-            </p>
-
-        </div>
+        <p class="page-subtitle">
+            Teknoloji ürününü sat veya kiraya ver.
+        </p>
 
 
-        <!-- ANA KART -->
         <div class="listing-card">
 
-            <!-- İLAN TÜRÜ -->
+            <!-- =====================
+                 İLAN TÜRÜ
+            ====================== -->
+
             <section class="form-section">
 
                 <h2 class="section-title">
                     İlan türü
                 </h2>
 
-                <div class="type-buttons">
+                <div class="type-grid">
 
                     <button
                         type="button"
@@ -434,15 +508,19 @@
                         class="type-button active"
                         onclick="selectListingType('sale')"
                     >
-                        <span class="type-icon">🛒</span>
+
+                        <span class="type-icon">
+                            🛒
+                        </span>
 
                         <span class="type-name">
                             Satılık
                         </span>
 
                         <span class="type-description">
-                            Ürünü tek seferde sat
+                            Ürünü sat
                         </span>
+
                     </button>
 
 
@@ -452,7 +530,10 @@
                         class="type-button"
                         onclick="selectListingType('rent')"
                     >
-                        <span class="type-icon">🔄</span>
+
+                        <span class="type-icon">
+                            🔄
+                        </span>
 
                         <span class="type-name">
                             Kiralık
@@ -461,6 +542,7 @@
                         <span class="type-description">
                             Günlük veya haftalık kirala
                         </span>
+
                     </button>
 
                 </div>
@@ -468,7 +550,10 @@
             </section>
 
 
-            <!-- ÜRÜN BİLGİLERİ -->
+            <!-- =====================
+                 ÜRÜN
+            ====================== -->
+
             <section class="form-section">
 
                 <h2 class="section-title">
@@ -477,7 +562,6 @@
 
                 <div class="form-grid">
 
-                    <!-- BAŞLIK -->
                     <div class="field full">
 
                         <label class="field-label">
@@ -496,92 +580,49 @@
                     </div>
 
 
-                    <!-- KATEGORİ -->
                     <div class="field">
 
                         <label class="field-label">
                             Kategori
                         </label>
 
-                        <select id="category" class="form-input">
+                        <select
+                            id="category"
+                            class="form-input"
+                        >
 
-                            <option value="Telefon">
-                                Telefon
-                            </option>
-
-                            <option value="Laptop">
-                                Laptop
-                            </option>
-
-                            <option value="Masaüstü PC">
-                                Masaüstü PC
-                            </option>
-
-                            <option value="Oyun Konsolu">
-                                Oyun Konsolu
-                            </option>
-
-                            <option value="Ekran Kartı">
-                                Ekran Kartı
-                            </option>
-
-                            <option value="İşlemci">
-                                İşlemci
-                            </option>
-
-                            <option value="RAM / SSD">
-                                RAM / SSD
-                            </option>
-
-                            <option value="Monitör">
-                                Monitör
-                            </option>
-
-                            <option value="Klavye / Mouse">
-                                Klavye / Mouse
-                            </option>
-
-                            <option value="Kulaklık">
-                                Kulaklık
-                            </option>
-
-                            <option value="Kamera">
-                                Kamera
-                            </option>
-
-                            <option value="Akıllı Saat">
-                                Akıllı Saat
-                            </option>
-
-                            <option value="Tablet">
-                                Tablet
-                            </option>
-
-                            <option value="Projeksiyon">
-                                Projeksiyon
-                            </option>
-
-                            <option value="Mikrofon">
-                                Mikrofon
-                            </option>
-
-                            <option value="Diğer">
-                                Diğer
-                            </option>
+                            <option>Telefon</option>
+                            <option>Laptop</option>
+                            <option>Masaüstü PC</option>
+                            <option>Oyun Konsolu</option>
+                            <option>Ekran Kartı</option>
+                            <option>İşlemci</option>
+                            <option>RAM / SSD</option>
+                            <option>Monitör</option>
+                            <option>Klavye / Mouse</option>
+                            <option>Kulaklık</option>
+                            <option>Kamera</option>
+                            <option>Akıllı Saat</option>
+                            <option>Tablet</option>
+                            <option>Projeksiyon</option>
+                            <option>Mikrofon</option>
+                            <option>Diğer</option>
 
                         </select>
 
                     </div>
 
 
-                    <!-- DURUM -->
                     <div class="field">
 
                         <label class="field-label">
                             Ürün durumu
                         </label>
 
-                        <select id="condition" class="form-input">
+                        <select
+                            id="condition"
+                            class="form-input"
+                        >
 
                             <option value="İkinci El">
                                 İkinci El
@@ -600,7 +641,6 @@
                     </div>
 
 
-                    <!-- MARKA -->
                     <div class="field">
 
                         <label class="field-label">
@@ -617,7 +657,6 @@
                     </div>
 
 
-                    <!-- MODEL -->
                     <div class="field">
 
                         <label class="field-label">
@@ -638,7 +677,10 @@
             </section>
 
 
-            <!-- SATILIK FİYAT -->
+            <!-- =====================
+                 SATIŞ FİYATI
+            ====================== -->
+
             <section
                 id="salePriceSection"
                 class="form-section"
@@ -655,15 +697,14 @@
                         <span class="required">*</span>
                     </label>
 
-                    <div class="price-input-wrap">
+                    <div class="price-box">
 
                         <input
                             id="price"
                             class="form-input"
                             type="number"
                             min="1"
-                            step="1"
-                            placeholder="Örn. 25000"
+                            placeholder="25000"
                         >
 
                         <span class="price-unit">
@@ -677,34 +718,35 @@
             </section>
 
 
-            <!-- KİRALIK FİYATLAR -->
+            <!-- =====================
+                 KİRALAMA
+            ====================== -->
+
             <section
-                id="rentalSection"
-                class="rental-fields"
+                id="rentalBox"
+                class="rental-box"
             >
 
-                <div class="rental-title">
+                <div class="rental-heading">
                     🔄 Kiralama fiyatları
                 </div>
 
                 <div class="rental-grid">
 
-                    <!-- GÜNLÜK -->
                     <div class="field">
 
                         <label class="field-label">
-                            Günlük fiyat
+                            Günlük
                             <span class="required">*</span>
                         </label>
 
-                        <div class="price-input-wrap">
+                        <div class="price-box">
 
                             <input
                                 id="daily_price"
                                 class="form-input"
                                 type="number"
                                 min="1"
-                                step="1"
                                 placeholder="750"
                             >
 
@@ -717,21 +759,19 @@
                     </div>
 
 
-                    <!-- HAFTALIK -->
                     <div class="field">
 
                         <label class="field-label">
-                            Haftalık fiyat
+                            Haftalık
                         </label>
 
-                        <div class="price-input-wrap">
+                        <div class="price-box">
 
                             <input
                                 id="weekly_price"
                                 class="form-input"
                                 type="number"
                                 min="0"
-                                step="1"
                                 placeholder="4000"
                             >
 
@@ -744,21 +784,19 @@
                     </div>
 
 
-                    <!-- DEPOZİTO -->
                     <div class="field">
 
                         <label class="field-label">
                             Depozito
                         </label>
 
-                        <div class="price-input-wrap">
+                        <div class="price-box">
 
                             <input
                                 id="deposit"
                                 class="form-input"
                                 type="number"
                                 min="0"
-                                step="1"
                                 placeholder="2000"
                             >
 
@@ -775,7 +813,58 @@
             </section>
 
 
-            <!-- KONUM -->
+            <!-- =====================
+                 FOTOĞRAFLAR
+            ====================== -->
+
+            <section class="form-section">
+
+                <h2 class="section-title">
+                    Ürün fotoğrafları
+                </h2>
+
+                <label
+                    for="photos"
+                    class="photo-upload"
+                >
+
+                    <div class="photo-upload-icon">
+                        📷
+                    </div>
+
+                    <div class="photo-upload-title">
+                        Fotoğraf ekle
+                    </div>
+
+                    <div class="photo-upload-text">
+                        Birden fazla fotoğraf seçebilirsin
+                    </div>
+
+                </label>
+
+                <input
+                    id="photos"
+                    type="file"
+                    accept="image/*"
+                    multiple
+                >
+
+                <div
+                    id="photoPreview"
+                    class="photo-preview"
+                ></div>
+
+                <div class="photo-note">
+                    İlk fotoğraf ilanının kapak fotoğrafı olarak kullanılabilir.
+                </div>
+
+            </section>
+
+
+            <!-- =====================
+                 KONUM
+            ====================== -->
+
             <section class="form-section">
 
                 <h2 class="section-title">
@@ -802,66 +891,65 @@
             </section>
 
 
-            <!-- AÇIKLAMA -->
+            <!-- =====================
+                 AÇIKLAMA
+            ====================== -->
+
             <section class="form-section">
 
                 <h2 class="section-title">
-                    Ürün açıklaması
+                    Açıklama
                 </h2>
 
-                <div class="field">
-
-                    <label class="field-label">
-                        Açıklama
-                    </label>
-
-                    <textarea
-                        id="description"
-                        class="form-input"
-                        rows="7"
-                        maxlength="3000"
-                        placeholder="Ürünün durumu, kullanım süresi, kutu ve aksesuar bilgileri gibi detayları yaz..."
-                    ></textarea>
-
-                </div>
+                <textarea
+                    id="description"
+                    class="form-input"
+                    maxlength="3000"
+                    placeholder="Ürünün durumu, kullanım süresi, kutu ve aksesuar bilgileri gibi detayları yaz..."
+                ></textarea>
 
             </section>
 
 
-            <!-- BİLGİ -->
+            <!-- =====================
+                 BİLGİ
+            ====================== -->
+
             <div class="info-box">
 
-                <span class="info-icon">
+                <span>
                     💡
                 </span>
 
                 <span>
-                    İlanını yayınladıktan sonra ana sayfadaki teknoloji
-                    ilanları arasında gösterilecektir. Ürün bilgilerini
-                    mümkün olduğunca doğru ve açık yaz.
+                    Ürünün gerçek durumunu ve önemli özelliklerini
+                    açıklamada belirt. Böylece ilanını gören kişiler
+                    ürün hakkında daha kolay bilgi sahibi olabilir.
                 </span>
 
             </div>
 
 
-            <!-- YAYINLA -->
+            <!-- =====================
+                 YAYINLA
+            ====================== -->
+
             <button
                 id="publishButton"
-                type="button"
                 class="publish-button"
+                type="button"
                 onclick="publishListing()"
             >
                 İlanı Yayınla
             </button>
 
 
-            <!-- MESAJ -->
-            <p id="message"></p>
+            <div id="message"></div>
 
 
             <div class="privacy-note">
-                İlan yayınlayarak verdiğin bilgilerin TEKNIVO'da
-                ilan oluşturmak amacıyla kullanılmasını kabul etmiş olursun.
+                İlan yayınlayarak verdiğin bilgilerin ilan oluşturmak
+                amacıyla kullanılmasını kabul etmiş olursun.
             </div>
 
         </div>
@@ -871,538 +959,685 @@
 </main>
 
 
-<script src="js/config.js"></script>
+<script src="/js/config.js"></script>
 
 <script>
 
-    /* =========================================
-       SUPABASE
-    ========================================= */
-
-    const client = supabase.createClient(
-        TEKNIVO_CONFIG.SUPABASE_URL,
-        TEKNIVO_CONFIG.SUPABASE_PUBLISHABLE_KEY
-    );
+"use strict";
 
 
-    /* =========================================
-       İLAN TÜRÜ
-    ========================================= */
+/* =========================================
+   SUPABASE
+========================================= */
 
-    let selectedListingType = "sale";
-
-
-    function selectListingType(type) {
-
-        selectedListingType = type;
-
-        const saleButton =
-            document.getElementById("saleButton");
-
-        const rentButton =
-            document.getElementById("rentButton");
-
-        const salePriceSection =
-            document.getElementById("salePriceSection");
-
-        const rentalSection =
-            document.getElementById("rentalSection");
+const client = supabase.createClient(
+    TEKNIVO_CONFIG.SUPABASE_URL,
+    TEKNIVO_CONFIG.SUPABASE_PUBLISHABLE_KEY
+);
 
 
-        if (type === "rent") {
+/* =========================================
+   İLAN TÜRÜ
+========================================= */
 
-            saleButton.classList.remove("active");
-
-            rentButton.classList.add("active");
-
-            salePriceSection.style.display = "none";
-
-            rentalSection.classList.add("show");
-
-        } else {
-
-            rentButton.classList.remove("active");
-
-            saleButton.classList.add("active");
-
-            rentalSection.classList.remove("show");
-
-            salePriceSection.style.display = "block";
-
-        }
-
-    }
+let selectedListingType = "sale";
 
 
-    /* =========================================
-       URL'DEN TÜR OKU
-       Örn:
-       ilan-ver.html?type=rent
-    ========================================= */
+function selectListingType(type) {
 
-    const urlParams =
-        new URLSearchParams(window.location.search);
+    selectedListingType = type;
 
-    const urlType =
-        urlParams.get("type");
+    const saleButton =
+        document.getElementById("saleButton");
 
-    if (urlType === "rent") {
+    const rentButton =
+        document.getElementById("rentButton");
 
-        selectListingType("rent");
+    const salePriceSection =
+        document.getElementById("salePriceSection");
+
+    const rentalBox =
+        document.getElementById("rentalBox");
+
+
+    if (type === "rent") {
+
+        saleButton.classList.remove("active");
+
+        rentButton.classList.add("active");
+
+        salePriceSection.style.display = "none";
+
+        rentalBox.classList.add("show");
 
     } else {
 
-        selectListingType("sale");
+        rentButton.classList.remove("active");
+
+        saleButton.classList.add("active");
+
+        salePriceSection.style.display = "block";
+
+        rentalBox.classList.remove("show");
 
     }
 
+}
 
-    /* =========================================
-       MESAJ
-    ========================================= */
 
-    function showMessage(
-        text,
-        type = "info"
-    ) {
+/* =========================================
+   URL PARAMETRESİ
+   ?type=rent
+========================================= */
 
-        const message =
-            document.getElementById("message");
+const params =
+    new URLSearchParams(window.location.search);
 
-        message.textContent = text;
+if (params.get("type") === "rent") {
 
-        message.className =
-            "show " + type;
+    selectListingType("rent");
+
+} else {
+
+    selectListingType("sale");
+
+}
+
+
+/* =========================================
+   MESAJ
+========================================= */
+
+function showMessage(text, type) {
+
+    const message =
+        document.getElementById("message");
+
+    message.textContent = text;
+
+    message.className =
+        "show " + type;
+
+}
+
+
+/* =========================================
+   CLERK BEKLE
+========================================= */
+
+async function waitForClerk() {
+
+    for (let i = 0; i < 100; i++) {
+
+        if (
+            window.Clerk &&
+            typeof window.Clerk.load === "function"
+        ) {
+
+            await window.Clerk.load();
+
+            return true;
+
+        }
+
+        await new Promise(resolve => {
+
+            setTimeout(resolve, 100);
+
+        });
 
     }
 
+    return false;
 
-    /* =========================================
-       SAYISAL DEĞER
-    ========================================= */
+}
 
-    function getNumber(id) {
 
-        const element =
-            document.getElementById(id);
+/* =========================================
+   FOTOĞRAF ÖNİZLEME
+========================================= */
 
-        const value =
-            Number(element.value);
+let selectedPhotos = [];
 
-        return Number.isFinite(value)
-            ? value
-            : 0;
+
+const photoInput =
+    document.getElementById("photos");
+
+
+photoInput.addEventListener(
+    "change",
+    function () {
+
+        const files =
+            Array.from(this.files || []);
+
+        selectedPhotos = files;
+
+        renderPhotoPreview();
 
     }
+);
 
 
-    /* =========================================
-       İLAN YAYINLA
-    ========================================= */
+function renderPhotoPreview() {
 
-    async function publishListing() {
+    const preview =
+        document.getElementById("photoPreview");
 
-        const button =
-            document.getElementById("publishButton");
+    preview.innerHTML = "";
 
+    selectedPhotos.forEach(
+        (file, index) => {
 
-        try {
+            const reader =
+                new FileReader();
 
-            button.disabled = true;
+            reader.onload = function (event) {
 
-            showMessage(
-                "İlan bilgileri kontrol ediliyor...",
-                "info"
-            );
+                const item =
+                    document.createElement("div");
 
+                item.className =
+                    "preview-item";
 
-            /* ===============================
-               KULLANICI
-            =============================== */
 
-            const {
-                data: {
-                    user
-                },
-                error: authError
-            } = await client.auth.getUser();
+                const image =
+                    document.createElement("img");
 
+                image.src =
+                    event.target.result;
 
-            if (authError) {
 
-                console.error(authError);
+                const number =
+                    document.createElement("span");
 
-                showMessage(
-                    "Giriş bilgileri alınamadı.",
-                    "error"
-                );
+                number.className =
+                    "preview-number";
 
-                button.disabled = false;
+                number.textContent =
+                    index === 0
+                        ? "KAPAK"
+                        : index + 1;
 
-                return;
-            }
 
+                item.appendChild(image);
 
-            if (!user) {
+                item.appendChild(number);
 
-                showMessage(
-                    "İlan vermek için önce giriş yapmalısın.",
-                    "error"
-                );
-
-                button.disabled = false;
-
-                setTimeout(() => {
-
-                    location.href = "/giris.html";
-
-                }, 1200);
-
-                return;
-            }
-
-
-            /* ===============================
-               FORM
-            =============================== */
-
-            const title =
-                document
-                    .getElementById("title")
-                    .value
-                    .trim();
-
-
-            const category =
-                document
-                    .getElementById("category")
-                    .value;
-
-
-            const brand =
-                document
-                    .getElementById("brand")
-                    .value
-                    .trim();
-
-
-            const model =
-                document
-                    .getElementById("model")
-                    .value
-                    .trim();
-
-
-            const condition =
-                document
-                    .getElementById("condition")
-                    .value;
-
-
-            const city =
-                document
-                    .getElementById("city")
-                    .value
-                    .trim();
-
-
-            const description =
-                document
-                    .getElementById("description")
-                    .value
-                    .trim();
-
-
-            /* ===============================
-               SATILIK
-            =============================== */
-
-            let price = 0;
-
-            let dailyPrice = null;
-
-            let weeklyPrice = null;
-
-            let deposit = null;
-
-
-            if (selectedListingType === "sale") {
-
-                price =
-                    getNumber("price");
-
-
-                if (!price || price <= 0) {
-
-                    showMessage(
-                        "Satış fiyatını girmen gerekiyor.",
-                        "error"
-                    );
-
-                    button.disabled = false;
-
-                    return;
-                }
-
-            }
-
-
-            /* ===============================
-               KİRALIK
-            =============================== */
-
-            if (selectedListingType === "rent") {
-
-                dailyPrice =
-                    getNumber("daily_price");
-
-
-                weeklyPrice =
-                    getNumber("weekly_price");
-
-
-                deposit =
-                    getNumber("deposit");
-
-
-                if (!dailyPrice || dailyPrice <= 0) {
-
-                    showMessage(
-                        "Kiralık ilan için günlük fiyat zorunlu.",
-                        "error"
-                    );
-
-                    button.disabled = false;
-
-                    return;
-                }
-
-
-                /*
-                    Eski sistemde fiyat alanı
-                    kullanılıyorsa günlük fiyatı
-                    ana fiyat olarak da kaydediyoruz.
-                */
-
-                price = dailyPrice;
-
-
-                if (weeklyPrice <= 0) {
-
-                    weeklyPrice = null;
-
-                }
-
-
-                if (deposit <= 0) {
-
-                    deposit = null;
-
-                }
-
-            }
-
-
-            /* ===============================
-               GENEL KONTROLLER
-            =============================== */
-
-            if (!title) {
-
-                showMessage(
-                    "İlan başlığını yazmalısın.",
-                    "error"
-                );
-
-                button.disabled = false;
-
-                return;
-            }
-
-
-            if (title.length < 5) {
-
-                showMessage(
-                    "İlan başlığı biraz daha açıklayıcı olmalı.",
-                    "error"
-                );
-
-                button.disabled = false;
-
-                return;
-            }
-
-
-            if (!city) {
-
-                showMessage(
-                    "Şehir bilgisini girmelisin.",
-                    "error"
-                );
-
-                button.disabled = false;
-
-                return;
-            }
-
-
-            /* ===============================
-               GÖNDERİYORUZ
-            =============================== */
-
-            showMessage(
-                "İlan yayınlanıyor...",
-                "info"
-            );
-
-
-            const listingData = {
-
-                user_id: user.id,
-
-                title,
-
-                category,
-
-                brand,
-
-                model,
-
-                condition,
-
-                price,
-
-                city,
-
-                description,
-
-                listing_type:
-                    selectedListingType,
-
-                daily_price:
-                    dailyPrice,
-
-                weekly_price:
-                    weeklyPrice,
-
-                deposit:
-
-                    deposit
+                preview.appendChild(item);
 
             };
 
+            reader.readAsDataURL(file);
 
-            console.log(
-                "TEKNIVO ilan:",
-                listingData
+        }
+    );
+
+}
+
+
+/* =========================================
+   SAYI
+========================================= */
+
+function numberValue(id) {
+
+    const value =
+        Number(
+            document
+                .getElementById(id)
+                .value
+        );
+
+    if (!Number.isFinite(value)) {
+
+        return 0;
+
+    }
+
+    return value;
+
+}
+
+
+/* =========================================
+   İLAN YAYINLA
+========================================= */
+
+async function publishListing() {
+
+    const button =
+        document.getElementById("publishButton");
+
+
+    try {
+
+        button.disabled = true;
+
+        showMessage(
+            "Giriş bilgileri kontrol ediliyor...",
+            "info"
+        );
+
+
+        /* ==============================
+           CLERK
+        ============================== */
+
+        const clerkReady =
+            await waitForClerk();
+
+
+        if (!clerkReady) {
+
+            showMessage(
+                "Giriş sistemi yüklenemedi. Sayfayı yenileyip tekrar dene.",
+                "error"
             );
 
+            button.disabled = false;
 
-            const {
-                data,
-                error
-            } = await client
-                .from("listings")
-                .insert(listingData)
-                .select()
-                .single();
+            return;
+
+        }
 
 
-            /* ===============================
-               HATA
-            =============================== */
+        /* ==============================
+           CLERK KULLANICISI
+        ============================== */
 
-            if (error) {
+        if (
+            !window.Clerk.isSignedIn ||
+            !window.Clerk.user
+        ) {
 
-                console.error(
-                    "TEKNIVO ilan hatası:",
-                    error
+            showMessage(
+                "İlan vermek için önce giriş yapmalısın.",
+                "error"
+            );
+
+            button.disabled = false;
+
+            setTimeout(() => {
+
+                window.location.href =
+                    "/giris.html";
+
+            }, 1000);
+
+            return;
+
+        }
+
+
+        const clerkUser =
+            window.Clerk.user;
+
+
+        const userId =
+            clerkUser.id;
+
+
+        /* ==============================
+           FORM
+        ============================== */
+
+        const title =
+            document
+                .getElementById("title")
+                .value
+                .trim();
+
+
+        const category =
+            document
+                .getElementById("category")
+                .value;
+
+
+        const brand =
+            document
+                .getElementById("brand")
+                .value
+                .trim();
+
+
+        const model =
+            document
+                .getElementById("model")
+                .value
+                .trim();
+
+
+        const condition =
+            document
+                .getElementById("condition")
+                .value;
+
+
+        const city =
+            document
+                .getElementById("city")
+                .value
+                .trim();
+
+
+        const description =
+            document
+                .getElementById("description")
+                .value
+                .trim();
+
+
+        /* ==============================
+           GENEL KONTROL
+        ============================== */
+
+        if (!title) {
+
+            showMessage(
+                "İlan başlığını yazmalısın.",
+                "error"
+            );
+
+            button.disabled = false;
+
+            return;
+
+        }
+
+
+        if (title.length < 5) {
+
+            showMessage(
+                "İlan başlığı en az 5 karakter olmalı.",
+                "error"
+            );
+
+            button.disabled = false;
+
+            return;
+
+        }
+
+
+        if (!city) {
+
+            showMessage(
+                "Şehir bilgisini girmelisin.",
+                "error"
+            );
+
+            button.disabled = false;
+
+            return;
+
+        }
+
+
+        /* ==============================
+           FİYATLAR
+        ============================== */
+
+        let price = 0;
+
+        let dailyPrice = null;
+
+        let weeklyPrice = null;
+
+        let deposit = null;
+
+
+        if (selectedListingType === "sale") {
+
+            price =
+                numberValue("price");
+
+
+            if (price <= 0) {
+
+                showMessage(
+                    "Satış fiyatını girmelisin.",
+                    "error"
                 );
-
-
-                /*
-                    Daha anlaşılır hata mesajları
-                */
-
-                if (
-                    error.message &&
-                    error.message.includes("listing_type")
-                ) {
-
-                    showMessage(
-                        "Supabase'de kiralık ilan alanları eksik. listing_type, daily_price, weekly_price ve deposit sütunlarını ekle.",
-                        "error"
-                    );
-
-                } else {
-
-                    showMessage(
-                        "İlan yayınlanamadı: " +
-                        error.message,
-                        "error"
-                    );
-
-                }
-
 
                 button.disabled = false;
 
                 return;
+
+            }
+
+        }
+
+
+        if (selectedListingType === "rent") {
+
+            dailyPrice =
+                numberValue("daily_price");
+
+
+            weeklyPrice =
+                numberValue("weekly_price");
+
+
+            deposit =
+                numberValue("deposit");
+
+
+            if (dailyPrice <= 0) {
+
+                showMessage(
+                    "Kiralık ilan için günlük fiyat zorunlu.",
+                    "error"
+                );
+
+                button.disabled = false;
+
+                return;
+
             }
 
 
-            /* ===============================
-               BAŞARILI
-            =============================== */
-
-            console.log(
-                "TEKNIVO ilan oluşturuldu:",
-                data
-            );
-
-
-            showMessage(
-                selectedListingType === "rent"
-                    ? "✅ Kiralık ilan başarıyla yayınlandı!"
-                    : "✅ İlan başarıyla yayınlandı!",
-                "success"
-            );
-
-
-            button.textContent =
-                "✓ İlan Yayınlandı";
-
-
             /*
-                1.2 saniye sonra ana sayfa
+                Eski fiyat filtrelerinin
+                de çalışması için günlük
+                fiyatı price alanına yazıyoruz.
             */
 
-            setTimeout(() => {
-
-                location.href = "/";
-
-            }, 1200);
+            price =
+                dailyPrice;
 
 
-        } catch (error) {
+            if (weeklyPrice <= 0) {
+
+                weeklyPrice = null;
+
+            }
+
+
+            if (deposit <= 0) {
+
+                deposit = null;
+
+            }
+
+        }
+
+
+        /* ==============================
+           FOTOĞRAF BİLGİSİ
+        ============================== */
+
+        /*
+            ÖNEMLİ:
+            Burada fotoğrafları henüz
+            Supabase Storage'a yüklemiyoruz.
+
+            Önce ilanı oluşturuyoruz.
+            Daha sonra Storage entegrasyonu
+            yapılabilir.
+        */
+
+
+        showMessage(
+            "İlan yayınlanıyor...",
+            "info"
+        );
+
+
+        /* ==============================
+           SUPABASE INSERT
+        ============================== */
+
+        const listingData = {
+
+            user_id: userId,
+
+            title: title,
+
+            category: category,
+
+            brand: brand,
+
+            model: model,
+
+            condition: condition,
+
+            price: price,
+
+            city: city,
+
+            description: description,
+
+            listing_type:
+                selectedListingType,
+
+            daily_price:
+                dailyPrice,
+
+            weekly_price:
+                weeklyPrice,
+
+            deposit:
+                deposit
+
+        };
+
+
+        console.log(
+            "TEKNIVO ilan verisi:",
+            listingData
+        );
+
+
+        const {
+            data,
+            error
+        } = await client
+            .from("listings")
+            .insert(listingData)
+            .select()
+            .single();
+
+
+        /* ==============================
+           HATA
+        ============================== */
+
+        if (error) {
 
             console.error(
-                "TEKNIVO beklenmeyen hata:",
+                "TEKNIVO Supabase hatası:",
                 error
             );
 
 
-            showMessage(
-                "Beklenmeyen bir hata oluştu. Lütfen tekrar dene.",
-                "error"
-            );
+            if (
+                error.message &&
+                (
+                    error.message.includes("listing_type") ||
+                    error.message.includes("daily_price") ||
+                    error.message.includes("weekly_price") ||
+                    error.message.includes("deposit")
+                )
+            ) {
+
+                showMessage(
+                    "Supabase'de kiralık ilan alanları eksik. listing_type, daily_price, weekly_price ve deposit sütunlarını eklemelisin.",
+                    "error"
+                );
+
+            } else {
+
+                showMessage(
+                    "İlan yayınlanamadı: " +
+                    error.message,
+                    "error"
+                );
+
+            }
 
 
             button.disabled = false;
 
+            return;
+
         }
 
+
+        /* ==============================
+           BAŞARILI
+        ============================== */
+
+        console.log(
+            "TEKNIVO ilan oluşturuldu:",
+            data
+        );
+
+
+        showMessage(
+            selectedListingType === "rent"
+                ? "✅ Kiralık ilan başarıyla yayınlandı!"
+                : "✅ İlan başarıyla yayınlandı!",
+            "success"
+        );
+
+
+        button.textContent =
+            "✓ İlan Yayınlandı";
+
+
+        /* ==============================
+           ANA SAYFA
+        ============================== */
+
+        setTimeout(() => {
+
+            window.location.href = "/";
+
+        }, 1200);
+
+
+    } catch (error) {
+
+        console.error(
+            "TEKNIVO beklenmeyen hata:",
+            error
+        );
+
+
+        showMessage(
+            error?.message ||
+            "Beklenmeyen bir hata oluştu.",
+            "error"
+        );
+
+
+        button.disabled = false;
+
     }
+
+}
 
 </script>
 
