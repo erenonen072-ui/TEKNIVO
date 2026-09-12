@@ -2,17 +2,20 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Kayıt Ol - TEKNIVO</title>
 
+    <meta
+        name="description"
+        content="TEKNIVO teknoloji pazaryerine ücretsiz kayıt ol."
+    >
+
     <link rel="stylesheet" href="/style.css">
 
-    <!-- CLERK -->
+    <!-- =========================
+         CLERK
+    ========================== -->
     <script
         defer
         crossorigin="anonymous"
@@ -21,17 +24,13 @@
     </script>
 
     <style>
-
         * {
             box-sizing: border-box;
         }
 
         body {
             margin: 0;
-            font-family:
-                Arial,
-                Helvetica,
-                sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
             background: #f7f7f8;
             color: #171717;
         }
@@ -47,12 +46,11 @@
         .auth-box {
             width: 100%;
             max-width: 450px;
-            background: white;
+            background: #fff;
             border: 1px solid #e7e7e7;
             border-radius: 18px;
             padding: 35px;
-            box-shadow:
-                0 15px 50px rgba(0,0,0,.06);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, .06);
         }
 
         .auth-logo {
@@ -98,13 +96,12 @@
             border-radius: 8px;
             outline: none;
             font-size: 14px;
-            background: white;
+            background: #fff;
         }
 
         .auth-field input:focus {
             border-color: #635bff;
-            box-shadow:
-                0 0 0 3px rgba(99,91,255,.08);
+            box-shadow: 0 0 0 3px rgba(99, 91, 255, .08);
         }
 
         .auth-button {
@@ -118,6 +115,7 @@
             cursor: pointer;
             margin-top: 5px;
             font-size: 14px;
+            transition: .2s;
         }
 
         .auth-button:hover {
@@ -134,7 +132,7 @@
             height: 47px;
             border: 1px solid #ddd;
             border-radius: 8px;
-            background: white;
+            background: #fff;
             color: #171717;
             font-weight: 800;
             cursor: pointer;
@@ -144,6 +142,11 @@
 
         .google-button:hover {
             background: #f7f7f7;
+        }
+
+        .google-button:disabled {
+            opacity: .6;
+            cursor: wait;
         }
 
         .divider {
@@ -186,6 +189,73 @@
             border: 1px solid #c9efd2;
         }
 
+        .verification-box {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .verification-box.show {
+            display: block;
+        }
+
+        .verification-title {
+            font-size: 17px;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .verification-text {
+            color: #777;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .code-input {
+            width: 100%;
+            height: 50px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 0 15px;
+            text-align: center;
+            font-size: 20px;
+            letter-spacing: 6px;
+            outline: none;
+        }
+
+        .code-input:focus {
+            border-color: #635bff;
+            box-shadow: 0 0 0 3px rgba(99, 91, 255, .08);
+        }
+
+        .verify-button {
+            width: 100%;
+            height: 47px;
+            margin-top: 12px;
+            border: 0;
+            border-radius: 8px;
+            background: #635bff;
+            color: #fff;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .verify-button:disabled {
+            opacity: .6;
+            cursor: wait;
+        }
+
+        .resend-button {
+            width: 100%;
+            margin-top: 12px;
+            border: 0;
+            background: transparent;
+            color: #635bff;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
         .auth-bottom {
             text-align: center;
             margin-top: 22px;
@@ -208,13 +278,19 @@
             text-decoration: none;
         }
 
-        .loading-text {
-            text-align: center;
-            color: #777;
-            font-size: 13px;
-            padding: 20px;
+        .back-home:hover {
+            color: #171717;
         }
 
+        @media (max-width: 480px) {
+            .auth-page {
+                padding: 15px;
+            }
+
+            .auth-box {
+                padding: 25px 20px;
+            }
+        }
     </style>
 </head>
 
@@ -224,6 +300,7 @@
 
     <div class="auth-box">
 
+        <!-- LOGO -->
         <div class="auth-logo">
             TEKNIVO<span>.</span>
         </div>
@@ -236,148 +313,195 @@
             Hesap Oluştur
         </h1>
 
+        <!-- MESAJ -->
         <div
             id="message"
             class="auth-message">
         </div>
 
-        <!-- GOOGLE -->
+        <!-- =========================
+             REGISTER AREA
+        ========================== -->
 
-        <button
-            id="googleButton"
-            class="google-button"
-            type="button">
+        <div id="registerArea">
 
-            🔵 Google ile Kayıt Ol
-
-        </button>
-
-        <div class="divider">
-            veya e-posta ile
-        </div>
-
-        <!-- REGISTER FORM -->
-
-        <form id="registerForm">
-
-            <div class="auth-field">
-
-                <label for="username">
-                    Kullanıcı adı
-                </label>
-
-                <input
-                    id="username"
-                    type="text"
-                    placeholder="kullaniciadi"
-                    autocomplete="username"
-                    minlength="3"
-                    maxlength="30"
-                    required
-                >
-
-            </div>
-
-
-            <div class="auth-field">
-
-                <label for="city">
-                    Şehir
-                </label>
-
-                <input
-                    id="city"
-                    type="text"
-                    placeholder="Batman"
-                    maxlength="50"
-                    required
-                >
-
-            </div>
-
-
-            <div class="auth-field">
-
-                <label for="email">
-                    E-posta
-                </label>
-
-                <input
-                    id="email"
-                    type="email"
-                    placeholder="ornek@mail.com"
-                    autocomplete="email"
-                    required
-                >
-
-            </div>
-
-
-            <div class="auth-field">
-
-                <label for="password">
-                    Şifre
-                </label>
-
-                <input
-                    id="password"
-                    type="password"
-                    placeholder="En az 8 karakter"
-                    autocomplete="new-password"
-                    minlength="8"
-                    required
-                >
-
-            </div>
-
-
-            <div class="auth-field">
-
-                <label for="password2">
-                    Şifre tekrar
-                </label>
-
-                <input
-                    id="password2"
-                    type="password"
-                    placeholder="Şifreni tekrar yaz"
-                    autocomplete="new-password"
-                    minlength="8"
-                    required
-                >
-
-            </div>
-
-
+            <!-- GOOGLE -->
             <button
-                id="registerButton"
-                class="auth-button"
-                type="submit">
-
-                Kayıt Ol
-
+                id="googleButton"
+                class="google-button"
+                type="button">
+                🔵 Google ile Kayıt Ol
             </button>
 
-        </form>
+            <div class="divider">
+                veya e-posta ile
+            </div>
+
+            <!-- REGISTER FORM -->
+            <form id="registerForm">
+
+                <div class="auth-field">
+
+                    <label for="username">
+                        Kullanıcı adı
+                    </label>
+
+                    <input
+                        id="username"
+                        type="text"
+                        placeholder="kullaniciadi"
+                        autocomplete="username"
+                        minlength="3"
+                        maxlength="30"
+                        required
+                    >
+
+                </div>
 
 
+                <div class="auth-field">
+
+                    <label for="city">
+                        Şehir
+                    </label>
+
+                    <input
+                        id="city"
+                        type="text"
+                        placeholder="Batman"
+                        maxlength="50"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="auth-field">
+
+                    <label for="email">
+                        E-posta
+                    </label>
+
+                    <input
+                        id="email"
+                        type="email"
+                        placeholder="ornek@mail.com"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="auth-field">
+
+                    <label for="password">
+                        Şifre
+                    </label>
+
+                    <input
+                        id="password"
+                        type="password"
+                        placeholder="En az 8 karakter"
+                        autocomplete="new-password"
+                        minlength="8"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="auth-field">
+
+                    <label for="password2">
+                        Şifre tekrar
+                    </label>
+
+                    <input
+                        id="password2"
+                        type="password"
+                        placeholder="Şifreni tekrar yaz"
+                        autocomplete="new-password"
+                        minlength="8"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    id="registerButton"
+                    class="auth-button"
+                    type="submit">
+                    Kayıt Ol
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- =========================
+             EMAIL VERIFICATION
+        ========================== -->
+
+        <div
+            id="verificationBox"
+            class="verification-box">
+
+            <div class="verification-title">
+                E-posta adresini doğrula
+            </div>
+
+            <div class="verification-text">
+                E-posta adresine gönderdiğimiz doğrulama
+                kodunu aşağıya gir.
+            </div>
+
+            <input
+                id="verificationCode"
+                class="code-input"
+                type="text"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+                maxlength="10"
+                placeholder="000000"
+            >
+
+            <button
+                id="verifyButton"
+                class="verify-button"
+                type="button">
+                E-postayı Doğrula
+            </button>
+
+            <button
+                id="resendButton"
+                class="resend-button"
+                type="button">
+                Kodu tekrar gönder
+            </button>
+
+        </div>
+
+
+        <!-- LOGIN -->
         <div class="auth-bottom">
 
             Zaten hesabın var mı?
 
-            <a href="giris.html">
+            <a href="/giris.html">
                 Giriş Yap
             </a>
 
         </div>
 
 
+        <!-- HOME -->
         <a
             href="/"
             class="back-home">
-
             ← Ana sayfaya dön
-
         </a>
 
     </div>
@@ -386,132 +510,118 @@
 
 
 <script>
-
 "use strict";
 
-
-/* =========================
+/* =====================================
    ELEMENTLER
-========================= */
+===================================== */
 
 const form =
-    document.getElementById(
-        "registerForm"
-    );
+    document.getElementById("registerForm");
 
 const button =
-    document.getElementById(
-        "registerButton"
-    );
+    document.getElementById("registerButton");
 
 const googleButton =
-    document.getElementById(
-        "googleButton"
-    );
+    document.getElementById("googleButton");
 
 const message =
-    document.getElementById(
-        "message"
-    );
+    document.getElementById("message");
+
+const registerArea =
+    document.getElementById("registerArea");
+
+const verificationBox =
+    document.getElementById("verificationBox");
+
+const verificationCode =
+    document.getElementById("verificationCode");
+
+const verifyButton =
+    document.getElementById("verifyButton");
+
+const resendButton =
+    document.getElementById("resendButton");
 
 
-/* =========================
+let currentSignUp = null;
+
+
+/* =====================================
    MESAJ
-========================= */
+===================================== */
 
-function showMessage(
-    text,
-    type
-) {
+function showMessage(text, type) {
 
     message.textContent = text;
 
     message.className =
         "auth-message " + type;
-
 }
 
 
-/* =========================
+/* =====================================
    CLERK BEKLE
-========================= */
+===================================== */
 
 async function waitForClerk() {
 
-    for (
-        let i = 0;
-        i < 100;
-        i++
-    ) {
+    for (let i = 0; i < 100; i++) {
 
         if (
             window.Clerk &&
-            typeof Clerk.load === "function"
+            typeof window.Clerk.load === "function"
         ) {
 
-            await Clerk.load();
+            await window.Clerk.load();
 
             return true;
-
         }
 
-        await new Promise(
-            resolve =>
-                setTimeout(
-                    resolve,
-                    100
-                )
-        );
+        await new Promise(function(resolve) {
+
+            setTimeout(resolve, 100);
+
+        });
 
     }
 
     return false;
-
 }
 
 
-/* =========================
-   SAYFA
-========================= */
+/* =====================================
+   SAYFA AÇILINCA
+===================================== */
 
 (async function () {
 
     const ready =
         await waitForClerk();
 
-
     if (!ready) {
 
         showMessage(
-            "Clerk yüklenemedi. Sayfayı yenileyip tekrar deneyin.",
+            "Kayıt sistemi yüklenemedi. Sayfayı yenileyip tekrar deneyin.",
             "error"
         );
 
         return;
-
     }
 
 
-    /*
-     * Zaten giriş yapılmışsa
-     * ana sayfaya gönder.
-     */
-
-    if (Clerk.isSignedIn) {
+    if (window.Clerk.isSignedIn) {
 
         window.location.href = "/";
 
-        return;
-
     }
-
 
 })();
 
 
-/* =========================
+/* =====================================
    GOOGLE KAYIT
-========================= */
+===================================== */
 
 googleButton.addEventListener(
     "click",
@@ -521,6 +631,7 @@ googleButton.addEventListener(
 
         googleButton.textContent =
             "Google açılıyor...";
+
 
         try {
 
@@ -537,20 +648,18 @@ googleButton.addEventListener(
             }
 
 
-            await Clerk.client.signUp.authenticateWithRedirect({
+            await window.Clerk.client.signUp
+                .authenticateWithRedirect({
 
-                strategy:
-                    "oauth_google",
+                    strategy: "oauth_google",
 
-                redirectUrl:
-                    window.location.origin +
-                    "/",
+                    redirectUrl:
+                        window.location.origin + "/",
 
-                redirectUrlComplete:
-                    window.location.origin +
-                    "/"
+                    redirectUrlComplete:
+                        window.location.origin + "/"
 
-            });
+                });
 
         }
 
@@ -561,27 +670,29 @@ googleButton.addEventListener(
                 error
             );
 
+
             showMessage(
                 error?.errors?.[0]?.longMessage ||
+                error?.errors?.[0]?.message ||
                 error?.message ||
                 "Google ile kayıt yapılamadı.",
                 "error"
             );
 
+
             googleButton.disabled = false;
 
             googleButton.textContent =
                 "🔵 Google ile Kayıt Ol";
-
         }
 
     }
 );
 
 
-/* =========================
+/* =====================================
    E-POSTA KAYIT
-========================= */
+===================================== */
 
 form.addEventListener(
     "submit",
@@ -634,7 +745,17 @@ form.addEventListener(
             );
 
             return;
+        }
 
+
+        if (!city) {
+
+            showMessage(
+                "Şehir bilgisini yaz.",
+                "error"
+            );
+
+            return;
         }
 
 
@@ -646,7 +767,6 @@ form.addEventListener(
             );
 
             return;
-
         }
 
 
@@ -658,7 +778,6 @@ form.addEventListener(
             );
 
             return;
-
         }
 
 
@@ -683,58 +802,67 @@ form.addEventListener(
             }
 
 
-            /*
-             * Clerk Sign Up
-             */
+            /* =========================
+               CLERK SIGN UP
+            ========================== */
 
-            const signUp =
-                await Clerk.client.signUp.create({
+            currentSignUp =
+                await window.Clerk.client.signUp.create({
+
                     emailAddress: email,
+
                     password: password
+
                 });
 
 
-            /*
-             * Kullanıcı adı ve şehir
-             * Clerk metadata'ya kaydedilir.
-             */
+            /* =========================
+               KULLANICI BİLGİLERİ
+            ========================== */
 
-            await signUp.update({
+            await currentSignUp.update({
+
                 unsafeMetadata: {
+
                     username: username,
+
                     city: city
+
                 }
+
             });
 
 
-            /*
-             * E-posta doğrulama
-             */
+            /* =========================
+               E-POSTA DOĞRULAMA
+            ========================== */
 
-            await signUp.prepareEmailAddressVerification({
-                strategy: "email_code"
-            });
+            await currentSignUp
+                .prepareEmailAddressVerification({
+
+                    strategy: "email_code"
+
+                });
+
+
+            /* FORMU GİZLE */
+
+            registerArea.style.display =
+                "none";
+
+
+            /* DOĞRULAMA EKRANINI AÇ */
+
+            verificationBox.classList.add("show");
 
 
             showMessage(
-                "Hesabın oluşturuldu! E-posta adresine gelen doğrulama kodunu girmen gerekiyor.",
+                "Doğrulama kodu e-posta adresine gönderildi.",
                 "success"
             );
 
 
-            /*
-             * Clerk doğrulama ekranı
-             */
-
-            setTimeout(
-                function () {
-
-                    window.location.href =
-                        "/giris.html";
-
-                },
-                1800
-            );
+            verificationCode.focus();
 
         }
 
@@ -762,9 +890,7 @@ form.addEventListener(
 
             }
 
-            else if (
-                error?.message
-            ) {
+            else if (error?.message) {
 
                 errorMessage =
                     error.message;
@@ -782,13 +908,216 @@ form.addEventListener(
 
             button.textContent =
                 "Kayıt Ol";
-
         }
 
     }
 );
 
-</script>
 
-</body>
-</html>
+/* =====================================
+   E-POSTA DOĞRULAMA
+===================================== */
+
+verifyButton.addEventListener(
+    "click",
+    async function () {
+
+        const code =
+            verificationCode.value.trim();
+
+
+        if (!currentSignUp) {
+
+            showMessage(
+                "Kayıt oturumu bulunamadı. Lütfen tekrar kayıt ol.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (!code) {
+
+            showMessage(
+                "E-posta doğrulama kodunu gir.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        verifyButton.disabled = true;
+
+        verifyButton.textContent =
+            "Doğrulanıyor...";
+
+
+        try {
+
+            await currentSignUp
+                .attemptEmailAddressVerification({
+
+                    code: code
+
+                });
+
+
+            /*
+             * Doğrulama tamamlandıysa
+             */
+
+            if (
+                currentSignUp.status === "complete"
+            ) {
+
+                await window.Clerk.setActive({
+
+                    session:
+                        currentSignUp.createdSessionId
+
+                });
+
+
+                showMessage(
+                    "Hesabın başarıyla oluşturuldu! Ana sayfaya yönlendiriliyorsun...",
+                    "success"
+                );
+
+
+                setTimeout(function () {
+
+                    window.location.href = "/";
+
+                }, 1000);
+
+
+                return;
+            }
+
+
+            showMessage(
+                "E-posta doğrulandı ancak hesap henüz tamamlanmadı.",
+                "error"
+            );
+
+
+            verifyButton.disabled = false;
+
+            verifyButton.textContent =
+                "E-postayı Doğrula";
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "E-posta doğrulama hatası:",
+                error
+            );
+
+
+            showMessage(
+                error?.errors?.[0]?.longMessage ||
+                error?.errors?.[0]?.message ||
+                error?.message ||
+                "Doğrulama kodu geçersiz.",
+                "error"
+            );
+
+
+            verifyButton.disabled = false;
+
+            verifyButton.textContent =
+                "E-postayı Doğrula";
+        }
+
+    }
+);
+
+
+/* =====================================
+   KODU TEKRAR GÖNDER
+===================================== */
+
+resendButton.addEventListener(
+    "click",
+    async function () {
+
+        if (!currentSignUp) {
+
+            showMessage(
+                "Kayıt oturumu bulunamadı.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        resendButton.disabled = true;
+
+        resendButton.textContent =
+            "Kod gönderiliyor...";
+
+
+        try {
+
+            await currentSignUp
+                .prepareEmailAddressVerification({
+
+                    strategy: "email_code"
+
+                });
+
+
+            showMessage(
+                "Yeni doğrulama kodu e-posta adresine gönderildi.",
+                "success"
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Kod gönderme hatası:",
+                error
+            );
+
+
+            showMessage(
+                error?.errors?.[0]?.longMessage ||
+                error?.message ||
+                "Kod gönderilemedi.",
+                "error"
+            );
+
+        }
+
+
+        setTimeout(function () {
+
+            resendButton.disabled = false;
+
+            resendButton.textContent =
+                "Kodu tekrar gönder";
+
+        }, 3000);
+
+    }
+);
+
+
+/* =====================================
+   ENTER İLE DOĞRULAMA
+===================================== */
+
+verificationCode.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (event.key === "Enter") {
+
+           
