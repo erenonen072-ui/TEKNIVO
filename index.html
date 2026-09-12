@@ -4,185 +4,318 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>TEKNIVO — Teknoloji Pazaryeri</title>
+    <title>TEKNIVO - Teknoloji Alım Satım</title>
+    <meta name="description" content="TEKNIVO ile telefon, laptop, bilgisayar ve diğer teknoloji ürünlerini keşfet, ilan ver ve sat.">
 
-    <meta
-        name="description"
-        content="TEKNIVO ile teknoloji ürünlerini keşfet, al ve sat."
-    >
+    <link rel="stylesheet" href="/style.css">
 
-    <link rel="stylesheet" href="style.css">
-
+    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/config.js"></script>
 </head>
 
 <body>
 
 <header class="header">
+    <div class="container header-inner">
 
-    <a href="/" class="logo">
-        TEK<span>NIVO</span>
-    </a>
-
-    <nav class="nav">
-        <a href="#kategoriler">Kategoriler</a>
-        <a href="#ilanlar">İlanlar</a>
-        <a href="ilan-ver.html" class="sell-link">
-            + İlan Ver
-        </a>
-    </nav>
-
-    <div class="auth-buttons">
-        <a href="giris.html" class="login">
-            Giriş
+        <a href="/" class="logo">
+            TEKNIVO
         </a>
 
-        <a href="kayit.html" class="register">
-            Kayıt Ol
-        </a>
+        <nav class="nav">
+            <a href="#kategoriler">Kategoriler</a>
+            <a href="#ilanlar">İlanlar</a>
+        </nav>
+
+        <div class="header-actions">
+            <a href="/giris.html" class="login-btn">Giriş Yap</a>
+            <a href="/ilan-ver.html" class="sell-btn">+ İlan Ver</a>
+        </div>
+
     </div>
-
 </header>
 
 
 <main>
 
-<section class="hero">
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container">
 
-    <div class="hero-content">
+            <div class="hero-content">
+                <span class="hero-label">TEKNOLOJİ PAZARI</span>
 
-        <div class="eyebrow">
-            TÜRKİYE'NİN TEKNOLOJİ PAZARYERİ
+                <h1>
+                    Teknolojini bul.<br>
+                    <strong>Yenisine geç.</strong>
+                </h1>
+
+                <p>
+                    Telefon, laptop, PC ve daha fazlasını keşfet.
+                </p>
+
+                <div class="search-box">
+                    <span class="search-icon">⌕</span>
+
+                    <input
+                        id="searchInput"
+                        type="text"
+                        placeholder="Telefon, laptop, ekran kartı..."
+                    >
+
+                    <button id="searchBtn">
+                        Ara
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- KATEGORİLER -->
+    <section class="categories-section" id="kategoriler">
+
+        <div class="container">
+
+            <div class="section-head">
+                <div>
+                    <span class="section-label">KEŞFET</span>
+                    <h2>Kategoriler</h2>
+                </div>
+            </div>
+
+            <div id="categories" class="categories">
+
+                <button class="category-card" data-category="">
+                    <span class="category-icon">▦</span>
+                    <span>Tümü</span>
+                </button>
+
+                <button class="category-card" data-category="Telefon">
+                    <span class="category-icon">📱</span>
+                    <span>Telefon</span>
+                </button>
+
+                <button class="category-card" data-category="Laptop">
+                    <span class="category-icon">💻</span>
+                    <span>Laptop</span>
+                </button>
+
+                <button class="category-card" data-category="Masaüstü PC">
+                    <span class="category-icon">🖥️</span>
+                    <span>Masaüstü PC</span>
+                </button>
+
+                <button class="category-card" data-category="Ekran Kartı">
+                    <span class="category-icon">▣</span>
+                    <span>Ekran Kartı</span>
+                </button>
+
+                <button class="category-card" data-category="İşlemci">
+                    <span class="category-icon">▤</span>
+                    <span>İşlemci</span>
+                </button>
+
+                <button class="category-card" data-category="Monitör">
+                    <span class="category-icon">▱</span>
+                    <span>Monitör</span>
+                </button>
+
+                <button class="category-card" data-category="Tablet">
+                    <span class="category-icon">▯</span>
+                    <span>Tablet</span>
+                </button>
+
+                <button class="category-card" data-category="Oyun Konsolu">
+                    <span class="category-icon">🎮</span>
+                    <span>Konsol</span>
+                </button>
+
+                <button class="category-card" data-category="Diğer teknoloji">
+                    <span class="category-icon">•••</span>
+                    <span>Diğer</span>
+                </button>
+
+            </div>
+
         </div>
 
-        <h1>
-            Aradığın teknoloji
-            <span>TEKNIVO'da.</span>
-        </h1>
+    </section>
 
-        <p>
-            Telefon, laptop, bilgisayar, ekran kartı,
-            konsol ve daha fazlasını keşfet.
-        </p>
 
-        <div class="search-box">
+    <!-- İLANLAR -->
+    <section class="listings-section" id="ilanlar">
 
-            <input
-                id="searchInput"
-                type="text"
-                placeholder="Telefon, RTX 4060, iPhone 15..."
-                onkeydown="if(event.key==='Enter') searchListings()"
-            >
+        <div class="container">
 
-            <button onclick="searchListings()">
-                🔎 Ara
-            </button>
+            <div class="section-head listings-head">
+
+                <div>
+                    <span class="section-label">PAZAR</span>
+                    <h2>Yeni İlanlar</h2>
+                </div>
+
+                <span id="listingCount" class="listing-count">
+                    İlanlar yükleniyor...
+                </span>
+
+            </div>
+
+            <div id="listings" class="listing-grid">
+
+                <div class="loading">
+                    İlanlar yükleniyor...
+                </div>
+
+            </div>
 
         </div>
 
-    </div>
+    </section>
 
 
-    <div class="hero-side">
+    <!-- CTA -->
+    <section class="sell-section">
 
-        <div class="hero-icon">
-            ⚡
+        <div class="container">
+
+            <div class="sell-box">
+
+                <div>
+                    <span class="section-label">SATIŞA BAŞLA</span>
+
+                    <h2>
+                        Kullanmadığın teknolojiyi
+                        <strong>sat.</strong>
+                    </h2>
+
+                    <p>
+                        İlanını birkaç dakikada oluştur.
+                    </p>
+                </div>
+
+                <a href="/ilan-ver.html" class="sell-big-btn">
+                    + Ücretsiz İlan Ver
+                </a>
+
+            </div>
+
         </div>
 
-        <h3>
-            Kullanmadığın teknolojiyi değerlendir.
-        </h3>
-
-        <p>
-            Ürününü birkaç dakikada ilan olarak yayınla.
-        </p>
-
-        <a href="ilan-ver.html">
-            Ücretsiz İlan Ver →
-        </a>
-
-    </div>
-
-</section>
-
-
-
-<section class="section" id="kategoriler">
-
-    <div class="section-title">
-
-        <div>
-            <small>KESİF ET</small>
-            <h2>Kategoriler</h2>
-        </div>
-
-    </div>
-
-    <div id="categories" class="categories"></div>
-
-</section>
-
-
-
-<section class="section" id="ilanlar">
-
-    <div class="section-title">
-
-        <div>
-            <small>PAZARYERİ</small>
-            <h2>Yeni İlanlar</h2>
-        </div>
-
-        <button
-            class="refresh"
-            onclick="loadListings()"
-        >
-            Yenile
-        </button>
-
-    </div>
-
-    <div
-        id="listingGrid"
-        class="listing-grid"
-    >
-
-        <div class="loading">
-            İlanlar yükleniyor...
-        </div>
-
-    </div>
-
-</section>
+    </section>
 
 </main>
 
 
-<footer>
+<footer class="footer">
 
-    <div class="footer-logo">
-        TEK<span>NIVO</span>
+    <div class="container footer-inner">
+
+        <div>
+            <div class="footer-logo">TEKNIVO</div>
+            <p>Teknoloji alım satım platformu.</p>
+        </div>
+
+        <div class="footer-links">
+            <a href="/">Ana Sayfa</a>
+            <a href="#kategoriler">Kategoriler</a>
+            <a href="/ilan-ver.html">İlan Ver</a>
+            <a href="/giris.html">Giriş Yap</a>
+        </div>
+
     </div>
 
-    <p>
-        Teknolojini sat. Yenisine geç.
-    </p>
-
-    <div class="footer-links">
-        <a href="#">Hakkımızda</a>
-        <a href="#">Gizlilik</a>
-        <a href="#">Kullanım Şartları</a>
+    <div class="container copyright">
+        © 2026 TEKNIVO. Tüm hakları saklıdır.
     </div>
-
-    <small>
-        © 2026 TEKNIVO
-    </small>
 
 </footer>
 
 
-<script src="js/config.js"></script>
-<script src="js/app.js"></script>
+<script src="/js/app.js"></script>
+
+<script>
+
+const searchInput = document.getElementById("searchInput");
+const searchBtn = document.getElementById("searchBtn");
+
+function performSearch() {
+
+    const value = searchInput.value.trim().toLowerCase();
+    const cards = document.querySelectorAll(".listing-card");
+
+    cards.forEach(card => {
+
+        const text = card.innerText.toLowerCase();
+
+        if (!value || text.includes(value)) {
+            card.style.display = "";
+        } else {
+            card.style.display = "none";
+        }
+
+    });
+
+    document.getElementById("ilanlar")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+}
+
+searchBtn.addEventListener("click", performSearch);
+
+searchInput.addEventListener("keydown", function(e) {
+
+    if (e.key === "Enter") {
+        performSearch();
+    }
+
+});
+
+
+document.querySelectorAll(".category-card").forEach(button => {
+
+    button.addEventListener("click", function() {
+
+        document.querySelectorAll(".category-card")
+            .forEach(x => x.classList.remove("active"));
+
+        this.classList.add("active");
+
+        const category = this.dataset.category;
+
+        const cards = document.querySelectorAll(".listing-card");
+
+        cards.forEach(card => {
+
+            const cardCategory =
+                (card.dataset.category || "").toLowerCase();
+
+            if (!category ||
+                cardCategory === category.toLowerCase()) {
+
+                card.style.display = "";
+
+            } else {
+
+                card.style.display = "none";
+
+            }
+
+        });
+
+        document.getElementById("ilanlar")
+            .scrollIntoView({
+                behavior: "smooth"
+            });
+
+    });
+
+});
+
+</script>
 
 </body>
 </html>
