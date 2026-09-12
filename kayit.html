@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1.0"
+>
+
+<title>TEKNIVO - Kayıt Ol</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+</head>
+
+<body>
+
+<main
+class="section"
+style="max-width:430px"
+>
+
+<div
+style="
+background:white;
+padding:35px;
+border-radius:20px;
+border:1px solid #e5e7eb;
+"
+>
+
+<h1>TEKNIVO hesabı oluştur</h1>
+
+
+<input
+id="username"
+placeholder="Kullanıcı adı"
+style="
+width:100%;
+padding:14px;
+margin-top:20px;
+border:1px solid #ddd;
+border-radius:10px;
+"
+>
+
+
+<input
+id="city"
+placeholder="Şehir"
+style="
+width:100%;
+padding:14px;
+margin-top:12px;
+border:1px solid #ddd;
+border-radius:10px;
+"
+>
+
+
+<input
+id="email"
+type="email"
+placeholder="E-posta"
+style="
+width:100%;
+padding:14px;
+margin-top:12px;
+border:1px solid #ddd;
+border-radius:10px;
+"
+>
+
+
+<input
+id="password"
+type="password"
+placeholder="Şifre"
+style="
+width:100%;
+padding:14px;
+margin-top:12px;
+border:1px solid #ddd;
+border-radius:10px;
+"
+>
+
+
+<button
+onclick="register()"
+class="register"
+style="
+width:100%;
+border:0;
+margin-top:15px;
+cursor:pointer;
+"
+>
+Hesap Oluştur
+</button>
+
+
+<p
+id="message"
+style="margin-top:15px"
+></p>
+
+</div>
+
+</main>
+
+
+<script src="js/config.js"></script>
+
+<script>
+
+const client =
+supabase.createClient(
+    TEKNIVO_CONFIG.SUPABASE_URL,
+    TEKNIVO_CONFIG.SUPABASE_PUBLISHABLE_KEY
+);
+
+
+async function register() {
+
+    const username =
+        document
+            .getElementById("username")
+            .value
+            .trim();
+
+
+    const city =
+        document
+            .getElementById("city")
+            .value
+            .trim();
+
+
+    const email =
+        document
+            .getElementById("email")
+            .value
+            .trim();
+
+
+    const password =
+        document
+            .getElementById("password")
+            .value;
+
+
+    const message =
+        document.getElementById("message");
+
+
+    message.textContent =
+        "Hesap oluşturuluyor...";
+
+
+    const {
+        data,
+        error
+    } =
+        await client.auth.signUp({
+
+            email,
+
+            password,
+
+            options: {
+
+                data: {
+
+                    username,
+
+                    city
+
+                }
+
+            }
+
+        });
+
+
+    if (error) {
+
+        message.textContent =
+            error.message;
+
+        return;
+
+    }
+
+
+    if (!data.user) {
+
+        message.textContent =
+            "Kullanıcı oluşturulamadı.";
+
+        return;
+
+    }
+
+
+    const {
+        error: profileError
+    } =
+        await client
+            .from("profiles")
+            .insert({
+
+                id: data.user.id,
+
+                username,
+
+                city
+
+            });
+
+
+    if (profileError) {
+
+        message.textContent =
+            profileError.message;
+
+        return;
+
+    }
+
+
+    message.textContent =
+        "Kayıt başarılı! E-postanı kontrol et.";
+
+}
+
+</script>
+
+</body>
+
+</html>
