@@ -1,24 +1,28 @@
+/* =========================================================
+   TEKNIVO - MARKETPLACE APP
+   ========================================================= */
+
 const config = window.TEKNIVO_CONFIG;
 
 let supabaseClient = null;
 
 if (
+    config &&
     config.SUPABASE_URL &&
     config.SUPABASE_PUBLISHABLE_KEY
 ) {
-
-    supabaseClient =
-        supabase.createClient(
-            config.SUPABASE_URL,
-            config.SUPABASE_PUBLISHABLE_KEY
-        );
+    supabaseClient = supabase.createClient(
+        config.SUPABASE_URL,
+        config.SUPABASE_PUBLISHABLE_KEY
+    );
 }
 
 
-/* KATEGORİLER */
+/* =========================================================
+   KATEGORİLER
+   ========================================================= */
 
 const categories = [
-
     ["📱", "Telefon"],
     ["💻", "Laptop"],
     ["🖥️", "Masaüstü PC"],
@@ -33,43 +37,79 @@ const categories = [
     ["⌚", "Akıllı Saat"],
     ["📱", "Tablet"],
     ["🔌", "Diğer"]
-
 ];
 
 
-const categoriesElement =
-    document.getElementById("categories");
+function renderCategories() {
 
+    const element =
+        document.getElementById("categories");
 
-categoriesElement.innerHTML =
-    categories.map(category => {
+    if (!element) return;
 
-        return `
-
-        <div
-            class="category"
-            onclick="filterCategory('${escapeHtml(category[1])}')"
+    element.innerHTML = `
+        <button
+            class="category active"
+            data-category=""
         >
+            <span class="category-icon">▦</span>
+            <span class="category-name">Tümü</span>
+        </button>
 
-            <span class="category-icon">
-                ${category[0]}
-            </span>
+        ${
+            categories.map(category => `
+                <button
+                    class="category"
+                    data-category="${escapeHtml(category[1])}"
+                >
+                    <span class="category-icon">
+                        ${category[0]}
+                    </span>
 
-            <span class="category-name">
-                ${category[1]}
-            </span>
+                    <span class="category-name">
+                        ${escapeHtml(category[1])}
+                    </span>
+                </button>
+            `).join("")
+        }
+    `;
 
-        </div>
+    document
+        .querySelectorAll(".category")
+        .forEach(button => {
 
-        `;
+            button.addEventListener(
+                "click",
+                () => {
 
-    }).join("");
+                    document
+                        .querySelectorAll(".category")
+                        .forEach(item =>
+                            item.classList.remove("active")
+                        );
+
+                    button.classList.add("active");
+
+                    loadListings(
+                        button.dataset.category || ""
+                    );
+
+                }
+            );
+
+        });
+}
 
 
-
-/* PARA */
+/* =========================================================
+   PARA
+   ========================================================= */
 
 function formatPrice(price) {
+
+    if (price === null || price === undefined) {
+        return "Fiyat belirtilmemiş";
+    }
 
     return new Intl.NumberFormat(
         "tr-TR",
@@ -83,24 +123,22 @@ function formatPrice(price) {
 }
 
 
-
-/* HTML GÜVENLİĞİ */
+/* =========================================================
+   HTML GÜVENLİĞİ
+   ========================================================= */
 
 function escapeHtml(value = "") {
 
     return String(value).replace(
         /[&<>"']/g,
-
         character => {
 
             const map = {
-
                 "&": "&amp;",
                 "<": "&lt;",
                 ">": "&gt;",
                 '"': "&quot;",
                 "'": "&#039;"
-
             };
 
             return map[character];
@@ -111,52 +149,109 @@ function escapeHtml(value = "") {
 }
 
 
+/* =========================================================
+   TARİH
+   ========================================================= */
 
-/* İLANLARI GETİR */
+function formatDate(date) {
+
+    if (!date) return "";
+
+    const d = new Date(date);
+
+    if (Number.isNaN(d.getTime())) {
+        return "";
+    }
+
+    const now = new Date();
+
+    const diff =
+        Math.floor(
+            (now - d) / 1000
+        );
+
+    if (diff < 60) {
+        return "Az önce";
+    }
+
+    if (diff < 3600) {
+        return `${Math.floor(diff / 60)} dk önce`;
+    }
+
+    if (diff < 86400) {
+        return `${Math.floor(diff / 3600)} saat önce`;
+    }
+
+    if (diff < 604800) {
+        return `${Math.floor(diff / 86400)} gün önce`;
+    }
+
+    return d.toLocaleDateString(
+        "tr-TR",
+        {
+            day: "numeric",
+            month: "short"
+        }
+    );
+
+}
+
+
+/* =========================================================
+   İLANLARI GETİR
+   ========================================================= */
 
 async function loadListings(category = "") {
 
     const grid =
         document.getElementById("listingGrid");
 
+    if (!grid) return;
+
+
+    /* SUPABASE KONTROL */
 
     if (!supabaseClient) {
 
         grid.innerHTML = `
-
             <div class="loading">
-
-                <strong>Supabase bağlantısı yapılmadı.</strong>
-
+                <strong>Supabase bağlantısı bulunamadı.</strong>
                 <br><br>
-
                 <small>
-                    js/config.js dosyasına
-                    Supabase bilgilerini ekle.
+                    js/config.js dosyanı kontrol et.
                 </small>
-
             </div>
-
         `;
 
         return;
     }
 
 
-    grid.innerHTML = `
+    /* LOADING */
 
+    grid.innerHTML = `
         <div class="loading">
             İlanlar yükleniyor...
         </div>
-
     `;
 
 
+    /* ARAMA */
+
+    const searchElement =
+        document.getElementById("searchInput");
+
+    const search =
+        searchElement
+            ? searchElement.value.trim()
+            : "";
+
+
+    /* SORGULAMA */
+
     let query =
         supabaseClient
-
             .from("listings")
-
             .select(`
                 id,
                 title,
@@ -167,24 +262,26 @@ async function loadListings(category = "") {
                 city,
                 condition,
                 created_at,
+                views,
                 listing_images (
                     image_url,
                     sort_order
                 )
             `)
-
-            .eq("status", "active")
-
+            .eq(
+                "status",
+                "active"
+            )
             .order(
                 "created_at",
                 {
                     ascending: false
                 }
             )
-
             .limit(40);
 
 
+    /* KATEGORİ */
 
     if (category) {
 
@@ -197,23 +294,21 @@ async function loadListings(category = "") {
     }
 
 
-
-    const search =
-        document
-            .getElementById("searchInput")
-            .value
-            .trim();
-
+    /* ARAMA */
 
     if (search) {
 
+        const safeSearch =
+            search
+                .replace(/,/g, "")
+                .replace(/[()]/g, "");
+
         query =
             query.or(
-                `title.ilike.%${search}%,brand.ilike.%${search}%,model.ilike.%${search}%`
+                `title.ilike.%${safeSearch}%,brand.ilike.%${safeSearch}%,model.ilike.%${safeSearch}%`
             );
 
     }
-
 
 
     const {
@@ -222,91 +317,125 @@ async function loadListings(category = "") {
     } = await query;
 
 
+    /* HATA */
 
     if (error) {
 
-        console.error(error);
+        console.error(
+            "TEKNIVO Supabase:",
+            error
+        );
 
         grid.innerHTML = `
-
             <div class="loading">
-
-                İlanlar yüklenemedi.
-
+                <strong>İlanlar yüklenemedi.</strong>
                 <br><br>
-
                 <small>
                     ${escapeHtml(error.message)}
                 </small>
-
             </div>
-
         `;
 
         return;
     }
 
 
+    /* İLAN YOK */
 
     if (!data || data.length === 0) {
 
         grid.innerHTML = `
-
             <div class="loading">
-
-                Henüz ilan bulunamadı.
+                <strong>Henüz ilan bulunamadı.</strong>
 
                 <br><br>
 
                 <a
-                    href="ilan-ver.html"
-                    style="color:#635bff;font-weight:900"
+                    href="/ilan-ver.html"
+                    style="
+                        color:#635bff;
+                        font-weight:800;
+                    "
                 >
                     İlk ilanı sen ver →
                 </a>
-
             </div>
-
         `;
 
-        return;
+        updateCount(0);
 
+        return;
     }
 
 
+    /* SAYI */
+
+    updateCount(data.length);
+
+
+    /* KARTLAR */
 
     grid.innerHTML =
-        data.map(createListingCard).join("");
+        data
+            .map(createListingCard)
+            .join("");
 
 }
 
 
+/* =========================================================
+   İLAN SAYISI
+   ========================================================= */
 
-/* İLAN KARTI */
+function updateCount(count) {
+
+    const element =
+        document.getElementById(
+            "listingCount"
+        );
+
+    if (!element) return;
+
+    element.textContent =
+        `${count} ilan`;
+
+}
+
+
+/* =========================================================
+   RESİM
+   ========================================================= */
+
+function getListingImage(item) {
+
+    if (
+        !item.listing_images ||
+        !item.listing_images.length
+    ) {
+        return null;
+    }
+
+    const sorted =
+        [...item.listing_images]
+            .sort(
+                (a, b) =>
+                    (a.sort_order || 0) -
+                    (b.sort_order || 0)
+            );
+
+    return sorted[0]?.image_url || null;
+
+}
+
+
+/* =========================================================
+   İLAN KARTI
+   ========================================================= */
 
 function createListingCard(item) {
 
-    let image = null;
-
-
-    if (
-        item.listing_images &&
-        item.listing_images.length
-    ) {
-
-        const sorted =
-            [...item.listing_images]
-                .sort(
-                    (a,b) =>
-                        (a.sort_order || 0) -
-                        (b.sort_order || 0)
-                );
-
-        image =
-            sorted[0]?.image_url;
-
-    }
-
+    const image =
+        getListingImage(item);
 
 
     const imageHTML =
@@ -315,22 +444,41 @@ function createListingCard(item) {
         ?
 
         `
-        <img
-            src="${escapeHtml(image)}"
-            alt="${escapeHtml(item.title)}"
-            loading="lazy"
-        >
+            <img
+                src="${escapeHtml(image)}"
+                alt="${escapeHtml(item.title)}"
+                loading="lazy"
+            >
         `
 
         :
 
-        "📦 Fotoğraf yok";
+        `
+            <div class="no-image">
+                <span>📦</span>
+                Fotoğraf yok
+            </div>
+        `;
 
+
+    const brandModel =
+        [
+            item.brand,
+            item.model
+        ]
+        .filter(Boolean)
+        .join(" ");
 
 
     return `
 
-        <article class="listing-card">
+        <article
+            class="listing-card"
+            data-category="${escapeHtml(
+                item.category || ""
+            )}"
+            onclick="openListing('${escapeHtml(item.id)}')"
+        >
 
             <div class="listing-image">
 
@@ -343,37 +491,74 @@ function createListingCard(item) {
 
                 <div class="listing-category">
 
-                    ${escapeHtml(item.category)}
+                    ${escapeHtml(
+                        item.category || "Teknoloji"
+                    )}
 
                 </div>
 
 
-                <div class="listing-title">
+                <h3 class="listing-title">
 
-                    ${escapeHtml(item.title)}
+                    ${escapeHtml(
+                        item.title
+                    )}
 
-                </div>
+                </h3>
+
+
+                ${
+                    brandModel
+
+                    ?
+
+                    `
+                    <div class="listing-model">
+                        ${escapeHtml(
+                            brandModel
+                        )}
+                    </div>
+                    `
+
+                    :
+
+                    ""
+                }
 
 
                 <div class="listing-price">
 
-                    ${formatPrice(item.price)}
+                    ${formatPrice(
+                        item.price
+                    )}
 
                 </div>
 
 
                 <div class="listing-info">
 
-                    📍
-                    ${escapeHtml(
-                        item.city ||
-                        "Şehir belirtilmedi"
-                    )}
+                    <span>
+                        📍
+                        ${escapeHtml(
+                            item.city ||
+                            "Şehir belirtilmedi"
+                        )}
+                    </span>
 
-                    ·
+                    <span>
+                        ${escapeHtml(
+                            item.condition ||
+                            ""
+                        )}
+                    </span>
 
-                    ${escapeHtml(
-                        item.condition
+                </div>
+
+
+                <div class="listing-date">
+
+                    ${formatDate(
+                        item.created_at
                     )}
 
                 </div>
@@ -387,41 +572,93 @@ function createListingCard(item) {
 }
 
 
+/* =========================================================
+   İLAN DETAYI
+   ========================================================= */
 
-/* KATEGORİ */
+function openListing(id) {
 
-function filterCategory(category) {
+    if (!id) return;
 
-    document
-        .getElementById("ilanlar")
-        .scrollIntoView({
-            behavior: "smooth"
-        });
-
-
-    loadListings(category);
+    window.location.href =
+        `/ilan.html?id=${encodeURIComponent(id)}`;
 
 }
 
 
-
-/* ARAMA */
+/* =========================================================
+   ARAMA
+   ========================================================= */
 
 function searchListings() {
-
-    document
-        .getElementById("ilanlar")
-        .scrollIntoView({
-            behavior: "smooth"
-        });
-
 
     loadListings();
 
 }
 
 
+/* =========================================================
+   ENTER İLE ARAMA
+   ========================================================= */
 
-/* BAŞLANGIÇ */
+function setupSearch() {
 
-loadListings();
+    const input =
+        document.getElementById(
+            "searchInput"
+        );
+
+    const button =
+        document.getElementById(
+            "searchBtn"
+        );
+
+
+    if (button) {
+
+        button.addEventListener(
+            "click",
+            searchListings
+        );
+
+    }
+
+
+    if (input) {
+
+        input.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key === "Enter"
+                ) {
+
+                    searchListings();
+
+                }
+
+            }
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   BAŞLANGIÇ
+   ========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        renderCategories();
+
+        setupSearch();
+
+        loadListings();
+
+    }
+);
