@@ -11,13 +11,19 @@
         content="TEKNIVO teknoloji pazaryeri. Telefon, laptop, bilgisayar, ekran kartı, konsol ve daha fazlasını keşfet."
     >
 
+    <meta name="theme-color" content="#111111">
+
     <link rel="stylesheet" href="/style.css">
 
-    <!-- SUPABASE -->
+    <!-- =========================
+         SUPABASE
+    ========================== -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/js/config.js"></script>
 
-    <!-- CLERK -->
+    <!-- =========================
+         CLERK
+    ========================== -->
     <script
         defer
         crossorigin="anonymous"
@@ -30,8 +36,7 @@
 
 <!-- =========================
      HEADER
-========================= -->
-
+========================== -->
 <header class="header">
 
     <div class="header-inner">
@@ -51,6 +56,7 @@
                 id="searchInput"
                 type="search"
                 placeholder="Telefon, laptop, marka veya model ara..."
+                autocomplete="off"
             >
 
             <button id="searchBtn">
@@ -62,15 +68,27 @@
         <!-- AUTH BUTTONS -->
         <div class="header-buttons">
 
+            <!--
+                Bu alan varsayılan olarak Giriş Yap gösterir.
+                Clerk yüklenirse ve kullanıcı giriş yapmışsa
+                kullanıcı menüsüne dönüşür.
+            -->
             <div id="clerk-auth-area">
 
-                <a href="giris.html" class="login">
+                <a
+                    href="/giris.html"
+                    class="login"
+                >
                     Giriş Yap
                 </a>
 
             </div>
 
-            <a href="ilan-ver.html" class="sell">
+            <!-- İLAN VER -->
+            <a
+                href="/ilan-ver.html"
+                class="sell"
+            >
                 + İlan Ver
             </a>
 
@@ -83,8 +101,7 @@
 
 <!-- =========================
      CATEGORY
-========================= -->
-
+========================== -->
 <div class="category-wrapper">
 
     <div class="category-inner">
@@ -106,12 +123,12 @@
 
 <!-- =========================
      MAIN
-========================= -->
-
+========================== -->
 <main>
 
-    <!-- INTRO -->
-
+    <!-- =========================
+         INTRO
+    ========================== -->
     <section class="intro">
 
         <div class="intro-text">
@@ -126,13 +143,17 @@
             </h1>
 
             <p>
-                Telefon, bilgisayar, oyun konsolu ve teknoloji ürünlerini
-                keşfet. Kullanmadığın ürünleri kolayca satışa çıkar.
+                Telefon, bilgisayar, oyun konsolu ve teknoloji
+                ürünlerini keşfet. Kullanmadığın ürünleri
+                kolayca satışa çıkar.
             </p>
 
         </div>
 
-        <a href="ilan-ver.html" class="intro-button">
+        <a
+            href="/ilan-ver.html"
+            class="intro-button"
+        >
             Ücretsiz İlan Ver
             <span>→</span>
         </a>
@@ -140,12 +161,14 @@
     </section>
 
 
-    <!-- MARKET -->
-
+    <!-- =========================
+         MARKET
+    ========================== -->
     <section class="market">
 
-        <!-- FILTER -->
-
+        <!-- =========================
+             FILTER
+        ========================== -->
         <aside
             class="filters"
             id="filters"
@@ -165,7 +188,6 @@
 
 
             <!-- CATEGORY -->
-
             <div class="filter">
 
                 <label>
@@ -178,59 +200,59 @@
                         Tüm kategoriler
                     </option>
 
-                    <option>
+                    <option value="Telefon">
                         Telefon
                     </option>
 
-                    <option>
+                    <option value="Laptop">
                         Laptop
                     </option>
 
-                    <option>
+                    <option value="Masaüstü PC">
                         Masaüstü PC
                     </option>
 
-                    <option>
+                    <option value="Ekran Kartı">
                         Ekran Kartı
                     </option>
 
-                    <option>
+                    <option value="İşlemci">
                         İşlemci
                     </option>
 
-                    <option>
+                    <option value="RAM / SSD">
                         RAM / SSD
                     </option>
 
-                    <option>
+                    <option value="Monitör">
                         Monitör
                     </option>
 
-                    <option>
+                    <option value="Klavye / Mouse">
                         Klavye / Mouse
                     </option>
 
-                    <option>
+                    <option value="Kulaklık">
                         Kulaklık
                     </option>
 
-                    <option>
+                    <option value="Tablet">
                         Tablet
                     </option>
 
-                    <option>
+                    <option value="Akıllı Saat">
                         Akıllı Saat
                     </option>
 
-                    <option>
+                    <option value="Kamera">
                         Kamera
                     </option>
 
-                    <option>
+                    <option value="Oyun Konsolu">
                         Oyun Konsolu
                     </option>
 
-                    <option>
+                    <option value="Diğer">
                         Diğer
                     </option>
 
@@ -240,7 +262,6 @@
 
 
             <!-- CITY -->
-
             <div class="filter">
 
                 <label>
@@ -251,13 +272,13 @@
                     id="cityFilter"
                     type="text"
                     placeholder="Örn. Batman"
+                    autocomplete="off"
                 >
 
             </div>
 
 
             <!-- PRICE -->
-
             <div class="filter">
 
                 <label>
@@ -270,6 +291,7 @@
                         id="minPrice"
                         type="number"
                         placeholder="Min ₺"
+                        min="0"
                     >
 
                     <span>
@@ -280,6 +302,7 @@
                         id="maxPrice"
                         type="number"
                         placeholder="Max ₺"
+                        min="0"
                     >
 
                 </div>
@@ -288,7 +311,6 @@
 
 
             <!-- CONDITION -->
-
             <div class="filter">
 
                 <label>
@@ -307,7 +329,6 @@
 
                 </label>
 
-
                 <label class="checkbox">
 
                     <input
@@ -319,7 +340,6 @@
                     İkinci El
 
                 </label>
-
 
                 <label class="checkbox">
 
@@ -337,7 +357,6 @@
 
 
             <!-- APPLY -->
-
             <button
                 id="applyFilters"
                 class="apply"
@@ -350,10 +369,10 @@
 
         <!-- =========================
              LISTINGS
-        ========================= -->
-
+        ========================== -->
         <section class="listings">
 
+            <!-- LISTING HEADER -->
             <div class="listing-header">
 
                 <div>
@@ -374,10 +393,10 @@
                     <button
                         id="mobileFilterBtn"
                         class="mobile-filter"
+                        type="button"
                     >
                         ☰ Filtre
                     </button>
-
 
                     <select id="sortSelect">
 
@@ -404,6 +423,7 @@
             </div>
 
 
+            <!-- LISTING GRID -->
             <div
                 id="listingGrid"
                 class="listing-grid"
@@ -428,8 +448,7 @@
 
 <!-- =========================
      FOOTER
-========================= -->
-
+========================== -->
 <footer>
 
     <div class="footer-inner">
@@ -453,11 +472,11 @@
 
         <div class="footer-links">
 
-            <a href="ilan-ver.html">
+            <a href="/ilan-ver.html">
                 İlan Ver
             </a>
 
-            <a href="giris.html">
+            <a href="/giris.html">
                 Giriş Yap
             </a>
 
@@ -475,9 +494,7 @@
 
 
     <div class="copyright">
-
         © 2026 TEKNIVO
-
     </div>
 
 </footer>
@@ -485,45 +502,63 @@
 
 <!-- =========================
      SUPABASE APP
-========================= -->
-
+========================== -->
 <script src="/js/app.js"></script>
 
 
 <!-- =========================
-     CLERK
-========================= -->
-
+     CLERK AUTH
+========================== -->
 <script>
 
-window.addEventListener("load", async function () {
+document.addEventListener("DOMContentLoaded", async function () {
+
+    const authArea =
+        document.getElementById("clerk-auth-area");
+
+    if (!authArea) {
+        return;
+    }
+
+
+    /*
+     * Clerk daha yüklenmeden önce
+     * Giriş Yap butonu kesin olarak görünür.
+     */
+    authArea.innerHTML = `
+        <a
+            href="/giris.html"
+            class="login"
+        >
+            Giriş Yap
+        </a>
+    `;
+
 
     try {
 
         /*
-         * Clerk'in yüklenmesini bekle
+         * Clerk yüklenmiş mi?
          */
+        if (typeof Clerk === "undefined") {
 
-        await Clerk.load();
+            console.warn(
+                "TEKNIVO: Clerk yüklenemedi."
+            );
 
-
-        /*
-         * Auth alanını bul
-         */
-
-        const authArea =
-            document.getElementById("clerk-auth-area");
-
-
-        if (!authArea) {
             return;
         }
 
 
         /*
-         * Kullanıcı giriş yaptıysa
+         * Clerk'i başlat
          */
+        await Clerk.load();
 
+
+        /*
+         * Kullanıcı giriş yapmışsa
+         */
         if (Clerk.isSignedIn) {
 
             authArea.innerHTML = `
@@ -538,33 +573,25 @@ window.addEventListener("load", async function () {
             `;
 
 
-            /*
-             * Kullanıcı menüsünü göster
-             */
-
-            Clerk.mountUserButton(
+            const userButton =
                 document.getElementById(
                     "clerk-user-button"
-                )
-            );
-
-        }
+                );
 
 
-        /*
-         * Kullanıcı giriş yapmadıysa
-         */
+            /*
+             * Kullanıcı menüsünü oluştur
+             */
+            if (
+                userButton &&
+                typeof Clerk.mountUserButton === "function"
+            ) {
 
-        else {
+                Clerk.mountUserButton(
+                    userButton
+                );
 
-            authArea.innerHTML = `
-                <a
-                    href="giris.html"
-                    class="login"
-                >
-                    Giriş Yap
-                </a>
-            `;
+            }
 
         }
 
@@ -576,6 +603,20 @@ window.addEventListener("load", async function () {
             "TEKNIVO Clerk hatası:",
             error
         );
+
+
+        /*
+         * Clerk hata verse bile
+         * Giriş Yap butonu geri gelir.
+         */
+        authArea.innerHTML = `
+            <a
+                href="/giris.html"
+                class="login"
+            >
+                Giriş Yap
+            </a>
+        `;
 
     }
 
