@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TEKNIVO — Teknoloji Pazaryeri</title>
+
+    <meta
+        name="description"
+        content="TEKNIVO ile teknoloji ürünlerini keşfet, al ve sat."
+    >
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+<header class="header">
+
+    <a href="/" class="logo">
+        TEK<span>NIVO</span>
+    </a>
+
+    <nav class="nav">
+        <a href="#kategoriler">Kategoriler</a>
+        <a href="#ilanlar">İlanlar</a>
+        <a href="ilan-ver.html" class="sell-link">
+            + İlan Ver
+        </a>
+    </nav>
+
+    <div class="auth-buttons">
+        <a href="giris.html" class="login">
+            Giriş
+        </a>
+
+        <a href="kayit.html" class="register">
+            Kayıt Ol
+        </a>
+    </div>
+
+</header>
+
+
+<main>
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <div class="eyebrow">
+            TÜRKİYE'NİN TEKNOLOJİ PAZARYERİ
+        </div>
+
+        <h1>
+            Aradığın teknoloji
+            <span>TEKNIVO'da.</span>
+        </h1>
+
+        <p>
+            Telefon, laptop, bilgisayar, ekran kartı,
+            konsol ve daha fazlasını keşfet.
+        </p>
+
+        <div class="search-box">
+
+            <input
+                id="searchInput"
+                type="text"
+                placeholder="Telefon, RTX 4060, iPhone 15..."
+                onkeydown="if(event.key==='Enter') searchListings()"
+            >
+
+            <button onclick="searchListings()">
+                🔎 Ara
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="hero-side">
+
+        <div class="hero-icon">
+            ⚡
+        </div>
+
+        <h3>
+            Kullanmadığın teknolojiyi değerlendir.
+        </h3>
+
+        <p>
+            Ürününü birkaç dakikada ilan olarak yayınla.
+        </p>
+
+        <a href="ilan-ver.html">
+            Ücretsiz İlan Ver →
+        </a>
+
+    </div>
+
+</section>
+
+
+
+<section class="section" id="kategoriler">
+
+    <div class="section-title">
+
+        <div>
+            <small>KESİF ET</small>
+            <h2>Kategoriler</h2>
+        </div>
+
+    </div>
+
+    <div id="categories" class="categories"></div>
+
+</section>
+
+
+
+<section class="section" id="ilanlar">
+
+    <div class="section-title">
+
+        <div>
+            <small>PAZARYERİ</small>
+            <h2>Yeni İlanlar</h2>
+        </div>
+
+        <button
+            class="refresh"
+            onclick="loadListings()"
+        >
+            Yenile
+        </button>
+
+    </div>
+
+    <div
+        id="listingGrid"
+        class="listing-grid"
+    >
+
+        <div class="loading">
+            İlanlar yükleniyor...
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<footer>
+
+    <div class="footer-logo">
+        TEK<span>NIVO</span>
+    </div>
+
+    <p>
+        Teknolojini sat. Yenisine geç.
+    </p>
+
+    <div class="footer-links">
+        <a href="#">Hakkımızda</a>
+        <a href="#">Gizlilik</a>
+        <a href="#">Kullanım Şartları</a>
+    </div>
+
+    <small>
+        © 2026 TEKNIVO
+    </small>
+
+</footer>
+
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
