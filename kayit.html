@@ -138,6 +138,7 @@
             cursor: pointer;
             margin-bottom: 15px;
             font-size: 14px;
+            transition: .2s;
         }
 
         .google-button:hover {
@@ -256,6 +257,11 @@
             cursor: pointer;
         }
 
+        .resend-button:disabled {
+            opacity: .5;
+            cursor: wait;
+        }
+
         .auth-bottom {
             text-align: center;
             margin-top: 22px;
@@ -267,6 +273,10 @@
             color: #635bff;
             font-weight: 800;
             text-decoration: none;
+        }
+
+        .auth-bottom a:hover {
+            text-decoration: underline;
         }
 
         .back-home {
@@ -320,7 +330,7 @@
         </div>
 
         <!-- =========================
-             REGISTER AREA
+             KAYIT ALANI
         ========================== -->
 
         <div id="registerArea">
@@ -330,7 +340,9 @@
                 id="googleButton"
                 class="google-button"
                 type="button">
+
                 🔵 Google ile Kayıt Ol
+
             </button>
 
             <div class="divider">
@@ -353,11 +365,9 @@
                         autocomplete="username"
                         minlength="3"
                         maxlength="30"
-                        required
-                    >
+                        required>
 
                 </div>
-
 
                 <div class="auth-field">
 
@@ -370,11 +380,9 @@
                         type="text"
                         placeholder="Batman"
                         maxlength="50"
-                        required
-                    >
+                        required>
 
                 </div>
-
 
                 <div class="auth-field">
 
@@ -387,11 +395,9 @@
                         type="email"
                         placeholder="ornek@mail.com"
                         autocomplete="email"
-                        required
-                    >
+                        required>
 
                 </div>
-
 
                 <div class="auth-field">
 
@@ -405,11 +411,9 @@
                         placeholder="En az 8 karakter"
                         autocomplete="new-password"
                         minlength="8"
-                        required
-                    >
+                        required>
 
                 </div>
-
 
                 <div class="auth-field">
 
@@ -423,17 +427,17 @@
                         placeholder="Şifreni tekrar yaz"
                         autocomplete="new-password"
                         minlength="8"
-                        required
-                    >
+                        required>
 
                 </div>
-
 
                 <button
                     id="registerButton"
                     class="auth-button"
                     type="submit">
+
                     Kayıt Ol
+
                 </button>
 
             </form>
@@ -442,7 +446,7 @@
 
 
         <!-- =========================
-             EMAIL VERIFICATION
+             E-POSTA DOĞRULAMA
         ========================== -->
 
         <div
@@ -465,21 +469,24 @@
                 inputmode="numeric"
                 autocomplete="one-time-code"
                 maxlength="10"
-                placeholder="000000"
-            >
+                placeholder="000000">
 
             <button
                 id="verifyButton"
                 class="verify-button"
                 type="button">
+
                 E-postayı Doğrula
+
             </button>
 
             <button
                 id="resendButton"
                 class="resend-button"
                 type="button">
+
                 Kodu tekrar gönder
+
             </button>
 
         </div>
@@ -501,7 +508,9 @@
         <a
             href="/"
             class="back-home">
+
             ← Ana sayfaya dön
+
         </a>
 
     </div>
@@ -512,9 +521,9 @@
 <script>
 "use strict";
 
-/* =====================================
+/* =========================================
    ELEMENTLER
-===================================== */
+========================================= */
 
 const form =
     document.getElementById("registerForm");
@@ -543,13 +552,12 @@ const verifyButton =
 const resendButton =
     document.getElementById("resendButton");
 
-
 let currentSignUp = null;
 
 
-/* =====================================
-   MESAJ
-===================================== */
+/* =========================================
+   MESAJ GÖSTER
+========================================= */
 
 function showMessage(text, type) {
 
@@ -560,22 +568,34 @@ function showMessage(text, type) {
 }
 
 
-/* =====================================
+/* =========================================
    CLERK BEKLE
-===================================== */
+========================================= */
 
 async function waitForClerk() {
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 150; i++) {
 
         if (
             window.Clerk &&
             typeof window.Clerk.load === "function"
         ) {
 
-            await window.Clerk.load();
+            try {
 
-            return true;
+                await window.Clerk.load();
+
+                return true;
+
+            } catch (error) {
+
+                console.error(
+                    "Clerk yükleme hatası:",
+                    error
+                );
+
+                return false;
+            }
         }
 
         await new Promise(function(resolve) {
@@ -583,16 +603,43 @@ async function waitForClerk() {
             setTimeout(resolve, 100);
 
         });
-
     }
 
     return false;
 }
 
 
-/* =====================================
-   SAYFA AÇILINCA
-===================================== */
+/* =========================================
+   HATA MESAJI
+========================================= */
+
+function getClerkError(error, fallback) {
+
+    if (
+        error &&
+        error.errors &&
+        error.errors.length > 0
+    ) {
+
+        return (
+            error.errors[0].longMessage ||
+            error.errors[0].message ||
+            fallback
+        );
+    }
+
+    if (error && error.message) {
+
+        return error.message;
+    }
+
+    return fallback;
+}
+
+
+/* =========================================
+   SAYFA AÇILIŞI
+========================================= */
 
 (async function () {
 
@@ -609,6 +656,19 @@ async function waitForClerk() {
         return;
     }
 
+    console.log(
+        "TEKNIVO: Clerk hazır."
+    );
+
+    console.log(
+        "TEKNIVO: Giriş durumu:",
+        window.Clerk.isSignedIn
+    );
+
+    /*
+     * Kullanıcı zaten giriş yaptıysa
+     * kayıt sayfasında kalmasın.
+     */
 
     if (window.Clerk.isSignedIn) {
 
@@ -619,9 +679,9 @@ async function waitForClerk() {
 })();
 
 
-/* =====================================
+/* =========================================
    GOOGLE KAYIT
-===================================== */
+========================================= */
 
 googleButton.addEventListener(
     "click",
@@ -632,26 +692,27 @@ googleButton.addEventListener(
         googleButton.textContent =
             "Google açılıyor...";
 
-
         try {
 
             const ready =
                 await waitForClerk();
-
 
             if (!ready) {
 
                 throw new Error(
                     "Clerk yüklenemedi."
                 );
-
             }
 
+            console.log(
+                "TEKNIVO: Google kayıt başlatılıyor..."
+            );
 
             await window.Clerk.client.signUp
                 .authenticateWithRedirect({
 
-                    strategy: "oauth_google",
+                    strategy:
+                        "oauth_google",
 
                     redirectUrl:
                         window.location.origin + "/",
@@ -661,24 +722,20 @@ googleButton.addEventListener(
 
                 });
 
-        }
-
-        catch (error) {
+        } catch (error) {
 
             console.error(
-                "Google kayıt hatası:",
+                "TEKNIVO Google kayıt hatası:",
                 error
             );
 
-
             showMessage(
-                error?.errors?.[0]?.longMessage ||
-                error?.errors?.[0]?.message ||
-                error?.message ||
-                "Google ile kayıt yapılamadı.",
+                getClerkError(
+                    error,
+                    "Google ile kayıt yapılamadı."
+                ),
                 "error"
             );
-
 
             googleButton.disabled = false;
 
@@ -690,9 +747,9 @@ googleButton.addEventListener(
 );
 
 
-/* =====================================
+/* =========================================
    E-POSTA KAYIT
-===================================== */
+========================================= */
 
 form.addEventListener(
     "submit",
@@ -735,12 +792,25 @@ form.addEventListener(
                 .value;
 
 
-        /* KONTROLLER */
+        /* =================================
+           KONTROLLER
+        ================================= */
 
         if (username.length < 3) {
 
             showMessage(
                 "Kullanıcı adı en az 3 karakter olmalı.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (!/^[a-zA-Z0-9_.-]+$/.test(username)) {
+
+            showMessage(
+                "Kullanıcı adında sadece harf, rakam, nokta, tire ve alt çizgi kullanabilirsin.",
                 "error"
             );
 
@@ -781,6 +851,10 @@ form.addEventListener(
         }
 
 
+        /* =================================
+           BUTON
+        ================================= */
+
         button.disabled = true;
 
         button.textContent =
@@ -789,71 +863,127 @@ form.addEventListener(
 
         try {
 
+            /* =============================
+               CLERK HAZIR MI?
+            ============================= */
+
             const ready =
                 await waitForClerk();
-
 
             if (!ready) {
 
                 throw new Error(
                     "Clerk yüklenemedi."
                 );
-
             }
 
 
-            /* =========================
-               CLERK SIGN UP
-            ========================== */
+            /* =============================
+               ZATEN GİRİŞ VAR MI?
+            ============================= */
+
+            if (window.Clerk.isSignedIn) {
+
+                window.location.href = "/";
+
+                return;
+            }
+
+
+            console.log(
+                "TEKNIVO: Clerk kayıt oluşturuluyor..."
+            );
+
+
+            /* =============================
+               SIGN UP
+            ============================= */
 
             currentSignUp =
                 await window.Clerk.client.signUp.create({
 
-                    emailAddress: email,
+                    emailAddress:
+                        email,
 
-                    password: password
+                    password:
+                        password
 
                 });
 
 
-            /* =========================
+            console.log(
+                "TEKNIVO: SignUp oluşturuldu:",
+                currentSignUp
+            );
+
+
+            /* =============================
                KULLANICI BİLGİLERİ
-            ========================== */
+            ============================= */
 
-            await currentSignUp.update({
+            try {
 
-                unsafeMetadata: {
+                await currentSignUp.update({
 
-                    username: username,
+                    unsafeMetadata: {
 
-                    city: city
+                        username:
+                            username,
 
-                }
+                        city:
+                            city
 
-            });
+                    }
+
+                });
+
+            } catch (metadataError) {
+
+                /*
+                 * Metadata kaydı başarısız olsa bile
+                 * hesabın oluşturulmasını engelleme.
+                 */
+
+                console.warn(
+                    "Kullanıcı bilgileri metadata'ya yazılamadı:",
+                    metadataError
+                );
+            }
 
 
-            /* =========================
+            /* =============================
                E-POSTA DOĞRULAMA
-            ========================== */
+            ============================= */
 
             await currentSignUp
                 .prepareEmailAddressVerification({
 
-                    strategy: "email_code"
+                    strategy:
+                        "email_code"
 
                 });
 
 
-            /* FORMU GİZLE */
+            console.log(
+                "TEKNIVO: Doğrulama kodu gönderildi."
+            );
+
+
+            /* =============================
+               FORMU GİZLE
+            ============================= */
 
             registerArea.style.display =
                 "none";
 
 
-            /* DOĞRULAMA EKRANINI AÇ */
+            /* =============================
+               DOĞRULAMA EKRANINI GÖSTER
+            ============================= */
 
-            verificationBox.classList.add("show");
+            verificationBox.classList.add(
+                "show"
+            );
 
 
             showMessage(
@@ -864,9 +994,8 @@ form.addEventListener(
 
             verificationCode.focus();
 
-        }
 
-        catch (error) {
+        } catch (error) {
 
             console.error(
                 "TEKNIVO kayıt hatası:",
@@ -874,32 +1003,11 @@ form.addEventListener(
             );
 
 
-            let errorMessage =
-                "Kayıt oluşturulamadı.";
-
-
-            if (
-                error?.errors &&
-                error.errors.length > 0
-            ) {
-
-                errorMessage =
-                    error.errors[0].longMessage ||
-                    error.errors[0].message ||
-                    errorMessage;
-
-            }
-
-            else if (error?.message) {
-
-                errorMessage =
-                    error.message;
-
-            }
-
-
             showMessage(
-                errorMessage,
+                getClerkError(
+                    error,
+                    "Kayıt oluşturulamadı."
+                ),
                 "error"
             );
 
@@ -914,9 +1022,9 @@ form.addEventListener(
 );
 
 
-/* =====================================
+/* =========================================
    E-POSTA DOĞRULAMA
-===================================== */
+========================================= */
 
 verifyButton.addEventListener(
     "click",
@@ -944,6 +1052,8 @@ verifyButton.addEventListener(
                 "error"
             );
 
+            verificationCode.focus();
+
             return;
         }
 
@@ -956,28 +1066,47 @@ verifyButton.addEventListener(
 
         try {
 
+            console.log(
+                "TEKNIVO: E-posta doğrulanıyor..."
+            );
+
+
             await currentSignUp
                 .attemptEmailAddressVerification({
 
-                    code: code
+                    code:
+                        code
 
                 });
 
 
-            /*
-             * Doğrulama tamamlandıysa
-             */
+            console.log(
+                "TEKNIVO doğrulama durumu:",
+                currentSignUp.status
+            );
+
+
+            /* =============================
+               KAYIT TAMAMLANDI
+            ============================= */
 
             if (
-                currentSignUp.status === "complete"
+                currentSignUp.status ===
+                "complete"
             ) {
 
-                await window.Clerk.setActive({
+                if (
+                    currentSignUp.createdSessionId
+                ) {
 
-                    session:
-                        currentSignUp.createdSessionId
+                    await window.Clerk.setActive({
 
-                });
+                        session:
+                            currentSignUp.createdSessionId
+
+                    });
+
+                }
 
 
                 showMessage(
@@ -988,7 +1117,8 @@ verifyButton.addEventListener(
 
                 setTimeout(function () {
 
-                    window.location.href = "/";
+                    window.location.href =
+                        "/";
 
                 }, 1000);
 
@@ -996,6 +1126,10 @@ verifyButton.addEventListener(
                 return;
             }
 
+
+            /* =============================
+               EK DOĞRULAMA
+            ============================= */
 
             showMessage(
                 "E-posta doğrulandı ancak hesap henüz tamamlanmadı.",
@@ -1008,21 +1142,20 @@ verifyButton.addEventListener(
             verifyButton.textContent =
                 "E-postayı Doğrula";
 
-        }
 
-        catch (error) {
+        } catch (error) {
 
             console.error(
-                "E-posta doğrulama hatası:",
+                "TEKNIVO e-posta doğrulama hatası:",
                 error
             );
 
 
             showMessage(
-                error?.errors?.[0]?.longMessage ||
-                error?.errors?.[0]?.message ||
-                error?.message ||
-                "Doğrulama kodu geçersiz.",
+                getClerkError(
+                    error,
+                    "Doğrulama kodu geçersiz."
+                ),
                 "error"
             );
 
@@ -1037,9 +1170,9 @@ verifyButton.addEventListener(
 );
 
 
-/* =====================================
+/* =========================================
    KODU TEKRAR GÖNDER
-===================================== */
+========================================= */
 
 resendButton.addEventListener(
     "click",
@@ -1067,7 +1200,8 @@ resendButton.addEventListener(
             await currentSignUp
                 .prepareEmailAddressVerification({
 
-                    strategy: "email_code"
+                    strategy:
+                        "email_code"
 
                 });
 
@@ -1077,20 +1211,20 @@ resendButton.addEventListener(
                 "success"
             );
 
-        }
 
-        catch (error) {
+        } catch (error) {
 
             console.error(
-                "Kod gönderme hatası:",
+                "TEKNIVO kod gönderme hatası:",
                 error
             );
 
 
             showMessage(
-                error?.errors?.[0]?.longMessage ||
-                error?.message ||
-                "Kod gönderilemedi.",
+                getClerkError(
+                    error,
+                    "Kod gönderilemedi."
+                ),
                 "error"
             );
 
@@ -1110,9 +1244,9 @@ resendButton.addEventListener(
 );
 
 
-/* =====================================
+/* =========================================
    ENTER İLE DOĞRULAMA
-===================================== */
+========================================= */
 
 verificationCode.addEventListener(
     "keydown",
@@ -1120,4 +1254,31 @@ verificationCode.addEventListener(
 
         if (event.key === "Enter") {
 
-           
+            event.preventDefault();
+
+            verifyButton.click();
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   KOD SADECE RAKAM
+========================================= */
+
+verificationCode.addEventListener(
+    "input",
+    function () {
+
+        this.value =
+            this.value.replace(/\D/g, "");
+
+    }
+);
+
+</script>
+
+</body>
+</html>
