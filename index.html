@@ -2,7 +2,11 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>TEKNIVO | Teknoloji Al, Sat & Kirala</title>
 
@@ -15,22 +19,31 @@
 
     <link rel="stylesheet" href="/style.css">
 
-    <!-- SUPABASE -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- =====================================================
+         SUPABASE
+    ====================================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
     <script src="/js/config.js"></script>
 
-    <!-- CLERK -->
+    <!-- =====================================================
+         CLERK
+    ====================================================== -->
+
     <script
         defer
         crossorigin="anonymous"
         data-clerk-publishable-key="pk_test_ZW5vdWdoLXN0dXJnZW9uLTIwNDEuY2xlcmsuYWNjb3VudHMuZGV2JA"
-        src="https://oceanic-capybara-20.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js">
-    </script>
+        src="https://oceanic-capybara-20.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js"
+    ></script>
 
     <style>
         /* =====================================================
-           TEKNIVO YENİ AL / SAT / KİRALA ALANI
-        ===================================================== */
+           TEKNIVO AL / SAT / KİRALA
+        ====================================================== */
 
         .trade-switch {
             display: flex;
@@ -49,7 +62,7 @@
             cursor: pointer;
             font-size: 14px;
             font-weight: 600;
-            transition: .2s;
+            transition: 0.2s;
         }
 
         .trade-btn:hover {
@@ -108,7 +121,7 @@
 
         .listing-type-badge.rent {
             background: #111;
-            color: white;
+            color: #fff;
         }
 
         .rental-price {
@@ -117,7 +130,57 @@
             margin-top: 4px;
         }
 
+        /* =====================================================
+           CLERK KULLANICI ALANI
+        ====================================================== */
+
+        #clerk-auth-area {
+            display: flex;
+            align-items: center;
+        }
+
+        .teknivo-user-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .teknivo-user-name {
+            display: inline-block;
+            max-width: 140px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #111;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .teknivo-logout {
+            border: 1px solid #ddd;
+            background: #fff;
+            color: #111;
+            padding: 9px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .teknivo-logout:hover {
+            background: #111;
+            color: #fff;
+            border-color: #111;
+        }
+
+        .teknivo-auth-loading {
+            color: #777;
+            font-size: 13px;
+        }
+
         @media (max-width: 700px) {
+
             .trade-switch {
                 overflow-x: auto;
                 scrollbar-width: none;
@@ -136,6 +199,14 @@
                 align-items: flex-start;
                 flex-direction: column;
             }
+
+            .teknivo-user-name {
+                max-width: 90px;
+            }
+
+            .teknivo-logout {
+                padding: 8px 10px;
+            }
         }
     </style>
 </head>
@@ -144,7 +215,7 @@
 
 <!-- =====================================================
      HEADER
-===================================================== -->
+====================================================== -->
 
 <header class="header">
 
@@ -166,7 +237,10 @@
                 autocomplete="off"
             >
 
-            <button id="searchBtn">
+            <button
+                id="searchBtn"
+                type="button"
+            >
                 Ara
             </button>
 
@@ -174,15 +248,23 @@
 
         <div class="header-buttons">
 
+            <!-- CLERK BURAYA GELECEK -->
+
             <div id="clerk-auth-area">
 
-                <a href="/giris.html" class="login">
+                <a
+                    href="/giris.html"
+                    class="login"
+                >
                     Giriş Yap
                 </a>
 
             </div>
 
-            <a href="/ilan-ver.html" class="sell">
+            <a
+                href="/ilan-ver.html"
+                class="sell"
+            >
                 + İlan Ver
             </a>
 
@@ -195,7 +277,7 @@
 
 <!-- =====================================================
      CATEGORY
-===================================================== -->
+====================================================== -->
 
 <div class="category-wrapper">
 
@@ -204,6 +286,7 @@
         <button
             class="category active"
             onclick="filterCategory('')"
+            type="button"
         >
             <span>✦</span>
             Tümü
@@ -218,7 +301,7 @@
 
 <!-- =====================================================
      AL / SAT / KİRALA
-===================================================== -->
+====================================================== -->
 
 <div class="trade-switch">
 
@@ -251,7 +334,7 @@
 
 <!-- =====================================================
      KİRALAMA BİLGİ
-===================================================== -->
+====================================================== -->
 
 <div
     class="rental-info"
@@ -288,7 +371,7 @@
 
 <!-- =====================================================
      MAIN
-===================================================== -->
+====================================================== -->
 
 <main>
 
@@ -342,7 +425,10 @@
                     Filtrele
                 </strong>
 
-                <button id="clearFilters">
+                <button
+                    id="clearFilters"
+                    type="button"
+                >
                     Temizle
                 </button>
 
@@ -552,6 +638,7 @@
             <button
                 id="applyFilters"
                 class="apply"
+                type="button"
             >
                 Filtreleri Uygula
             </button>
@@ -636,7 +723,7 @@
 
 <!-- =====================================================
      FOOTER
-===================================================== -->
+====================================================== -->
 
 <footer>
 
@@ -657,7 +744,6 @@
             </p>
 
         </div>
-
 
         <div class="footer-links">
 
@@ -681,7 +767,6 @@
 
     </div>
 
-
     <div class="copyright">
         © 2026 TEKNIVO
     </div>
@@ -691,117 +776,215 @@
 
 <!-- =====================================================
      SUPABASE APP
-===================================================== -->
+====================================================== -->
 
 <script src="/js/app.js"></script>
 
 
 <!-- =====================================================
-     CLERK
-===================================================== -->
+     CLERK AUTH
+====================================================== -->
 
 <script>
+document.addEventListener("DOMContentLoaded", async function () {
 
-document.addEventListener(
-    "DOMContentLoaded",
-    async function () {
+    const authArea =
+        document.getElementById("clerk-auth-area");
 
-        const authArea =
-            document.getElementById(
-                "clerk-auth-area"
+    if (!authArea) {
+        return;
+    }
+
+    /*
+     * Başlangıçta giriş butonu göster.
+     */
+
+    authArea.innerHTML = `
+        <a
+            href="/giris.html"
+            class="login"
+        >
+            Giriş Yap
+        </a>
+    `;
+
+    try {
+
+        /*
+         * Clerk yüklenmiş mi?
+         */
+
+        if (!window.Clerk) {
+
+            console.warn(
+                "TEKNIVO: Clerk henüz yüklenemedi."
             );
 
-        if (!authArea) return;
+            return;
+        }
+
+
+        /*
+         * Clerk'i başlat.
+         */
+
+        await window.Clerk.load();
+
+
+        /*
+         * Kullanıcı giriş yapmış mı?
+         */
+
+        if (
+            window.Clerk.isSignedIn &&
+            window.Clerk.user
+        ) {
+
+            const user =
+                window.Clerk.user;
+
+
+            /*
+             * Kullanıcı adını belirle.
+             */
+
+            const name =
+                user.firstName ||
+                user.username ||
+                (
+                    user.primaryEmailAddress &&
+                    user.primaryEmailAddress.emailAddress
+                        ? user.primaryEmailAddress.emailAddress.split("@")[0]
+                        : null
+                ) ||
+                "Hesabım";
+
+
+            /*
+             * Kullanıcı alanını oluştur.
+             */
+
+            authArea.innerHTML = `
+
+                <div class="teknivo-user-area">
+
+                    <span
+                        class="teknivo-user-name"
+                        title="${escapeHtml(name)}"
+                    >
+                        ${escapeHtml(name)}
+                    </span>
+
+                    <button
+                        id="teknivoLogout"
+                        class="teknivo-logout"
+                        type="button"
+                    >
+                        Çıkış
+                    </button>
+
+                </div>
+
+            `;
+
+
+            /*
+             * Çıkış butonu.
+             */
+
+            const logoutButton =
+                document.getElementById(
+                    "teknivoLogout"
+                );
+
+
+            if (logoutButton) {
+
+                logoutButton.addEventListener(
+                    "click",
+                    async function () {
+
+                        logoutButton.disabled = true;
+
+                        logoutButton.textContent =
+                            "Çıkılıyor...";
+
+                        try {
+
+                            await window.Clerk.signOut();
+
+                            window.location.href = "/";
+
+                        } catch (error) {
+
+                            console.error(
+                                "TEKNIVO çıkış hatası:",
+                                error
+                            );
+
+                            logoutButton.disabled = false;
+
+                            logoutButton.textContent =
+                                "Çıkış";
+                        }
+
+                    }
+                );
+
+            }
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "TEKNIVO Clerk hatası:",
+            error
+        );
+
+        /*
+         * Clerk hata verirse normal giriş butonu
+         * görünmeye devam etsin.
+         */
 
         authArea.innerHTML = `
+
             <a
                 href="/giris.html"
                 class="login"
             >
                 Giriş Yap
             </a>
+
         `;
-
-        try {
-
-            if (
-                typeof Clerk ===
-                "undefined"
-            ) {
-
-                console.warn(
-                    "TEKNIVO: Clerk yüklenemedi."
-                );
-
-                return;
-
-            }
-
-            await Clerk.load();
-
-            if (Clerk.isSignedIn) {
-
-                authArea.innerHTML = `
-                    <div
-                        id="clerk-user-button"
-                        style="
-                            display:flex;
-                            align-items:center;
-                            min-height:40px;
-                        "
-                    ></div>
-                `;
-
-                const userButton =
-                    document.getElementById(
-                        "clerk-user-button"
-                    );
-
-                if (
-                    userButton &&
-                    typeof Clerk.mountUserButton ===
-                    "function"
-                ) {
-
-                    Clerk.mountUserButton(
-                        userButton
-                    );
-
-                }
-
-            }
-
-        } catch (error) {
-
-            console.error(
-                "TEKNIVO Clerk hatası:",
-                error
-            );
-
-            authArea.innerHTML = `
-                <a
-                    href="/giris.html"
-                    class="login"
-                >
-                    Giriş Yap
-                </a>
-            `;
-
-        }
 
     }
 
-);
+});
 
+
+/*
+ * Güvenli HTML metni.
+ */
+
+function escapeHtml(value) {
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
 </script>
 
 
 <!-- =====================================================
      AL / SAT / KİRALA SİSTEMİ
-===================================================== -->
+====================================================== -->
 
 <script>
-
 (function () {
 
     const buttons =
@@ -824,16 +1007,23 @@ document.addEventListener(
             "listingTitle"
         );
 
-
     let currentType = "all";
 
+
+    /*
+     * İlan türünü değiştir.
+     */
 
     function setType(type) {
 
         currentType = type;
 
 
-        buttons.forEach(button => {
+        /*
+         * Üst butonların active durumunu değiştir.
+         */
+
+        buttons.forEach(function (button) {
 
             button.classList.toggle(
                 "active",
@@ -843,13 +1033,25 @@ document.addEventListener(
         });
 
 
+        /*
+         * Kiralık.
+         */
+
         if (type === "rent") {
 
-            rentalInfo.style.display =
-                "block";
+            if (rentalInfo) {
 
-            title.textContent =
-                "Kiralık İlanlar";
+                rentalInfo.style.display =
+                    "block";
+
+            }
+
+            if (title) {
+
+                title.textContent =
+                    "Kiralık İlanlar";
+
+            }
 
             if (typeFilter) {
 
@@ -858,13 +1060,28 @@ document.addEventListener(
 
             }
 
-        } else if (type === "sale") {
+        }
 
-            rentalInfo.style.display =
-                "none";
 
-            title.textContent =
-                "Satılık İlanlar";
+        /*
+         * Satılık.
+         */
+
+        else if (type === "sale") {
+
+            if (rentalInfo) {
+
+                rentalInfo.style.display =
+                    "none";
+
+            }
+
+            if (title) {
+
+                title.textContent =
+                    "Satılık İlanlar";
+
+            }
 
             if (typeFilter) {
 
@@ -873,13 +1090,28 @@ document.addEventListener(
 
             }
 
-        } else {
+        }
 
-            rentalInfo.style.display =
-                "none";
 
-            title.textContent =
-                "Yeni İlanlar";
+        /*
+         * Tümü.
+         */
+
+        else {
+
+            if (rentalInfo) {
+
+                rentalInfo.style.display =
+                    "none";
+
+            }
+
+            if (title) {
+
+                title.textContent =
+                    "Yeni İlanlar";
+
+            }
 
             if (typeFilter) {
 
@@ -892,8 +1124,7 @@ document.addEventListener(
 
 
         /*
-         * Mevcut app.js filtre sistemini
-         * tetiklemeyi deniyoruz.
+         * app.js içindeki filtre fonksiyonu varsa çalıştır.
          */
 
         if (
@@ -901,23 +1132,54 @@ document.addEventListener(
             "function"
         ) {
 
-            window.applyFilters();
+            try {
+
+                window.applyFilters();
+
+            } catch (error) {
+
+                console.warn(
+                    "TEKNIVO applyFilters:",
+                    error
+                );
+
+            }
 
         }
+
+
+        /*
+         * app.js içindeki yükleme fonksiyonu varsa çalıştır.
+         */
 
         if (
             typeof window.loadListings ===
             "function"
         ) {
 
-            window.loadListings();
+            try {
+
+                window.loadListings();
+
+            } catch (error) {
+
+                console.warn(
+                    "TEKNIVO loadListings:",
+                    error
+                );
+
+            }
 
         }
 
     }
 
 
-    buttons.forEach(button => {
+    /*
+     * Üstteki Satılık / Kiralık butonları.
+     */
+
+    buttons.forEach(function (button) {
 
         button.addEventListener(
             "click",
@@ -932,6 +1194,10 @@ document.addEventListener(
 
     });
 
+
+    /*
+     * Sol taraftaki ilan türü filtresi.
+     */
 
     if (typeFilter) {
 
@@ -962,7 +1228,9 @@ document.addEventListener(
 
 
     /*
-     * URL üzerinden:
+     * URL'den type okuma.
+     *
+     * Örnek:
      * /?type=rent
      */
 
@@ -986,9 +1254,10 @@ document.addEventListener(
 
 
     /*
-     * app.js tarafından oluşturulan
-     * kartlara ilan türü bilgisi eklemek
-     * için küçük uyumluluk katmanı.
+     * İlan kartlarını izliyoruz.
+     *
+     * app.js yeni kart oluşturduğunda
+     * kiralık ilanlara KİRALIK etiketi ekler.
      */
 
     const observer =
@@ -1001,7 +1270,7 @@ document.addEventListener(
                     );
 
 
-                cards.forEach(card => {
+                cards.forEach(function (card) {
 
                     if (
                         card.dataset.teknivoTypeAdded
@@ -1012,40 +1281,48 @@ document.addEventListener(
                     }
 
 
-                    const text =
-                        card.innerText ||
-                        "";
-
-
                     /*
-                     * Supabase verisinde
-                     * tur / ilan_turu / type /
-                     * listing_type gibi alanlar
-                     * kullanılıyorsa destekler.
+                     * Karttaki veri attribute'larını kontrol et.
                      */
 
                     const type =
                         card.dataset.type ||
                         card.dataset.listingType ||
+                        card.dataset.listingTypeValue ||
                         "";
 
 
                     if (type === "rent") {
 
-                        const badge =
-                            document.createElement(
-                                "div"
+                        /*
+                         * Daha önce badge eklenmişse
+                         * tekrar ekleme.
+                         */
+
+                        const existingBadge =
+                            card.querySelector(
+                                ".listing-type-badge"
                             );
 
-                        badge.className =
-                            "listing-type-badge rent";
 
-                        badge.textContent =
-                            "KİRALIK";
+                        if (!existingBadge) {
 
-                        card.prepend(
-                            badge
-                        );
+                            const badge =
+                                document.createElement(
+                                    "div"
+                                );
+
+                            badge.className =
+                                "listing-type-badge rent";
+
+                            badge.textContent =
+                                "KİRALIK";
+
+                            card.prepend(
+                                badge
+                            );
+
+                        }
 
                     }
 
@@ -1078,8 +1355,8 @@ document.addEventListener(
     }
 
 })();
-
 </script>
+
 
 </body>
 </html>
