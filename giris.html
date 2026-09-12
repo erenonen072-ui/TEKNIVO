@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1.0"
+>
+
+<title>TEKNIVO - Giriş</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+</head>
+
+<body>
+
+<main
+class="section"
+style="max-width:430px"
+>
+
+<div
+style="
+background:white;
+padding:35px;
+border-radius:20px;
+border:1px solid #e5e7eb;
+"
+>
+
+<h1>TEKNIVO'ya giriş yap</h1>
+
+<p
+style="
+color:#777;
+margin:10px 0 25px;
+"
+>
+Hesabına giriş yap.
+</p>
+
+
+<input
+id="email"
+type="email"
+placeholder="E-posta"
+style="
+width:100%;
+padding:14px;
+margin-bottom:12px;
+border:1px solid #ddd;
+border-radius:10px;
+"
+>
+
+
+<input
+id="password"
+type="password"
+placeholder="Şifre"
+style="
+width:100%;
+padding:14px;
+margin-bottom:15px;
+border:1px solid #ddd;
+border-radius:10px;
+"
+>
+
+
+<button
+onclick="login()"
+class="register"
+style="
+border:0;
+width:100%;
+cursor:pointer;
+font-size:15px;
+"
+>
+Giriş Yap
+</button>
+
+
+<p
+id="message"
+style="margin-top:15px"
+></p>
+
+
+<a
+href="kayit.html"
+style="
+display:block;
+margin-top:20px;
+color:#635bff;
+font-weight:800;
+"
+>
+Hesabın yok mu? Kayıt ol
+</a>
+
+</div>
+
+</main>
+
+
+<script src="js/config.js"></script>
+
+<script>
+
+const client =
+supabase.createClient(
+    TEKNIVO_CONFIG.SUPABASE_URL,
+    TEKNIVO_CONFIG.SUPABASE_PUBLISHABLE_KEY
+);
+
+
+async function login() {
+
+    const email =
+        document
+            .getElementById("email")
+            .value
+            .trim();
+
+
+    const password =
+        document
+            .getElementById("password")
+            .value;
+
+
+    const message =
+        document.getElementById("message");
+
+
+    message.textContent =
+        "Giriş yapılıyor...";
+
+
+    const {
+        error
+    } =
+        await client.auth.signInWithPassword({
+
+            email,
+
+            password
+
+        });
+
+
+    if (error) {
+
+        message.textContent =
+            error.message;
+
+        return;
+
+    }
+
+
+    message.textContent =
+        "Giriş başarılı!";
+
+
+    setTimeout(
+        () => {
+            location.href = "/";
+        },
+        700
+    );
+
+}
+
+</script>
+
+</body>
+
+</html>
