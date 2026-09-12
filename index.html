@@ -4,166 +4,380 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>TEKNIVO - Teknoloji Alım Satım</title>
-    <meta name="description" content="TEKNIVO ile telefon, laptop, bilgisayar ve diğer teknoloji ürünlerini keşfet, ilan ver ve sat.">
+    <title>TEKNIVO - Teknoloji Alışveriş Pazaryeri</title>
+
+    <meta
+        name="description"
+        content="TEKNIVO ile telefon, laptop, bilgisayar, ekran kartı, konsol ve diğer teknoloji ürünlerini keşfet, al ve sat."
+    >
 
     <link rel="stylesheet" href="/style.css">
 
-    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/js/config.js"></script>
 </head>
 
 <body>
 
-<header class="header">
-    <div class="container header-inner">
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="top-header">
+
+    <div class="header-inner">
 
         <a href="/" class="logo">
             TEKNIVO
         </a>
 
-        <nav class="nav">
-            <a href="#kategoriler">Kategoriler</a>
-            <a href="#ilanlar">İlanlar</a>
-        </nav>
+        <div class="search-box">
 
-        <div class="header-actions">
-            <a href="/giris.html" class="login-btn">Giriş Yap</a>
-            <a href="/ilan-ver.html" class="sell-btn">+ İlan Ver</a>
+            <span class="search-icon">⌕</span>
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="İlan, marka, model veya kategori ara"
+                autocomplete="off"
+            >
+
+            <button id="searchBtn">
+                Ara
+            </button>
+
         </div>
 
+        <nav class="header-actions">
+
+            <a href="giris.html" class="login-btn">
+                Giriş Yap
+            </a>
+
+            <a href="ilan-ver.html" class="sell-btn">
+                + İlan Ver
+            </a>
+
+        </nav>
+
     </div>
+
 </header>
 
 
-<main>
+<!-- =====================================================
+     CATEGORY BAR
+===================================================== -->
 
-    <!-- HERO -->
-    <section class="hero">
-        <div class="container">
+<section class="category-bar">
 
-            <div class="hero-content">
-                <span class="hero-label">TEKNOLOJİ PAZARI</span>
+    <div class="category-inner">
 
-                <h1>
-                    Teknolojini bul.<br>
-                    <strong>Yenisine geç.</strong>
-                </h1>
+        <button class="category-all active" onclick="filterCategory('')">
+            Tümü
+        </button>
 
-                <p>
-                    Telefon, laptop, PC ve daha fazlasını keşfet.
-                </p>
+        <div id="categories"></div>
 
-                <div class="search-box">
-                    <span class="search-icon">⌕</span>
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="main-container">
+
+    <!-- ÜST TANITIM -->
+
+    <section class="market-intro">
+
+        <div>
+            <div class="intro-small">
+                TEKNOLOJİ PAZARYERİ
+            </div>
+
+            <h1>
+                Teknolojini keşfet.
+                <span>Al veya sat.</span>
+            </h1>
+
+            <p>
+                Telefonlardan bilgisayarlara, ekran kartlarından oyun konsollarına
+                kadar teknoloji ilanlarını tek yerde keşfet.
+            </p>
+        </div>
+
+        <a href="ilan-ver.html" class="intro-sell">
+            Ücretsiz ilan ver
+            <span>→</span>
+        </a>
+
+    </section>
+
+
+    <!-- =================================================
+         MARKETPLACE
+    ================================================= -->
+
+    <section class="marketplace">
+
+        <!-- FILTER -->
+
+        <aside class="filters" id="filters">
+
+            <div class="filter-header">
+
+                <strong>Filtrele</strong>
+
+                <button
+                    type="button"
+                    id="clearFilters"
+                    class="clear-btn"
+                >
+                    Temizle
+                </button>
+
+            </div>
+
+
+            <!-- KATEGORİ -->
+
+            <div class="filter-section">
+
+                <label>Kategori</label>
+
+                <select id="categoryFilter">
+
+                    <option value="">
+                        Tüm kategoriler
+                    </option>
+
+                    <option value="Telefon">
+                        Telefon
+                    </option>
+
+                    <option value="Laptop">
+                        Laptop
+                    </option>
+
+                    <option value="Masaüstü PC">
+                        Masaüstü PC
+                    </option>
+
+                    <option value="Ekran Kartı">
+                        Ekran Kartı
+                    </option>
+
+                    <option value="İşlemci">
+                        İşlemci
+                    </option>
+
+                    <option value="RAM / SSD">
+                        RAM / SSD
+                    </option>
+
+                    <option value="Monitör">
+                        Monitör
+                    </option>
+
+                    <option value="Klavye / Mouse">
+                        Klavye / Mouse
+                    </option>
+
+                    <option value="Kulaklık">
+                        Kulaklık
+                    </option>
+
+                    <option value="Tablet">
+                        Tablet
+                    </option>
+
+                    <option value="Akıllı Saat">
+                        Akıllı Saat
+                    </option>
+
+                    <option value="Kamera">
+                        Kamera
+                    </option>
+
+                    <option value="Oyun Konsolu">
+                        Oyun Konsolu
+                    </option>
+
+                    <option value="Diğer">
+                        Diğer teknoloji
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- ŞEHİR -->
+
+            <div class="filter-section">
+
+                <label>Konum</label>
+
+                <input
+                    type="text"
+                    id="cityFilter"
+                    placeholder="Şehir ara"
+                >
+
+            </div>
+
+
+            <!-- FİYAT -->
+
+            <div class="filter-section">
+
+                <label>Fiyat</label>
+
+                <div class="price-inputs">
 
                     <input
-                        id="searchInput"
-                        type="text"
-                        placeholder="Telefon, laptop, ekran kartı..."
+                        type="number"
+                        id="minPrice"
+                        placeholder="Min"
+                        min="0"
                     >
 
-                    <button id="searchBtn">
-                        Ara
+                    <span>—</span>
+
+                    <input
+                        type="number"
+                        id="maxPrice"
+                        placeholder="Maks"
+                        min="0"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- DURUM -->
+
+            <div class="filter-section">
+
+                <label>Ürün durumu</label>
+
+                <label class="check-row">
+
+                    <input
+                        type="checkbox"
+                        value="Sıfır"
+                        class="condition-filter"
+                    >
+
+                    <span>Sıfır</span>
+
+                </label>
+
+                <label class="check-row">
+
+                    <input
+                        type="checkbox"
+                        value="İkinci El"
+                        class="condition-filter"
+                    >
+
+                    <span>İkinci el</span>
+
+                </label>
+
+                <label class="check-row">
+
+                    <input
+                        type="checkbox"
+                        value="Az Kullanılmış"
+                        class="condition-filter"
+                    >
+
+                    <span>Az kullanılmış</span>
+
+                </label>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="apply-filter"
+                id="applyFilters"
+            >
+                Filtreleri Uygula
+            </button>
+
+        </aside>
+
+
+        <!-- PRODUCTS -->
+
+        <section class="products-area">
+
+            <div class="products-top">
+
+                <div>
+
+                    <h2>
+                        Yeni İlanlar
+                    </h2>
+
+                    <div
+                        id="listingCount"
+                        class="listing-count"
+                    >
+                        İlanlar yükleniyor...
+                    </div>
+
+                </div>
+
+
+                <div class="products-actions">
+
+                    <button
+                        class="mobile-filter-btn"
+                        id="mobileFilterBtn"
+                    >
+                        ☰ Filtrele
                     </button>
-                </div>
-            </div>
 
-        </div>
-    </section>
+                    <select id="sortSelect">
 
+                        <option value="newest">
+                            En yeni
+                        </option>
 
-    <!-- KATEGORİLER -->
-    <section class="categories-section" id="kategoriler">
+                        <option value="price-low">
+                            Fiyat: düşükten yükseğe
+                        </option>
 
-        <div class="container">
+                        <option value="price-high">
+                            Fiyat: yüksekten düşüğe
+                        </option>
 
-            <div class="section-head">
-                <div>
-                    <span class="section-label">KEŞFET</span>
-                    <h2>Kategoriler</h2>
-                </div>
-            </div>
+                        <option value="popular">
+                            En çok görüntülenen
+                        </option>
 
-            <div id="categories" class="categories">
+                    </select>
 
-                <button class="category-card" data-category="">
-                    <span class="category-icon">▦</span>
-                    <span>Tümü</span>
-                </button>
-
-                <button class="category-card" data-category="Telefon">
-                    <span class="category-icon">📱</span>
-                    <span>Telefon</span>
-                </button>
-
-                <button class="category-card" data-category="Laptop">
-                    <span class="category-icon">💻</span>
-                    <span>Laptop</span>
-                </button>
-
-                <button class="category-card" data-category="Masaüstü PC">
-                    <span class="category-icon">🖥️</span>
-                    <span>Masaüstü PC</span>
-                </button>
-
-                <button class="category-card" data-category="Ekran Kartı">
-                    <span class="category-icon">▣</span>
-                    <span>Ekran Kartı</span>
-                </button>
-
-                <button class="category-card" data-category="İşlemci">
-                    <span class="category-icon">▤</span>
-                    <span>İşlemci</span>
-                </button>
-
-                <button class="category-card" data-category="Monitör">
-                    <span class="category-icon">▱</span>
-                    <span>Monitör</span>
-                </button>
-
-                <button class="category-card" data-category="Tablet">
-                    <span class="category-icon">▯</span>
-                    <span>Tablet</span>
-                </button>
-
-                <button class="category-card" data-category="Oyun Konsolu">
-                    <span class="category-icon">🎮</span>
-                    <span>Konsol</span>
-                </button>
-
-                <button class="category-card" data-category="Diğer teknoloji">
-                    <span class="category-icon">•••</span>
-                    <span>Diğer</span>
-                </button>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- İLANLAR -->
-    <section class="listings-section" id="ilanlar">
-
-        <div class="container">
-
-            <div class="section-head listings-head">
-
-                <div>
-                    <span class="section-label">PAZAR</span>
-                    <h2>Yeni İlanlar</h2>
                 </div>
 
-                <span id="listingCount" class="listing-count">
-                    İlanlar yükleniyor...
-                </span>
-
             </div>
 
-            <div id="listings" class="listing-grid">
+
+            <!-- İLANLAR -->
+
+            <div
+                id="listingGrid"
+                class="listing-grid"
+            >
 
                 <div class="loading">
                     İlanlar yükleniyor...
@@ -171,151 +385,66 @@
 
             </div>
 
-        </div>
-
-    </section>
-
-
-    <!-- CTA -->
-    <section class="sell-section">
-
-        <div class="container">
-
-            <div class="sell-box">
-
-                <div>
-                    <span class="section-label">SATIŞA BAŞLA</span>
-
-                    <h2>
-                        Kullanmadığın teknolojiyi
-                        <strong>sat.</strong>
-                    </h2>
-
-                    <p>
-                        İlanını birkaç dakikada oluştur.
-                    </p>
-                </div>
-
-                <a href="/ilan-ver.html" class="sell-big-btn">
-                    + Ücretsiz İlan Ver
-                </a>
-
-            </div>
-
-        </div>
+        </section>
 
     </section>
 
 </main>
 
 
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
 <footer class="footer">
 
-    <div class="container footer-inner">
+    <div class="footer-inner">
 
-        <div>
-            <div class="footer-logo">TEKNIVO</div>
-            <p>Teknoloji alım satım platformu.</p>
+        <div class="footer-brand">
+
+            <strong>TEKNIVO</strong>
+
+            <p>
+                Teknoloji almanın ve satmanın
+                daha kolay yolu.
+            </p>
+
         </div>
 
+
         <div class="footer-links">
-            <a href="/">Ana Sayfa</a>
-            <a href="#kategoriler">Kategoriler</a>
-            <a href="/ilan-ver.html">İlan Ver</a>
-            <a href="/giris.html">Giriş Yap</a>
+
+            <a href="ilan-ver.html">
+                İlan Ver
+            </a>
+
+            <a href="giris.html">
+                Giriş Yap
+            </a>
+
+            <a href="#">
+                Hakkımızda
+            </a>
+
+            <a href="#">
+                Gizlilik
+            </a>
+
         </div>
 
     </div>
 
-    <div class="container copyright">
-        © 2026 TEKNIVO. Tüm hakları saklıdır.
+
+    <div class="footer-bottom">
+
+        © 2026 TEKNIVO · Tüm hakları saklıdır.
+
     </div>
 
 </footer>
 
 
 <script src="/js/app.js"></script>
-
-<script>
-
-const searchInput = document.getElementById("searchInput");
-const searchBtn = document.getElementById("searchBtn");
-
-function performSearch() {
-
-    const value = searchInput.value.trim().toLowerCase();
-    const cards = document.querySelectorAll(".listing-card");
-
-    cards.forEach(card => {
-
-        const text = card.innerText.toLowerCase();
-
-        if (!value || text.includes(value)) {
-            card.style.display = "";
-        } else {
-            card.style.display = "none";
-        }
-
-    });
-
-    document.getElementById("ilanlar")
-        .scrollIntoView({
-            behavior: "smooth"
-        });
-}
-
-searchBtn.addEventListener("click", performSearch);
-
-searchInput.addEventListener("keydown", function(e) {
-
-    if (e.key === "Enter") {
-        performSearch();
-    }
-
-});
-
-
-document.querySelectorAll(".category-card").forEach(button => {
-
-    button.addEventListener("click", function() {
-
-        document.querySelectorAll(".category-card")
-            .forEach(x => x.classList.remove("active"));
-
-        this.classList.add("active");
-
-        const category = this.dataset.category;
-
-        const cards = document.querySelectorAll(".listing-card");
-
-        cards.forEach(card => {
-
-            const cardCategory =
-                (card.dataset.category || "").toLowerCase();
-
-            if (!category ||
-                cardCategory === category.toLowerCase()) {
-
-                card.style.display = "";
-
-            } else {
-
-                card.style.display = "none";
-
-            }
-
-        });
-
-        document.getElementById("ilanlar")
-            .scrollIntoView({
-                behavior: "smooth"
-            });
-
-    });
-
-});
-
-</script>
 
 </body>
 </html>
