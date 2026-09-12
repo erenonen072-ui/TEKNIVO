@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -13,47 +12,54 @@
 
     <link rel="stylesheet" href="/style.css">
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/js/config.js"></script>
+    <!-- CLERK -->
+    <script
+        defer
+        crossorigin="anonymous"
+        data-clerk-publishable-key="pk_test_ZW5vdWdoLXN0dXJnZW9uLTIwNDEuY2xlcmsuYWNjb3VudHMuZGV2JA"
+        src="https://oceanic-capybara-20.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js">
+    </script>
 
     <style>
 
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+            background: #f7f7f8;
+            color: #171717;
+        }
+
         .auth-page {
             min-height: 100vh;
-
             display: flex;
             align-items: center;
             justify-content: center;
-
             padding: 30px 15px;
-
-            background: #f7f7f8;
         }
 
         .auth-box {
             width: 100%;
             max-width: 450px;
-
             background: white;
-
             border: 1px solid #e7e7e7;
-
-            border-radius: 16px;
-
+            border-radius: 18px;
             padding: 35px;
-
             box-shadow:
                 0 15px 50px rgba(0,0,0,.06);
         }
 
         .auth-logo {
             text-align: center;
-
             font-size: 30px;
             font-weight: 950;
-
             letter-spacing: -1.5px;
-
             margin-bottom: 8px;
         }
 
@@ -63,18 +69,14 @@
 
         .auth-subtitle {
             text-align: center;
-
             color: #777;
-
             font-size: 13px;
-
             margin-bottom: 30px;
         }
 
         .auth-box h1 {
             font-size: 24px;
-
-            margin-bottom: 20px;
+            margin: 0 0 20px;
         }
 
         .auth-field {
@@ -83,62 +85,39 @@
 
         .auth-field label {
             display: block;
-
             font-size: 12px;
-
             font-weight: 800;
-
             margin-bottom: 7px;
         }
 
-        .auth-field input,
-        .auth-field select {
-
+        .auth-field input {
             width: 100%;
-
             height: 46px;
-
             padding: 0 13px;
-
             border: 1px solid #ddd;
-
             border-radius: 8px;
-
             outline: none;
-
             font-size: 14px;
-
             background: white;
         }
 
-        .auth-field input:focus,
-        .auth-field select:focus {
-
+        .auth-field input:focus {
             border-color: #635bff;
-
             box-shadow:
                 0 0 0 3px rgba(99,91,255,.08);
         }
 
         .auth-button {
-
             width: 100%;
-
-            height: 47px;
-
+            min-height: 47px;
             border: 0;
-
             border-radius: 8px;
-
             background: #635bff;
-
             color: white;
-
             font-weight: 900;
-
             cursor: pointer;
-
             margin-top: 5px;
+            font-size: 14px;
         }
 
         .auth-button:hover {
@@ -150,80 +129,96 @@
             cursor: wait;
         }
 
-        .auth-message {
-
-            display: none;
-
-            margin-bottom: 15px;
-
-            padding: 12px;
-
+        .google-button {
+            width: 100%;
+            height: 47px;
+            border: 1px solid #ddd;
             border-radius: 8px;
+            background: white;
+            color: #171717;
+            font-weight: 800;
+            cursor: pointer;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
 
+        .google-button:hover {
+            background: #f7f7f7;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 20px 0;
+            color: #999;
             font-size: 12px;
+        }
 
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #e7e7e7;
+        }
+
+        .auth-message {
+            display: none;
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12px;
             line-height: 1.5;
         }
 
         .auth-message.error {
-
             display: block;
-
             background: #fff0f0;
-
             color: #c62828;
-
             border: 1px solid #ffd0d0;
         }
 
         .auth-message.success {
-
             display: block;
-
             background: #effcf3;
-
             color: #218838;
-
             border: 1px solid #c9efd2;
         }
 
         .auth-bottom {
-
             text-align: center;
-
             margin-top: 22px;
-
             color: #777;
-
             font-size: 13px;
         }
 
         .auth-bottom a {
-
             color: #635bff;
-
             font-weight: 800;
+            text-decoration: none;
         }
 
         .back-home {
-
             display: block;
-
             text-align: center;
-
             margin-top: 20px;
-
             color: #777;
-
             font-size: 12px;
+            text-decoration: none;
+        }
+
+        .loading-text {
+            text-align: center;
+            color: #777;
+            font-size: 13px;
+            padding: 20px;
         }
 
     </style>
-
 </head>
 
 <body>
-
 
 <div class="auth-page">
 
@@ -237,20 +232,33 @@
             Teknoloji almanın ve satmanın kolay yolu.
         </div>
 
-
         <h1>
             Hesap Oluştur
         </h1>
 
-
         <div
             id="message"
-            class="auth-message"
-        ></div>
+            class="auth-message">
+        </div>
 
+        <!-- GOOGLE -->
+
+        <button
+            id="googleButton"
+            class="google-button"
+            type="button">
+
+            🔵 Google ile Kayıt Ol
+
+        </button>
+
+        <div class="divider">
+            veya e-posta ile
+        </div>
+
+        <!-- REGISTER FORM -->
 
         <form id="registerForm">
-
 
             <div class="auth-field">
 
@@ -314,9 +322,9 @@
                 <input
                     id="password"
                     type="password"
-                    placeholder="En az 6 karakter"
+                    placeholder="En az 8 karakter"
                     autocomplete="new-password"
-                    minlength="6"
+                    minlength="8"
                     required
                 >
 
@@ -334,7 +342,7 @@
                     type="password"
                     placeholder="Şifreni tekrar yaz"
                     autocomplete="new-password"
-                    minlength="6"
+                    minlength="8"
                     required
                 >
 
@@ -344,11 +352,11 @@
             <button
                 id="registerButton"
                 class="auth-button"
-                type="submit"
-            >
-                Kayıt Ol
-            </button>
+                type="submit">
 
+                Kayıt Ol
+
+            </button>
 
         </form>
 
@@ -366,9 +374,10 @@
 
         <a
             href="/"
-            class="back-home"
-        >
+            class="back-home">
+
             ← Ana sayfaya dön
+
         </a>
 
     </div>
@@ -381,45 +390,34 @@
 "use strict";
 
 
-const config =
-    window.TEKNIVO_CONFIG || {};
-
-
-let supabaseClient = null;
-
-
-if (
-    window.supabase &&
-    config.SUPABASE_URL &&
-    config.SUPABASE_PUBLISHABLE_KEY
-) {
-
-    supabaseClient =
-        window.supabase.createClient(
-            config.SUPABASE_URL,
-            config.SUPABASE_PUBLISHABLE_KEY
-        );
-
-}
-
+/* =========================
+   ELEMENTLER
+========================= */
 
 const form =
     document.getElementById(
         "registerForm"
     );
 
-
 const button =
     document.getElementById(
         "registerButton"
     );
 
+const googleButton =
+    document.getElementById(
+        "googleButton"
+    );
 
 const message =
     document.getElementById(
         "message"
     );
 
+
+/* =========================
+   MESAJ
+========================= */
 
 function showMessage(
     text,
@@ -434,48 +432,181 @@ function showMessage(
 }
 
 
+/* =========================
+   CLERK BEKLE
+========================= */
+
+async function waitForClerk() {
+
+    for (
+        let i = 0;
+        i < 100;
+        i++
+    ) {
+
+        if (
+            window.Clerk &&
+            typeof Clerk.load === "function"
+        ) {
+
+            await Clerk.load();
+
+            return true;
+
+        }
+
+        await new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    100
+                )
+        );
+
+    }
+
+    return false;
+
+}
+
+
+/* =========================
+   SAYFA
+========================= */
+
+(async function () {
+
+    const ready =
+        await waitForClerk();
+
+
+    if (!ready) {
+
+        showMessage(
+            "Clerk yüklenemedi. Sayfayı yenileyip tekrar deneyin.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Zaten giriş yapılmışsa
+     * ana sayfaya gönder.
+     */
+
+    if (Clerk.isSignedIn) {
+
+        window.location.href = "/";
+
+        return;
+
+    }
+
+
+})();
+
+
+/* =========================
+   GOOGLE KAYIT
+========================= */
+
+googleButton.addEventListener(
+    "click",
+    async function () {
+
+        googleButton.disabled = true;
+
+        googleButton.textContent =
+            "Google açılıyor...";
+
+        try {
+
+            const ready =
+                await waitForClerk();
+
+
+            if (!ready) {
+
+                throw new Error(
+                    "Clerk yüklenemedi."
+                );
+
+            }
+
+
+            await Clerk.client.signUp.authenticateWithRedirect({
+
+                strategy:
+                    "oauth_google",
+
+                redirectUrl:
+                    window.location.origin +
+                    "/",
+
+                redirectUrlComplete:
+                    window.location.origin +
+                    "/"
+
+            });
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Google kayıt hatası:",
+                error
+            );
+
+            showMessage(
+                error?.errors?.[0]?.longMessage ||
+                error?.message ||
+                "Google ile kayıt yapılamadı.",
+                "error"
+            );
+
+            googleButton.disabled = false;
+
+            googleButton.textContent =
+                "🔵 Google ile Kayıt Ol";
+
+        }
+
+    }
+);
+
+
+/* =========================
+   E-POSTA KAYIT
+========================= */
+
 form.addEventListener(
     "submit",
-    async function(event) {
+    async function (event) {
 
         event.preventDefault();
 
 
-        if (!supabaseClient) {
-
-            showMessage(
-                "Supabase bağlantısı kurulamadı. config.js dosyanı kontrol et.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
         const username =
             document
-                .getElementById(
-                    "username"
-                )
+                .getElementById("username")
                 .value
                 .trim();
 
 
         const city =
             document
-                .getElementById(
-                    "city"
-                )
+                .getElementById("city")
                 .value
                 .trim();
 
 
         const email =
             document
-                .getElementById(
-                    "email"
-                )
+                .getElementById("email")
                 .value
                 .trim()
                 .toLowerCase();
@@ -483,23 +614,19 @@ form.addEventListener(
 
         const password =
             document
-                .getElementById(
-                    "password"
-                )
+                .getElementById("password")
                 .value;
 
 
         const password2 =
             document
-                .getElementById(
-                    "password2"
-                )
+                .getElementById("password2")
                 .value;
 
 
-        if (
-            username.length < 3
-        ) {
+        /* KONTROLLER */
+
+        if (username.length < 3) {
 
             showMessage(
                 "Kullanıcı adı en az 3 karakter olmalı.",
@@ -511,12 +638,10 @@ form.addEventListener(
         }
 
 
-        if (
-            password.length < 6
-        ) {
+        if (password.length < 8) {
 
             showMessage(
-                "Şifre en az 6 karakter olmalı.",
+                "Şifre en az 8 karakter olmalı.",
                 "error"
             );
 
@@ -525,9 +650,7 @@ form.addEventListener(
         }
 
 
-        if (
-            password !== password2
-        ) {
+        if (password !== password2) {
 
             showMessage(
                 "Şifreler aynı değil.",
@@ -545,144 +668,127 @@ form.addEventListener(
             "Hesap oluşturuluyor...";
 
 
-        const {
-            data,
-            error
-        } =
-            await supabaseClient.auth.signUp({
+        try {
 
-                email,
+            const ready =
+                await waitForClerk();
 
-                password,
 
-                options: {
+            if (!ready) {
 
-                    emailRedirectTo:
-                        window.location.origin + "/"
+                throw new Error(
+                    "Clerk yüklenemedi."
+                );
 
+            }
+
+
+            /*
+             * Clerk Sign Up
+             */
+
+            const signUp =
+                await Clerk.client.signUp.create({
+                    emailAddress: email,
+                    password: password
+                });
+
+
+            /*
+             * Kullanıcı adı ve şehir
+             * Clerk metadata'ya kaydedilir.
+             */
+
+            await signUp.update({
+                unsafeMetadata: {
+                    username: username,
+                    city: city
                 }
-
             });
 
 
-        if (error) {
+            /*
+             * E-posta doğrulama
+             */
+
+            await signUp.prepareEmailAddressVerification({
+                strategy: "email_code"
+            });
+
+
+            showMessage(
+                "Hesabın oluşturuldu! E-posta adresine gelen doğrulama kodunu girmen gerekiyor.",
+                "success"
+            );
+
+
+            /*
+             * Clerk doğrulama ekranı
+             */
+
+            setTimeout(
+                function () {
+
+                    window.location.href =
+                        "/giris.html";
+
+                },
+                1800
+            );
+
+        }
+
+        catch (error) {
 
             console.error(
                 "TEKNIVO kayıt hatası:",
                 error
             );
 
+
+            let errorMessage =
+                "Kayıt oluşturulamadı.";
+
+
+            if (
+                error?.errors &&
+                error.errors.length > 0
+            ) {
+
+                errorMessage =
+                    error.errors[0].longMessage ||
+                    error.errors[0].message ||
+                    errorMessage;
+
+            }
+
+            else if (
+                error?.message
+            ) {
+
+                errorMessage =
+                    error.message;
+
+            }
+
+
             showMessage(
-                error.message ||
-                "Kayıt oluşturulamadı.",
+                errorMessage,
                 "error"
             );
+
 
             button.disabled = false;
 
             button.textContent =
                 "Kayıt Ol";
 
-            return;
-
         }
-
-
-        /*
-         * PROFİL OLUŞTUR
-         *
-         * E-posta doğrulaması kapalıysa
-         * session hemen gelir.
-         */
-
-        if (data?.user) {
-
-            const session =
-                data?.session;
-
-
-            if (session) {
-
-                const {
-                    error:
-                    profileError
-                } =
-                    await supabaseClient
-                        .from("profiles")
-                        .insert({
-
-                            id:
-                                data.user.id,
-
-                            username:
-                                username,
-
-                            city:
-                                city
-
-                        });
-
-
-                if (
-                    profileError &&
-                    profileError.code !==
-                    "23505"
-                ) {
-
-                    console.error(
-                        "Profil hatası:",
-                        profileError
-                    );
-
-                }
-
-            }
-
-
-            /*
-             * EMAIL CONFIRMATION AÇIKSA
-             */
-
-            if (!data.session) {
-
-                showMessage(
-                    "Hesabın oluşturuldu! E-posta adresine gönderilen doğrulama bağlantısına tıkla. Sonra giriş yapabilirsin.",
-                    "success"
-                );
-
-                button.disabled = false;
-
-                button.textContent =
-                    "Kayıt Ol";
-
-                return;
-
-            }
-
-        }
-
-
-        showMessage(
-            "Kayıt başarılı! Ana sayfaya yönlendiriliyorsun...",
-            "success"
-        );
-
-
-        setTimeout(
-            () => {
-
-                window.location.href =
-                    "/";
-
-            },
-            1000
-        );
 
     }
 );
 
 </script>
-
 
 </body>
 </html>
