@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1.0"
+>
+
+<title>TEKNIVO - İlan Ver</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+</head>
+
+<body>
+
+<main
+class="section"
+style="max-width:700px"
+>
+
+<div
+style="
+background:white;
+padding:35px;
+border-radius:22px;
+border:1px solid #e5e7eb;
+"
+>
+
+<h1>İlan Ver</h1>
+
+<p
+style="
+color:#777;
+margin:10px 0 25px;
+"
+>
+Teknoloji ürününü TEKNIVO'da satışa çıkar.
+</p>
+
+
+<input
+id="title"
+placeholder="İlan başlığı"
+class="form-input"
+>
+
+
+<select
+id="category"
+class="form-input"
+>
+
+<option>Telefon</option>
+<option>Laptop</option>
+<option>Masaüstü PC</option>
+<option>Oyun Konsolu</option>
+<option>Ekran Kartı</option>
+<option>İşlemci</option>
+<option>RAM / SSD</option>
+<option>Monitör</option>
+<option>Klavye / Mouse</option>
+<option>Kulaklık</option>
+<option>Kamera</option>
+<option>Akıllı Saat</option>
+<option>Tablet</option>
+<option>Diğer</option>
+
+</select>
+
+
+<input
+id="brand"
+placeholder="Marka"
+class="form-input"
+>
+
+
+<input
+id="model"
+placeholder="Model"
+class="form-input"
+>
+
+
+<select
+id="condition"
+class="form-input"
+>
+
+<option value="İkinci El">
+İkinci El
+</option>
+
+<option value="Sıfır">
+Sıfır
+</option>
+
+<option value="Yenilenmiş">
+Yenilenmiş
+</option>
+
+</select>
+
+
+<input
+id="price"
+type="number"
+min="0"
+placeholder="Fiyat (TL)"
+class="form-input"
+>
+
+
+<input
+id="city"
+placeholder="Şehir"
+class="form-input"
+>
+
+
+<textarea
+id="description"
+rows="7"
+placeholder="Ürünün açıklaması..."
+class="form-input"
+></textarea>
+
+
+<button
+onclick="publishListing()"
+class="register"
+style="
+border:0;
+cursor:pointer;
+padding:14px 22px;
+"
+>
+İlanı Yayınla
+</button>
+
+
+<p
+id="message"
+style="margin-top:15px"
+></p>
+
+</div>
+
+</main>
+
+
+<style>
+
+.form-input {
+
+width:100%;
+
+padding:14px;
+
+margin-bottom:12px;
+
+border:
+1px solid #ddd;
+
+border-radius:10px;
+
+font-size:15px;
+
+font-family:inherit;
+
+outline:none;
+
+}
+
+.form-input:focus {
+
+border-color:#635bff;
+
+}
+
+textarea.form-input {
+
+resize:vertical;
+
+}
+
+</style>
+
+
+<script src="js/config.js"></script>
+
+<script>
+
+const client =
+supabase.createClient(
+    TEKNIVO_CONFIG.SUPABASE_URL,
+    TEKNIVO_CONFIG.SUPABASE_PUBLISHABLE_KEY
+);
+
+
+async function publishListing() {
+
+    const message =
+        document.getElementById("message");
+
+
+    const {
+        data: {
+            user
+        }
+    } =
+        await client.auth.getUser();
+
+
+    if (!user) {
+
+        message.textContent =
+            "İlan vermek için önce giriş yapmalısın.";
+
+        return;
+
+    }
+
+
+    const title =
+        document
+            .getElementById("title")
+            .value
+            .trim();
+
+
+    const category =
+        document
+            .getElementById("category")
+            .value;
+
+
+    const brand =
+        document
+            .getElementById("brand")
+            .value
+            .trim();
+
+
+    const model =
+        document
+            .getElementById("model")
+            .value
+            .trim();
+
+
+    const condition =
+        document
+            .getElementById("condition")
+            .value;
+
+
+    const price =
+        Number(
+            document
+                .getElementById("price")
+                .value
+        );
+
+
+    const city =
+        document
+            .getElementById("city")
+            .value
+            .trim();
+
+
+    const description =
+        document
+            .getElementById("description")
+            .value
+            .trim();
+
+
+    if (!title || !price) {
+
+        message.textContent =
+            "Başlık ve fiyat zorunlu.";
+
+        return;
+
+    }
+
+
+    message.textContent =
+        "İlan yayınlanıyor...";
+
+
+    const {
+        error
+    } =
+        await client
+            .from("listings")
+            .insert({
+
+                user_id:
+                    user.id,
+
+                title,
+
+                category,
+
+                brand,
+
+                model,
+
+                condition,
+
+                price,
+
+                city,
+
+                description
+
+            });
+
+
+    if (error) {
+
+        console.error(error);
+
+        message.textContent =
+            error.message;
+
+        return;
+
+    }
+
+
+    message.textContent =
+        "✅ İlan başarıyla yayınlandı!";
+
+
+    setTimeout(
+        () => {
+            location.href = "/";
+        },
+        1000
+    );
+
+}
+
+</script>
+
+</body>
+
+</html>
