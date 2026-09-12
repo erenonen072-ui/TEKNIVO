@@ -2,33 +2,57 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Giriş Yap - TEKNIVO</title>
 
     <link rel="stylesheet" href="/style.css">
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/js/config.js"></script>
+    <!-- CLERK -->
+    <script
+        defer
+        crossorigin="anonymous"
+        data-clerk-publishable-key="pk_test_ZW5vdWdoLXN0dXJnZW9uLTIwNDEuY2xlcmsuYWNjb3VudHMuZGV2JA"
+        src="https://oceanic-capybara-20.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js">
+    </script>
 
     <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+            background: #f7f7f8;
+            color: #171717;
+        }
+
         .auth-page {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 30px 15px;
-            background: #f7f7f8;
         }
 
         .auth-box {
             width: 100%;
             max-width: 430px;
-            background: white;
+            background: #fff;
             border: 1px solid #e7e7e7;
-            border-radius: 16px;
+            border-radius: 18px;
             padding: 35px;
-            box-shadow: 0 15px 50px rgba(0,0,0,.06);
+            box-shadow:
+                0 15px 50px rgba(0,0,0,.06);
         }
 
         .auth-logo {
@@ -52,7 +76,45 @@
 
         .auth-box h1 {
             font-size: 24px;
-            margin-bottom: 20px;
+            margin: 0 0 20px;
+        }
+
+        .google-button {
+            width: 100%;
+            height: 47px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fff;
+            color: #171717;
+            font-weight: 800;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .google-button:hover {
+            background: #f7f7f7;
+        }
+
+        .google-button:disabled {
+            opacity: .6;
+            cursor: wait;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 20px 0;
+            color: #999;
+            font-size: 12px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #e7e7e7;
         }
 
         .auth-field {
@@ -74,11 +136,24 @@
             border-radius: 8px;
             outline: none;
             font-size: 14px;
+            background: #fff;
         }
 
         .auth-field input:focus {
             border-color: #635bff;
-            box-shadow: 0 0 0 3px rgba(99,91,255,.08);
+            box-shadow:
+                0 0 0 3px rgba(99,91,255,.08);
+        }
+
+        .forgot {
+            display: block;
+            text-align: right;
+            margin-top: -7px;
+            margin-bottom: 16px;
+            color: #635bff;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
         }
 
         .auth-button {
@@ -90,7 +165,7 @@
             color: white;
             font-weight: 900;
             cursor: pointer;
-            margin-top: 5px;
+            font-size: 14px;
         }
 
         .auth-button:hover {
@@ -135,6 +210,7 @@
         .auth-bottom a {
             color: #635bff;
             font-weight: 800;
+            text-decoration: none;
         }
 
         .back-home {
@@ -143,7 +219,9 @@
             margin-top: 20px;
             color: #777;
             font-size: 12px;
+            text-decoration: none;
         }
+
     </style>
 </head>
 
@@ -161,13 +239,39 @@
             Teknoloji almanın ve satmanın kolay yolu.
         </div>
 
-        <h1>Giriş Yap</h1>
+        <h1>
+            Giriş Yap
+        </h1>
 
-        <div id="message" class="auth-message"></div>
+        <div
+            id="message"
+            class="auth-message">
+        </div>
+
+
+        <!-- GOOGLE -->
+
+        <button
+            id="googleButton"
+            class="google-button"
+            type="button">
+
+            🔵 Google ile Giriş Yap
+
+        </button>
+
+
+        <div class="divider">
+            veya e-posta ile
+        </div>
+
+
+        <!-- LOGIN FORM -->
 
         <form id="loginForm">
 
             <div class="auth-field">
+
                 <label for="email">
                     E-posta
                 </label>
@@ -179,9 +283,12 @@
                     autocomplete="email"
                     required
                 >
+
             </div>
 
+
             <div class="auth-field">
+
                 <label for="password">
                     Şifre
                 </label>
@@ -193,25 +300,49 @@
                     autocomplete="current-password"
                     required
                 >
+
             </div>
+
+
+            <a
+                href="#"
+                id="forgotPassword"
+                class="forgot">
+
+                Şifremi unuttum
+
+            </a>
+
 
             <button
                 id="loginButton"
                 class="auth-button"
-                type="submit"
-            >
+                type="submit">
+
                 Giriş Yap
+
             </button>
 
         </form>
 
+
         <div class="auth-bottom">
+
             Hesabın yok mu?
-            <a href="kayit.html">Kayıt Ol</a>
+
+            <a href="kayit.html">
+                Kayıt Ol
+            </a>
+
         </div>
 
-        <a href="/" class="back-home">
+
+        <a
+            href="/"
+            class="back-home">
+
             ← Ana sayfaya dön
+
         </a>
 
     </div>
@@ -223,63 +354,219 @@
 
 "use strict";
 
-const config = window.TEKNIVO_CONFIG || {};
 
-let supabaseClient = null;
-
-if (
-    window.supabase &&
-    config.SUPABASE_URL &&
-    config.SUPABASE_PUBLISHABLE_KEY
-) {
-    supabaseClient =
-        window.supabase.createClient(
-            config.SUPABASE_URL,
-            config.SUPABASE_PUBLISHABLE_KEY
-        );
-}
+/* =====================================
+   ELEMENTLER
+===================================== */
 
 const form =
-    document.getElementById("loginForm");
+    document.getElementById(
+        "loginForm"
+    );
 
-const button =
-    document.getElementById("loginButton");
+const loginButton =
+    document.getElementById(
+        "loginButton"
+    );
+
+const googleButton =
+    document.getElementById(
+        "googleButton"
+    );
+
+const forgotPassword =
+    document.getElementById(
+        "forgotPassword"
+    );
 
 const message =
-    document.getElementById("message");
+    document.getElementById(
+        "message"
+    );
 
 
-function showMessage(text, type) {
+/* =====================================
+   MESAJ
+===================================== */
+
+function showMessage(
+    text,
+    type
+) {
 
     message.textContent = text;
 
     message.className =
         "auth-message " + type;
+
 }
 
 
-form.addEventListener(
-    "submit",
-    async function(event) {
+/* =====================================
+   CLERK BEKLE
+===================================== */
 
-        event.preventDefault();
+async function waitForClerk() {
 
-        if (!supabaseClient) {
+    for (
+        let i = 0;
+        i < 100;
+        i++
+    ) {
+
+        if (
+            window.Clerk &&
+            typeof Clerk.load === "function"
+        ) {
+
+            await Clerk.load();
+
+            return true;
+
+        }
+
+        await new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    100
+                )
+        );
+
+    }
+
+    return false;
+
+}
+
+
+/* =====================================
+   SAYFA AÇILINCA
+===================================== */
+
+(async function () {
+
+    const ready =
+        await waitForClerk();
+
+
+    if (!ready) {
+
+        showMessage(
+            "Giriş sistemi yüklenemedi. Sayfayı yenileyip tekrar deneyin.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Zaten giriş yapılmışsa
+     * ana sayfaya gönder.
+     */
+
+    if (Clerk.isSignedIn) {
+
+        window.location.href = "/";
+
+    }
+
+})();
+
+
+/* =====================================
+   GOOGLE GİRİŞ
+===================================== */
+
+googleButton.addEventListener(
+    "click",
+    async function () {
+
+        googleButton.disabled = true;
+
+        googleButton.textContent =
+            "Google açılıyor...";
+
+
+        try {
+
+            const ready =
+                await waitForClerk();
+
+
+            if (!ready) {
+
+                throw new Error(
+                    "Clerk yüklenemedi."
+                );
+
+            }
+
+
+            await Clerk.client.signIn.authenticateWithRedirect({
+
+                strategy:
+                    "oauth_google",
+
+                redirectUrl:
+                    window.location.origin +
+                    "/",
+
+                redirectUrlComplete:
+                    window.location.origin +
+                    "/"
+
+            });
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Google giriş hatası:",
+                error
+            );
+
 
             showMessage(
-                "Supabase bağlantısı kurulamadı. config.js dosyanı kontrol et.",
+                error?.errors?.[0]?.longMessage ||
+                error?.message ||
+                "Google ile giriş yapılamadı.",
                 "error"
             );
 
-            return;
+
+            googleButton.disabled = false;
+
+            googleButton.textContent =
+                "🔵 Google ile Giriş Yap";
+
         }
+
+    }
+);
+
+
+/* =====================================
+   E-POSTA + ŞİFRE GİRİŞ
+===================================== */
+
+form.addEventListener(
+    "submit",
+    async function (event) {
+
+        event.preventDefault();
 
 
         const email =
             document
                 .getElementById("email")
                 .value
-                .trim();
+                .trim()
+                .toLowerCase();
+
 
         const password =
             document
@@ -295,68 +582,320 @@ form.addEventListener(
             );
 
             return;
+
         }
 
 
-        button.disabled = true;
-        button.textContent = "Giriş yapılıyor...";
+        loginButton.disabled = true;
+
+        loginButton.textContent =
+            "Giriş yapılıyor...";
 
 
-        const {
-            data,
-            error
-        } =
-            await supabaseClient.auth.signInWithPassword({
-                email,
-                password
-            });
+        try {
+
+            const ready =
+                await waitForClerk();
 
 
-        if (error) {
+            if (!ready) {
+
+                throw new Error(
+                    "Clerk yüklenemedi."
+                );
+
+            }
+
+
+            /*
+             * Clerk Sign In
+             */
+
+            const signIn =
+                await Clerk.client.signIn.create({
+                    identifier: email,
+                    password: password
+                });
+
+
+            /*
+             * Giriş tamamlandıysa
+             */
+
+            if (
+                signIn.status ===
+                "complete"
+            ) {
+
+                await Clerk.setActive({
+                    session:
+                        signIn.createdSessionId
+                });
+
+
+                showMessage(
+                    "Giriş başarılı! Ana sayfaya yönlendiriliyorsun...",
+                    "success"
+                );
+
+
+                setTimeout(
+                    function () {
+
+                        window.location.href =
+                            "/";
+
+                    },
+                    700
+                );
+
+
+                return;
+
+            }
+
+
+            /*
+             * Ek doğrulama gerekiyorsa
+             */
+
+            showMessage(
+                "Giriş için ek bir doğrulama gerekiyor. Lütfen hesabını doğrula.",
+                "error"
+            );
+
+
+            console.log(
+                "Clerk giriş durumu:",
+                signIn.status
+            );
+
+
+            loginButton.disabled = false;
+
+            loginButton.textContent =
+                "Giriş Yap";
+
+        }
+
+        catch (error) {
 
             console.error(
                 "TEKNIVO giriş hatası:",
                 error
             );
 
+
+            let errorMessage =
+                "E-posta veya şifre hatalı.";
+
+
+            if (
+                error?.errors &&
+                error.errors.length > 0
+            ) {
+
+                errorMessage =
+                    error.errors[0].longMessage ||
+                    error.errors[0].message ||
+                    errorMessage;
+
+            }
+
+            else if (
+                error?.message
+            ) {
+
+                errorMessage =
+                    error.message;
+
+            }
+
+
             showMessage(
-                error.message ||
-                "Giriş yapılamadı.",
+                errorMessage,
                 "error"
             );
 
-            button.disabled = false;
-            button.textContent = "Giriş Yap";
 
-            return;
+            loginButton.disabled = false;
+
+            loginButton.textContent =
+                "Giriş Yap";
+
         }
 
+    }
+);
 
-        if (!data?.session) {
+
+/* =====================================
+   ŞİFREMİ UNUTTUM
+===================================== */
+
+forgotPassword.addEventListener(
+    "click",
+    async function (event) {
+
+        event.preventDefault();
+
+
+        const email =
+            document
+                .getElementById("email")
+                .value
+                .trim()
+                .toLowerCase();
+
+
+        if (!email) {
 
             showMessage(
-                "Giriş tamamlanamadı. E-posta doğrulaması gerekiyorsa önce e-postanı doğrula.",
+                "Önce e-posta adresini yaz.",
                 "error"
             );
 
-            button.disabled = false;
-            button.textContent = "Giriş Yap";
+            document
+                .getElementById("email")
+                .focus();
 
             return;
+
         }
 
 
-        showMessage(
-            "Giriş başarılı! Ana sayfaya yönlendiriliyorsun...",
-            "success"
-        );
+        try {
+
+            const ready =
+                await waitForClerk();
 
 
-        setTimeout(() => {
+            if (!ready) {
 
-            window.location.href = "/";
+                throw new Error(
+                    "Clerk yüklenemedi."
+                );
 
-        }, 700);
+            }
+
+
+            /*
+             * Şifre sıfırlama
+             */
+
+            const signIn =
+                await Clerk.client.signIn.create({
+                    identifier: email
+                });
+
+
+            await signIn.prepareFirstFactor({
+                strategy:
+                    "reset_password_email_code"
+            });
+
+
+            const code =
+                prompt(
+                    "E-posta adresine gelen şifre sıfırlama kodunu gir:"
+                );
+
+
+            if (!code) {
+
+                return;
+
+            }
+
+
+            await signIn.attemptFirstFactor({
+                strategy:
+                    "reset_password_email_code",
+                code:
+                    code
+            });
+
+
+            const newPassword =
+                prompt(
+                    "Yeni şifreni gir (en az 8 karakter):"
+                );
+
+
+            if (!newPassword) {
+
+                return;
+
+            }
+
+
+            if (
+                newPassword.length < 8
+            ) {
+
+                showMessage(
+                    "Yeni şifre en az 8 karakter olmalı.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            await signIn.resetPassword({
+                password:
+                    newPassword
+            });
+
+
+            if (
+                signIn.status ===
+                "complete"
+            ) {
+
+                await Clerk.setActive({
+                    session:
+                        signIn.createdSessionId
+                });
+
+
+                showMessage(
+                    "Şifren yenilendi! Giriş yapılıyor...",
+                    "success"
+                );
+
+
+                setTimeout(
+                    function () {
+
+                        window.location.href =
+                            "/";
+
+                    },
+                    1000
+                );
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Şifre sıfırlama hatası:",
+                error
+            );
+
+
+            showMessage(
+                error?.errors?.[0]?.longMessage ||
+                error?.message ||
+                "Şifre sıfırlama işlemi başarısız oldu.",
+                "error"
+            );
+
+        }
 
     }
 );
