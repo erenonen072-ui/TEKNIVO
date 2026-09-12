@@ -2,17 +2,20 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Giriş Yap - TEKNIVO</title>
 
+    <meta
+        name="description"
+        content="TEKNIVO hesabına giriş yap."
+    >
+
     <link rel="stylesheet" href="/style.css">
 
-    <!-- CLERK -->
+    <!-- =========================
+         CLERK
+    ========================== -->
     <script
         defer
         crossorigin="anonymous"
@@ -21,17 +24,13 @@
     </script>
 
     <style>
-
         * {
             box-sizing: border-box;
         }
 
         body {
             margin: 0;
-            font-family:
-                Arial,
-                Helvetica,
-                sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
             background: #f7f7f8;
             color: #171717;
         }
@@ -51,8 +50,7 @@
             border: 1px solid #e7e7e7;
             border-radius: 18px;
             padding: 35px;
-            box-shadow:
-                0 15px 50px rgba(0,0,0,.06);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, .06);
         }
 
         .auth-logo {
@@ -89,6 +87,7 @@
             font-weight: 800;
             cursor: pointer;
             font-size: 14px;
+            transition: .2s;
         }
 
         .google-button:hover {
@@ -141,8 +140,7 @@
 
         .auth-field input:focus {
             border-color: #635bff;
-            box-shadow:
-                0 0 0 3px rgba(99,91,255,.08);
+            box-shadow: 0 0 0 3px rgba(99, 91, 255, .08);
         }
 
         .forgot {
@@ -156,6 +154,10 @@
             text-decoration: none;
         }
 
+        .forgot:hover {
+            text-decoration: underline;
+        }
+
         .auth-button {
             width: 100%;
             height: 47px;
@@ -166,6 +168,7 @@
             font-weight: 900;
             cursor: pointer;
             font-size: 14px;
+            transition: .2s;
         }
 
         .auth-button:hover {
@@ -213,6 +216,10 @@
             text-decoration: none;
         }
 
+        .auth-bottom a:hover {
+            text-decoration: underline;
+        }
+
         .back-home {
             display: block;
             text-align: center;
@@ -222,6 +229,9 @@
             text-decoration: none;
         }
 
+        .back-home:hover {
+            color: #171717;
+        }
     </style>
 </head>
 
@@ -231,6 +241,7 @@
 
     <div class="auth-box">
 
+        <!-- LOGO -->
         <div class="auth-logo">
             TEKNIVO<span>.</span>
         </div>
@@ -243,31 +254,26 @@
             Giriş Yap
         </h1>
 
+        <!-- MESSAGE -->
         <div
             id="message"
             class="auth-message">
         </div>
 
-
         <!-- GOOGLE -->
-
         <button
             id="googleButton"
             class="google-button"
             type="button">
-
             🔵 Google ile Giriş Yap
-
         </button>
 
-
+        <!-- DIVIDER -->
         <div class="divider">
             veya e-posta ile
         </div>
 
-
         <!-- LOGIN FORM -->
-
         <form id="loginForm">
 
             <div class="auth-field">
@@ -308,9 +314,7 @@
                 href="#"
                 id="forgotPassword"
                 class="forgot">
-
                 Şifremi unuttum
-
             </a>
 
 
@@ -318,31 +322,29 @@
                 id="loginButton"
                 class="auth-button"
                 type="submit">
-
                 Giriş Yap
-
             </button>
 
         </form>
 
 
+        <!-- REGISTER -->
         <div class="auth-bottom">
 
             Hesabın yok mu?
 
-            <a href="kayit.html">
+            <a href="/kayit.html">
                 Kayıt Ol
             </a>
 
         </div>
 
 
+        <!-- HOME -->
         <a
             href="/"
             class="back-home">
-
             ← Ana sayfaya dön
-
         </a>
 
     </div>
@@ -351,54 +353,38 @@
 
 
 <script>
-
 "use strict";
-
 
 /* =====================================
    ELEMENTLER
 ===================================== */
 
 const form =
-    document.getElementById(
-        "loginForm"
-    );
+    document.getElementById("loginForm");
 
 const loginButton =
-    document.getElementById(
-        "loginButton"
-    );
+    document.getElementById("loginButton");
 
 const googleButton =
-    document.getElementById(
-        "googleButton"
-    );
+    document.getElementById("googleButton");
 
 const forgotPassword =
-    document.getElementById(
-        "forgotPassword"
-    );
+    document.getElementById("forgotPassword");
 
 const message =
-    document.getElementById(
-        "message"
-    );
+    document.getElementById("message");
 
 
 /* =====================================
-   MESAJ
+   MESAJ GÖSTER
 ===================================== */
 
-function showMessage(
-    text,
-    type
-) {
+function showMessage(text, type) {
 
     message.textContent = text;
 
     message.className =
         "auth-message " + type;
-
 }
 
 
@@ -408,35 +394,26 @@ function showMessage(
 
 async function waitForClerk() {
 
-    for (
-        let i = 0;
-        i < 100;
-        i++
-    ) {
+    for (let i = 0; i < 100; i++) {
 
         if (
             window.Clerk &&
-            typeof Clerk.load === "function"
+            typeof window.Clerk.load === "function"
         ) {
 
-            await Clerk.load();
+            await window.Clerk.load();
 
             return true;
-
         }
 
-        await new Promise(
-            resolve =>
-                setTimeout(
-                    resolve,
-                    100
-                )
-        );
+        await new Promise(function(resolve) {
 
+            setTimeout(resolve, 100);
+
+        });
     }
 
     return false;
-
 }
 
 
@@ -449,7 +426,6 @@ async function waitForClerk() {
     const ready =
         await waitForClerk();
 
-
     if (!ready) {
 
         showMessage(
@@ -458,16 +434,15 @@ async function waitForClerk() {
         );
 
         return;
-
     }
 
 
     /*
-     * Zaten giriş yapılmışsa
+     * Kullanıcı zaten giriş yaptıysa
      * ana sayfaya gönder.
      */
 
-    if (Clerk.isSignedIn) {
+    if (window.Clerk.isSignedIn) {
 
         window.location.href = "/";
 
@@ -477,7 +452,7 @@ async function waitForClerk() {
 
 
 /* =====================================
-   GOOGLE GİRİŞ
+   GOOGLE İLE GİRİŞ
 ===================================== */
 
 googleButton.addEventListener(
@@ -505,20 +480,18 @@ googleButton.addEventListener(
             }
 
 
-            await Clerk.client.signIn.authenticateWithRedirect({
+            await window.Clerk.client.signIn
+                .authenticateWithRedirect({
 
-                strategy:
-                    "oauth_google",
+                    strategy: "oauth_google",
 
-                redirectUrl:
-                    window.location.origin +
-                    "/",
+                    redirectUrl:
+                        window.location.origin + "/",
 
-                redirectUrlComplete:
-                    window.location.origin +
-                    "/"
+                    redirectUrlComplete:
+                        window.location.origin + "/"
 
-            });
+                });
 
         }
 
@@ -532,6 +505,7 @@ googleButton.addEventListener(
 
             showMessage(
                 error?.errors?.[0]?.longMessage ||
+                error?.errors?.[0]?.message ||
                 error?.message ||
                 "Google ile giriş yapılamadı.",
                 "error"
@@ -542,7 +516,6 @@ googleButton.addEventListener(
 
             googleButton.textContent =
                 "🔵 Google ile Giriş Yap";
-
         }
 
     }
@@ -582,7 +555,6 @@ form.addEventListener(
             );
 
             return;
-
         }
 
 
@@ -608,28 +580,32 @@ form.addEventListener(
 
 
             /*
-             * Clerk Sign In
+             * Clerk ile giriş yap.
              */
 
             const signIn =
-                await Clerk.client.signIn.create({
+                await window.Clerk.client.signIn.create({
+
                     identifier: email,
+
                     password: password
+
                 });
 
 
             /*
-             * Giriş tamamlandıysa
+             * Giriş tamamlandı.
              */
 
             if (
-                signIn.status ===
-                "complete"
+                signIn.status === "complete"
             ) {
 
-                await Clerk.setActive({
+                await window.Clerk.setActive({
+
                     session:
                         signIn.createdSessionId
+
                 });
 
 
@@ -639,24 +615,19 @@ form.addEventListener(
                 );
 
 
-                setTimeout(
-                    function () {
+                setTimeout(function () {
 
-                        window.location.href =
-                            "/";
+                    window.location.href = "/";
 
-                    },
-                    700
-                );
+                }, 700);
 
 
                 return;
-
             }
 
 
             /*
-             * Ek doğrulama gerekiyorsa
+             * Ek doğrulama gerekiyorsa.
              */
 
             showMessage(
@@ -702,9 +673,7 @@ form.addEventListener(
 
             }
 
-            else if (
-                error?.message
-            ) {
+            else if (error?.message) {
 
                 errorMessage =
                     error.message;
@@ -722,7 +691,6 @@ form.addEventListener(
 
             loginButton.textContent =
                 "Giriş Yap";
-
         }
 
     }
@@ -755,12 +723,13 @@ forgotPassword.addEventListener(
                 "error"
             );
 
+
             document
                 .getElementById("email")
                 .focus();
 
-            return;
 
+            return;
         }
 
 
@@ -780,24 +749,38 @@ forgotPassword.addEventListener(
 
 
             /*
-             * Şifre sıfırlama
+             * Şifre sıfırlama işlemini başlat.
              */
 
             const signIn =
-                await Clerk.client.signIn.create({
+                await window.Clerk.client.signIn.create({
+
                     identifier: email
+
                 });
 
 
             await signIn.prepareFirstFactor({
+
                 strategy:
                     "reset_password_email_code"
+
             });
 
 
+            showMessage(
+                "E-posta adresine şifre sıfırlama kodu gönderildi.",
+                "success"
+            );
+
+
+            /*
+             * Kod girişi.
+             */
+
             const code =
                 prompt(
-                    "E-posta adresine gelen şifre sıfırlama kodunu gir:"
+                    "E-posta adresine gelen kodu gir:"
                 );
 
 
@@ -809,12 +792,18 @@ forgotPassword.addEventListener(
 
 
             await signIn.attemptFirstFactor({
+
                 strategy:
                     "reset_password_email_code",
-                code:
-                    code
+
+                code: code.trim()
+
             });
 
+
+            /*
+             * Yeni şifre.
+             */
 
             const newPassword =
                 prompt(
@@ -839,24 +828,26 @@ forgotPassword.addEventListener(
                 );
 
                 return;
-
             }
 
 
             await signIn.resetPassword({
+
                 password:
                     newPassword
+
             });
 
 
             if (
-                signIn.status ===
-                "complete"
+                signIn.status === "complete"
             ) {
 
-                await Clerk.setActive({
+                await window.Clerk.setActive({
+
                     session:
                         signIn.createdSessionId
+
                 });
 
 
@@ -866,15 +857,11 @@ forgotPassword.addEventListener(
                 );
 
 
-                setTimeout(
-                    function () {
+                setTimeout(function () {
 
-                        window.location.href =
-                            "/";
+                    window.location.href = "/";
 
-                    },
-                    1000
-                );
+                }, 1000);
 
             }
 
@@ -890,6 +877,7 @@ forgotPassword.addEventListener(
 
             showMessage(
                 error?.errors?.[0]?.longMessage ||
+                error?.errors?.[0]?.message ||
                 error?.message ||
                 "Şifre sıfırlama işlemi başarısız oldu.",
                 "error"
