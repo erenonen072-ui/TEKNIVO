@@ -1,246 +1,688 @@
 <!DOCTYPE html>
 <html lang="tr">
-
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-name="viewport"
-content="width=device-width,initial-scale=1.0"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>TEKNIVO - Kayıt Ol</title>
+    <title>Kayıt Ol - TEKNIVO</title>
 
-<link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/config.js"></script>
+
+    <style>
+
+        .auth-page {
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 30px 15px;
+
+            background: #f7f7f8;
+        }
+
+        .auth-box {
+            width: 100%;
+            max-width: 450px;
+
+            background: white;
+
+            border: 1px solid #e7e7e7;
+
+            border-radius: 16px;
+
+            padding: 35px;
+
+            box-shadow:
+                0 15px 50px rgba(0,0,0,.06);
+        }
+
+        .auth-logo {
+            text-align: center;
+
+            font-size: 30px;
+            font-weight: 950;
+
+            letter-spacing: -1.5px;
+
+            margin-bottom: 8px;
+        }
+
+        .auth-logo span {
+            color: #635bff;
+        }
+
+        .auth-subtitle {
+            text-align: center;
+
+            color: #777;
+
+            font-size: 13px;
+
+            margin-bottom: 30px;
+        }
+
+        .auth-box h1 {
+            font-size: 24px;
+
+            margin-bottom: 20px;
+        }
+
+        .auth-field {
+            margin-bottom: 15px;
+        }
+
+        .auth-field label {
+            display: block;
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+            margin-bottom: 7px;
+        }
+
+        .auth-field input,
+        .auth-field select {
+
+            width: 100%;
+
+            height: 46px;
+
+            padding: 0 13px;
+
+            border: 1px solid #ddd;
+
+            border-radius: 8px;
+
+            outline: none;
+
+            font-size: 14px;
+
+            background: white;
+        }
+
+        .auth-field input:focus,
+        .auth-field select:focus {
+
+            border-color: #635bff;
+
+            box-shadow:
+                0 0 0 3px rgba(99,91,255,.08);
+        }
+
+        .auth-button {
+
+            width: 100%;
+
+            height: 47px;
+
+            border: 0;
+
+            border-radius: 8px;
+
+            background: #635bff;
+
+            color: white;
+
+            font-weight: 900;
+
+            cursor: pointer;
+
+            margin-top: 5px;
+        }
+
+        .auth-button:hover {
+            background: #5148e5;
+        }
+
+        .auth-button:disabled {
+            opacity: .6;
+            cursor: wait;
+        }
+
+        .auth-message {
+
+            display: none;
+
+            margin-bottom: 15px;
+
+            padding: 12px;
+
+            border-radius: 8px;
+
+            font-size: 12px;
+
+            line-height: 1.5;
+        }
+
+        .auth-message.error {
+
+            display: block;
+
+            background: #fff0f0;
+
+            color: #c62828;
+
+            border: 1px solid #ffd0d0;
+        }
+
+        .auth-message.success {
+
+            display: block;
+
+            background: #effcf3;
+
+            color: #218838;
+
+            border: 1px solid #c9efd2;
+        }
+
+        .auth-bottom {
+
+            text-align: center;
+
+            margin-top: 22px;
+
+            color: #777;
+
+            font-size: 13px;
+        }
+
+        .auth-bottom a {
+
+            color: #635bff;
+
+            font-weight: 800;
+        }
+
+        .back-home {
+
+            display: block;
+
+            text-align: center;
+
+            margin-top: 20px;
+
+            color: #777;
+
+            font-size: 12px;
+        }
+
+    </style>
 
 </head>
 
 <body>
 
-<main
-class="section"
-style="max-width:430px"
->
 
-<div
-style="
-background:white;
-padding:35px;
-border-radius:20px;
-border:1px solid #e5e7eb;
-"
->
+<div class="auth-page">
 
-<h1>TEKNIVO hesabı oluştur</h1>
+    <div class="auth-box">
+
+        <div class="auth-logo">
+            TEKNIVO<span>.</span>
+        </div>
+
+        <div class="auth-subtitle">
+            Teknoloji almanın ve satmanın kolay yolu.
+        </div>
 
 
-<input
-id="username"
-placeholder="Kullanıcı adı"
-style="
-width:100%;
-padding:14px;
-margin-top:20px;
-border:1px solid #ddd;
-border-radius:10px;
-"
->
+        <h1>
+            Hesap Oluştur
+        </h1>
 
 
-<input
-id="city"
-placeholder="Şehir"
-style="
-width:100%;
-padding:14px;
-margin-top:12px;
-border:1px solid #ddd;
-border-radius:10px;
-"
->
+        <div
+            id="message"
+            class="auth-message"
+        ></div>
 
 
-<input
-id="email"
-type="email"
-placeholder="E-posta"
-style="
-width:100%;
-padding:14px;
-margin-top:12px;
-border:1px solid #ddd;
-border-radius:10px;
-"
->
+        <form id="registerForm">
 
 
-<input
-id="password"
-type="password"
-placeholder="Şifre"
-style="
-width:100%;
-padding:14px;
-margin-top:12px;
-border:1px solid #ddd;
-border-radius:10px;
-"
->
+            <div class="auth-field">
+
+                <label for="username">
+                    Kullanıcı adı
+                </label>
+
+                <input
+                    id="username"
+                    type="text"
+                    placeholder="kullaniciadi"
+                    autocomplete="username"
+                    minlength="3"
+                    maxlength="30"
+                    required
+                >
+
+            </div>
 
 
-<button
-onclick="register()"
-class="register"
-style="
-width:100%;
-border:0;
-margin-top:15px;
-cursor:pointer;
-"
->
-Hesap Oluştur
-</button>
+            <div class="auth-field">
+
+                <label for="city">
+                    Şehir
+                </label>
+
+                <input
+                    id="city"
+                    type="text"
+                    placeholder="Batman"
+                    maxlength="50"
+                    required
+                >
+
+            </div>
 
 
-<p
-id="message"
-style="margin-top:15px"
-></p>
+            <div class="auth-field">
+
+                <label for="email">
+                    E-posta
+                </label>
+
+                <input
+                    id="email"
+                    type="email"
+                    placeholder="ornek@mail.com"
+                    autocomplete="email"
+                    required
+                >
+
+            </div>
+
+
+            <div class="auth-field">
+
+                <label for="password">
+                    Şifre
+                </label>
+
+                <input
+                    id="password"
+                    type="password"
+                    placeholder="En az 6 karakter"
+                    autocomplete="new-password"
+                    minlength="6"
+                    required
+                >
+
+            </div>
+
+
+            <div class="auth-field">
+
+                <label for="password2">
+                    Şifre tekrar
+                </label>
+
+                <input
+                    id="password2"
+                    type="password"
+                    placeholder="Şifreni tekrar yaz"
+                    autocomplete="new-password"
+                    minlength="6"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                id="registerButton"
+                class="auth-button"
+                type="submit"
+            >
+                Kayıt Ol
+            </button>
+
+
+        </form>
+
+
+        <div class="auth-bottom">
+
+            Zaten hesabın var mı?
+
+            <a href="giris.html">
+                Giriş Yap
+            </a>
+
+        </div>
+
+
+        <a
+            href="/"
+            class="back-home"
+        >
+            ← Ana sayfaya dön
+        </a>
+
+    </div>
 
 </div>
 
-</main>
-
-
-<script src="js/config.js"></script>
 
 <script>
 
-const client =
-supabase.createClient(
-    TEKNIVO_CONFIG.SUPABASE_URL,
-    TEKNIVO_CONFIG.SUPABASE_PUBLISHABLE_KEY
-);
+"use strict";
 
 
-async function register() {
-
-    const username =
-        document
-            .getElementById("username")
-            .value
-            .trim();
+const config =
+    window.TEKNIVO_CONFIG || {};
 
 
-    const city =
-        document
-            .getElementById("city")
-            .value
-            .trim();
+let supabaseClient = null;
 
 
-    const email =
-        document
-            .getElementById("email")
-            .value
-            .trim();
+if (
+    window.supabase &&
+    config.SUPABASE_URL &&
+    config.SUPABASE_PUBLISHABLE_KEY
+) {
+
+    supabaseClient =
+        window.supabase.createClient(
+            config.SUPABASE_URL,
+            config.SUPABASE_PUBLISHABLE_KEY
+        );
+
+}
 
 
-    const password =
-        document
-            .getElementById("password")
-            .value;
+const form =
+    document.getElementById(
+        "registerForm"
+    );
 
 
-    const message =
-        document.getElementById("message");
+const button =
+    document.getElementById(
+        "registerButton"
+    );
 
 
-    message.textContent =
-        "Hesap oluşturuluyor...";
+const message =
+    document.getElementById(
+        "message"
+    );
 
 
-    const {
-        data,
-        error
-    } =
-        await client.auth.signUp({
+function showMessage(
+    text,
+    type
+) {
 
-            email,
+    message.textContent = text;
 
-            password,
+    message.className =
+        "auth-message " + type;
 
-            options: {
+}
 
-                data: {
 
-                    username,
+form.addEventListener(
+    "submit",
+    async function(event) {
 
-                    city
+        event.preventDefault();
+
+
+        if (!supabaseClient) {
+
+            showMessage(
+                "Supabase bağlantısı kurulamadı. config.js dosyanı kontrol et.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const username =
+            document
+                .getElementById(
+                    "username"
+                )
+                .value
+                .trim();
+
+
+        const city =
+            document
+                .getElementById(
+                    "city"
+                )
+                .value
+                .trim();
+
+
+        const email =
+            document
+                .getElementById(
+                    "email"
+                )
+                .value
+                .trim()
+                .toLowerCase();
+
+
+        const password =
+            document
+                .getElementById(
+                    "password"
+                )
+                .value;
+
+
+        const password2 =
+            document
+                .getElementById(
+                    "password2"
+                )
+                .value;
+
+
+        if (
+            username.length < 3
+        ) {
+
+            showMessage(
+                "Kullanıcı adı en az 3 karakter olmalı.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if (
+            password.length < 6
+        ) {
+
+            showMessage(
+                "Şifre en az 6 karakter olmalı.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if (
+            password !== password2
+        ) {
+
+            showMessage(
+                "Şifreler aynı değil.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        button.disabled = true;
+
+        button.textContent =
+            "Hesap oluşturuluyor...";
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.auth.signUp({
+
+                email,
+
+                password,
+
+                options: {
+
+                    emailRedirectTo:
+                        window.location.origin + "/"
+
+                }
+
+            });
+
+
+        if (error) {
+
+            console.error(
+                "TEKNIVO kayıt hatası:",
+                error
+            );
+
+            showMessage(
+                error.message ||
+                "Kayıt oluşturulamadı.",
+                "error"
+            );
+
+            button.disabled = false;
+
+            button.textContent =
+                "Kayıt Ol";
+
+            return;
+
+        }
+
+
+        /*
+         * PROFİL OLUŞTUR
+         *
+         * E-posta doğrulaması kapalıysa
+         * session hemen gelir.
+         */
+
+        if (data?.user) {
+
+            const session =
+                data?.session;
+
+
+            if (session) {
+
+                const {
+                    error:
+                    profileError
+                } =
+                    await supabaseClient
+                        .from("profiles")
+                        .insert({
+
+                            id:
+                                data.user.id,
+
+                            username:
+                                username,
+
+                            city:
+                                city
+
+                        });
+
+
+                if (
+                    profileError &&
+                    profileError.code !==
+                    "23505"
+                ) {
+
+                    console.error(
+                        "Profil hatası:",
+                        profileError
+                    );
 
                 }
 
             }
 
-        });
+
+            /*
+             * EMAIL CONFIRMATION AÇIKSA
+             */
+
+            if (!data.session) {
+
+                showMessage(
+                    "Hesabın oluşturuldu! E-posta adresine gönderilen doğrulama bağlantısına tıkla. Sonra giriş yapabilirsin.",
+                    "success"
+                );
+
+                button.disabled = false;
+
+                button.textContent =
+                    "Kayıt Ol";
+
+                return;
+
+            }
+
+        }
 
 
-    if (error) {
-
-        message.textContent =
-            error.message;
-
-        return;
-
-    }
+        showMessage(
+            "Kayıt başarılı! Ana sayfaya yönlendiriliyorsun...",
+            "success"
+        );
 
 
-    if (!data.user) {
+        setTimeout(
+            () => {
 
-        message.textContent =
-            "Kullanıcı oluşturulamadı.";
+                window.location.href =
+                    "/";
 
-        return;
-
-    }
-
-
-    const {
-        error: profileError
-    } =
-        await client
-            .from("profiles")
-            .insert({
-
-                id: data.user.id,
-
-                username,
-
-                city
-
-            });
-
-
-    if (profileError) {
-
-        message.textContent =
-            profileError.message;
-
-        return;
+            },
+            1000
+        );
 
     }
-
-
-    message.textContent =
-        "Kayıt başarılı! E-postanı kontrol et.";
-
-}
+);
 
 </script>
 
-</body>
 
+</body>
 </html>
