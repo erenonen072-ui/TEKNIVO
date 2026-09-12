@@ -1,187 +1,367 @@
 <!DOCTYPE html>
 <html lang="tr">
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta charset="UTF-8">
+    <title>Giriş Yap - TEKNIVO</title>
 
-<meta
-name="viewport"
-content="width=device-width,initial-scale=1.0"
->
+    <link rel="stylesheet" href="/style.css">
 
-<title>TEKNIVO - Giriş</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/config.js"></script>
 
-<link rel="stylesheet" href="style.css">
+    <style>
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 15px;
+            background: #f7f7f8;
+        }
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        .auth-box {
+            width: 100%;
+            max-width: 430px;
+            background: white;
+            border: 1px solid #e7e7e7;
+            border-radius: 16px;
+            padding: 35px;
+            box-shadow: 0 15px 50px rgba(0,0,0,.06);
+        }
 
+        .auth-logo {
+            text-align: center;
+            font-size: 30px;
+            font-weight: 950;
+            letter-spacing: -1.5px;
+            margin-bottom: 8px;
+        }
+
+        .auth-logo span {
+            color: #635bff;
+        }
+
+        .auth-subtitle {
+            text-align: center;
+            color: #777;
+            font-size: 13px;
+            margin-bottom: 30px;
+        }
+
+        .auth-box h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .auth-field {
+            margin-bottom: 16px;
+        }
+
+        .auth-field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 800;
+            margin-bottom: 7px;
+        }
+
+        .auth-field input {
+            width: 100%;
+            height: 46px;
+            padding: 0 13px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .auth-field input:focus {
+            border-color: #635bff;
+            box-shadow: 0 0 0 3px rgba(99,91,255,.08);
+        }
+
+        .auth-button {
+            width: 100%;
+            height: 47px;
+            border: 0;
+            border-radius: 8px;
+            background: #635bff;
+            color: white;
+            font-weight: 900;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .auth-button:hover {
+            background: #5148e5;
+        }
+
+        .auth-button:disabled {
+            opacity: .6;
+            cursor: wait;
+        }
+
+        .auth-message {
+            display: none;
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .auth-message.error {
+            display: block;
+            background: #fff0f0;
+            color: #c62828;
+            border: 1px solid #ffd0d0;
+        }
+
+        .auth-message.success {
+            display: block;
+            background: #effcf3;
+            color: #218838;
+            border: 1px solid #c9efd2;
+        }
+
+        .auth-bottom {
+            text-align: center;
+            margin-top: 22px;
+            color: #777;
+            font-size: 13px;
+        }
+
+        .auth-bottom a {
+            color: #635bff;
+            font-weight: 800;
+        }
+
+        .back-home {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #777;
+            font-size: 12px;
+        }
+    </style>
 </head>
 
 <body>
 
-<main
-class="section"
-style="max-width:430px"
->
+<div class="auth-page">
 
-<div
-style="
-background:white;
-padding:35px;
-border-radius:20px;
-border:1px solid #e5e7eb;
-"
->
+    <div class="auth-box">
 
-<h1>TEKNIVO'ya giriş yap</h1>
+        <div class="auth-logo">
+            TEKNIVO<span>.</span>
+        </div>
 
-<p
-style="
-color:#777;
-margin:10px 0 25px;
-"
->
-Hesabına giriş yap.
-</p>
+        <div class="auth-subtitle">
+            Teknoloji almanın ve satmanın kolay yolu.
+        </div>
 
+        <h1>Giriş Yap</h1>
 
-<input
-id="email"
-type="email"
-placeholder="E-posta"
-style="
-width:100%;
-padding:14px;
-margin-bottom:12px;
-border:1px solid #ddd;
-border-radius:10px;
-"
->
+        <div id="message" class="auth-message"></div>
 
+        <form id="loginForm">
 
-<input
-id="password"
-type="password"
-placeholder="Şifre"
-style="
-width:100%;
-padding:14px;
-margin-bottom:15px;
-border:1px solid #ddd;
-border-radius:10px;
-"
->
+            <div class="auth-field">
+                <label for="email">
+                    E-posta
+                </label>
 
+                <input
+                    id="email"
+                    type="email"
+                    placeholder="ornek@mail.com"
+                    autocomplete="email"
+                    required
+                >
+            </div>
 
-<button
-onclick="login()"
-class="register"
-style="
-border:0;
-width:100%;
-cursor:pointer;
-font-size:15px;
-"
->
-Giriş Yap
-</button>
+            <div class="auth-field">
+                <label for="password">
+                    Şifre
+                </label>
 
+                <input
+                    id="password"
+                    type="password"
+                    placeholder="Şifren"
+                    autocomplete="current-password"
+                    required
+                >
+            </div>
 
-<p
-id="message"
-style="margin-top:15px"
-></p>
+            <button
+                id="loginButton"
+                class="auth-button"
+                type="submit"
+            >
+                Giriş Yap
+            </button>
 
+        </form>
 
-<a
-href="kayit.html"
-style="
-display:block;
-margin-top:20px;
-color:#635bff;
-font-weight:800;
-"
->
-Hesabın yok mu? Kayıt ol
-</a>
+        <div class="auth-bottom">
+            Hesabın yok mu?
+            <a href="kayit.html">Kayıt Ol</a>
+        </div>
+
+        <a href="/" class="back-home">
+            ← Ana sayfaya dön
+        </a>
+
+    </div>
 
 </div>
 
-</main>
-
-
-<script src="js/config.js"></script>
 
 <script>
 
-const client =
-supabase.createClient(
-    TEKNIVO_CONFIG.SUPABASE_URL,
-    TEKNIVO_CONFIG.SUPABASE_PUBLISHABLE_KEY
-);
+"use strict";
+
+const config = window.TEKNIVO_CONFIG || {};
+
+let supabaseClient = null;
+
+if (
+    window.supabase &&
+    config.SUPABASE_URL &&
+    config.SUPABASE_PUBLISHABLE_KEY
+) {
+    supabaseClient =
+        window.supabase.createClient(
+            config.SUPABASE_URL,
+            config.SUPABASE_PUBLISHABLE_KEY
+        );
+}
+
+const form =
+    document.getElementById("loginForm");
+
+const button =
+    document.getElementById("loginButton");
+
+const message =
+    document.getElementById("message");
 
 
-async function login() {
+function showMessage(text, type) {
 
-    const email =
-        document
-            .getElementById("email")
-            .value
-            .trim();
+    message.textContent = text;
 
-
-    const password =
-        document
-            .getElementById("password")
-            .value;
+    message.className =
+        "auth-message " + type;
+}
 
 
-    const message =
-        document.getElementById("message");
+form.addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+        if (!supabaseClient) {
+
+            showMessage(
+                "Supabase bağlantısı kurulamadı. config.js dosyanı kontrol et.",
+                "error"
+            );
+
+            return;
+        }
 
 
-    message.textContent =
-        "Giriş yapılıyor...";
+        const email =
+            document
+                .getElementById("email")
+                .value
+                .trim();
+
+        const password =
+            document
+                .getElementById("password")
+                .value;
 
 
-    const {
-        error
-    } =
-        await client.auth.signInWithPassword({
+        if (!email || !password) {
 
-            email,
+            showMessage(
+                "E-posta ve şifre alanlarını doldur.",
+                "error"
+            );
 
-            password
+            return;
+        }
 
-        });
+
+        button.disabled = true;
+        button.textContent = "Giriş yapılıyor...";
 
 
-    if (error) {
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.auth.signInWithPassword({
+                email,
+                password
+            });
 
-        message.textContent =
-            error.message;
 
-        return;
+        if (error) {
+
+            console.error(
+                "TEKNIVO giriş hatası:",
+                error
+            );
+
+            showMessage(
+                error.message ||
+                "Giriş yapılamadı.",
+                "error"
+            );
+
+            button.disabled = false;
+            button.textContent = "Giriş Yap";
+
+            return;
+        }
+
+
+        if (!data?.session) {
+
+            showMessage(
+                "Giriş tamamlanamadı. E-posta doğrulaması gerekiyorsa önce e-postanı doğrula.",
+                "error"
+            );
+
+            button.disabled = false;
+            button.textContent = "Giriş Yap";
+
+            return;
+        }
+
+
+        showMessage(
+            "Giriş başarılı! Ana sayfaya yönlendiriliyorsun...",
+            "success"
+        );
+
+
+        setTimeout(() => {
+
+            window.location.href = "/";
+
+        }, 700);
 
     }
-
-
-    message.textContent =
-        "Giriş başarılı!";
-
-
-    setTimeout(
-        () => {
-            location.href = "/";
-        },
-        700
-    );
-
-}
+);
 
 </script>
 
 </body>
-
 </html>
