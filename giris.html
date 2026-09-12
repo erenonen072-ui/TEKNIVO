@@ -13,9 +13,7 @@
 
     <link rel="stylesheet" href="/style.css">
 
-    <!-- =========================
-         CLERK
-    ========================== -->
+    <!-- CLERK -->
     <script
         defer
         crossorigin="anonymous"
@@ -241,7 +239,6 @@
 
     <div class="auth-box">
 
-        <!-- LOGO -->
         <div class="auth-logo">
             TEKNIVO<span>.</span>
         </div>
@@ -250,17 +247,10 @@
             Teknoloji almanın ve satmanın kolay yolu.
         </div>
 
-        <h1>
-            Giriş Yap
-        </h1>
+        <h1>Giriş Yap</h1>
 
-        <!-- MESSAGE -->
-        <div
-            id="message"
-            class="auth-message">
-        </div>
+        <div id="message" class="auth-message"></div>
 
-        <!-- GOOGLE -->
         <button
             id="googleButton"
             class="google-button"
@@ -268,12 +258,10 @@
             🔵 Google ile Giriş Yap
         </button>
 
-        <!-- DIVIDER -->
         <div class="divider">
             veya e-posta ile
         </div>
 
-        <!-- LOGIN FORM -->
         <form id="loginForm">
 
             <div class="auth-field">
@@ -287,11 +275,9 @@
                     type="email"
                     placeholder="ornek@mail.com"
                     autocomplete="email"
-                    required
-                >
+                    required>
 
             </div>
-
 
             <div class="auth-field">
 
@@ -304,11 +290,9 @@
                     type="password"
                     placeholder="Şifren"
                     autocomplete="current-password"
-                    required
-                >
+                    required>
 
             </div>
-
 
             <a
                 href="#"
@@ -316,7 +300,6 @@
                 class="forgot">
                 Şifremi unuttum
             </a>
-
 
             <button
                 id="loginButton"
@@ -327,8 +310,6 @@
 
         </form>
 
-
-        <!-- REGISTER -->
         <div class="auth-bottom">
 
             Hesabın yok mu?
@@ -339,8 +320,6 @@
 
         </div>
 
-
-        <!-- HOME -->
         <a
             href="/"
             class="back-home">
@@ -355,29 +334,20 @@
 <script>
 "use strict";
 
-/* =====================================
+/* =========================================
    ELEMENTLER
-===================================== */
+========================================= */
 
-const form =
-    document.getElementById("loginForm");
-
-const loginButton =
-    document.getElementById("loginButton");
-
-const googleButton =
-    document.getElementById("googleButton");
-
-const forgotPassword =
-    document.getElementById("forgotPassword");
-
-const message =
-    document.getElementById("message");
+const form = document.getElementById("loginForm");
+const loginButton = document.getElementById("loginButton");
+const googleButton = document.getElementById("googleButton");
+const forgotPassword = document.getElementById("forgotPassword");
+const message = document.getElementById("message");
 
 
-/* =====================================
-   MESAJ GÖSTER
-===================================== */
+/* =========================================
+   MESAJ
+========================================= */
 
 function showMessage(text, type) {
 
@@ -388,28 +358,38 @@ function showMessage(text, type) {
 }
 
 
-/* =====================================
+/* =========================================
    CLERK BEKLE
-===================================== */
+========================================= */
 
 async function waitForClerk() {
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 150; i++) {
 
         if (
             window.Clerk &&
             typeof window.Clerk.load === "function"
         ) {
 
-            await window.Clerk.load();
+            try {
 
-            return true;
+                await window.Clerk.load();
+
+                return true;
+
+            } catch (error) {
+
+                console.error(
+                    "Clerk load hatası:",
+                    error
+                );
+
+                return false;
+            }
         }
 
-        await new Promise(function(resolve) {
-
+        await new Promise(resolve => {
             setTimeout(resolve, 100);
-
         });
     }
 
@@ -417,30 +397,32 @@ async function waitForClerk() {
 }
 
 
-/* =====================================
-   SAYFA AÇILINCA
-===================================== */
+/* =========================================
+   SAYFA AÇILIŞI
+========================================= */
 
 (async function () {
 
-    const ready =
-        await waitForClerk();
+    const ready = await waitForClerk();
 
     if (!ready) {
 
         showMessage(
-            "Giriş sistemi yüklenemedi. Sayfayı yenileyip tekrar deneyin.",
+            "Clerk yüklenemedi. Sayfayı yenileyip tekrar deneyin.",
             "error"
         );
 
         return;
     }
 
+    console.log(
+        "TEKNIVO Clerk hazır."
+    );
 
-    /*
-     * Kullanıcı zaten giriş yaptıysa
-     * ana sayfaya gönder.
-     */
+    console.log(
+        "Giriş durumu:",
+        window.Clerk.isSignedIn
+    );
 
     if (window.Clerk.isSignedIn) {
 
@@ -451,9 +433,9 @@ async function waitForClerk() {
 })();
 
 
-/* =====================================
-   GOOGLE İLE GİRİŞ
-===================================== */
+/* =========================================
+   GOOGLE GİRİŞ
+========================================= */
 
 googleButton.addEventListener(
     "click",
@@ -464,44 +446,34 @@ googleButton.addEventListener(
         googleButton.textContent =
             "Google açılıyor...";
 
-
         try {
 
             const ready =
                 await waitForClerk();
-
 
             if (!ready) {
 
                 throw new Error(
                     "Clerk yüklenemedi."
                 );
-
             }
 
+            await window.Clerk.client.signIn.authenticateWithRedirect({
+                strategy: "oauth_google",
 
-            await window.Clerk.client.signIn
-                .authenticateWithRedirect({
+                redirectUrl:
+                    window.location.origin + "/",
 
-                    strategy: "oauth_google",
+                redirectUrlComplete:
+                    window.location.origin + "/"
+            });
 
-                    redirectUrl:
-                        window.location.origin + "/",
-
-                    redirectUrlComplete:
-                        window.location.origin + "/"
-
-                });
-
-        }
-
-        catch (error) {
+        } catch (error) {
 
             console.error(
                 "Google giriş hatası:",
                 error
             );
-
 
             showMessage(
                 error?.errors?.[0]?.longMessage ||
@@ -510,7 +482,6 @@ googleButton.addEventListener(
                 "Google ile giriş yapılamadı.",
                 "error"
             );
-
 
             googleButton.disabled = false;
 
@@ -522,9 +493,9 @@ googleButton.addEventListener(
 );
 
 
-/* =====================================
-   E-POSTA + ŞİFRE GİRİŞ
-===================================== */
+/* =========================================
+   E-POSTA + ŞİFRE
+========================================= */
 
 form.addEventListener(
     "submit",
@@ -532,14 +503,12 @@ form.addEventListener(
 
         event.preventDefault();
 
-
         const email =
             document
                 .getElementById("email")
                 .value
                 .trim()
                 .toLowerCase();
-
 
         const password =
             document
@@ -569,43 +538,39 @@ form.addEventListener(
             const ready =
                 await waitForClerk();
 
-
             if (!ready) {
 
                 throw new Error(
                     "Clerk yüklenemedi."
                 );
-
             }
 
 
-            /*
-             * Clerk ile giriş yap.
-             */
+            console.log(
+                "Clerk ile giriş deneniyor..."
+            );
+
 
             const signIn =
                 await window.Clerk.client.signIn.create({
-
                     identifier: email,
-
                     password: password
-
                 });
 
 
-            /*
-             * Giriş tamamlandı.
-             */
+            console.log(
+                "Clerk signIn:",
+                signIn
+            );
+
 
             if (
                 signIn.status === "complete"
             ) {
 
                 await window.Clerk.setActive({
-
                     session:
                         signIn.createdSessionId
-
                 });
 
 
@@ -615,7 +580,7 @@ form.addEventListener(
                 );
 
 
-                setTimeout(function () {
+                setTimeout(() => {
 
                     window.location.href = "/";
 
@@ -626,19 +591,9 @@ form.addEventListener(
             }
 
 
-            /*
-             * Ek doğrulama gerekiyorsa.
-             */
-
             showMessage(
-                "Giriş için ek bir doğrulama gerekiyor. Lütfen hesabını doğrula.",
+                "Giriş tamamlanamadı. Hesabının doğrulama adımlarını kontrol et.",
                 "error"
-            );
-
-
-            console.log(
-                "Clerk giriş durumu:",
-                signIn.status
             );
 
 
@@ -647,9 +602,8 @@ form.addEventListener(
             loginButton.textContent =
                 "Giriş Yap";
 
-        }
 
-        catch (error) {
+        } catch (error) {
 
             console.error(
                 "TEKNIVO giriş hatası:",
@@ -671,13 +625,10 @@ form.addEventListener(
                     error.errors[0].message ||
                     errorMessage;
 
-            }
-
-            else if (error?.message) {
+            } else if (error?.message) {
 
                 errorMessage =
                     error.message;
-
             }
 
 
@@ -697,9 +648,9 @@ form.addEventListener(
 );
 
 
-/* =====================================
+/* =========================================
    ŞİFREMİ UNUTTUM
-===================================== */
+========================================= */
 
 forgotPassword.addEventListener(
     "click",
@@ -723,11 +674,9 @@ forgotPassword.addEventListener(
                 "error"
             );
 
-
             document
                 .getElementById("email")
                 .focus();
-
 
             return;
         }
@@ -738,33 +687,23 @@ forgotPassword.addEventListener(
             const ready =
                 await waitForClerk();
 
-
             if (!ready) {
 
                 throw new Error(
                     "Clerk yüklenemedi."
                 );
-
             }
 
 
-            /*
-             * Şifre sıfırlama işlemini başlat.
-             */
-
             const signIn =
                 await window.Clerk.client.signIn.create({
-
                     identifier: email
-
                 });
 
 
             await signIn.prepareFirstFactor({
-
                 strategy:
                     "reset_password_email_code"
-
             });
 
 
@@ -774,10 +713,6 @@ forgotPassword.addEventListener(
             );
 
 
-            /*
-             * Kod girişi.
-             */
-
             const code =
                 prompt(
                     "E-posta adresine gelen kodu gir:"
@@ -785,25 +720,18 @@ forgotPassword.addEventListener(
 
 
             if (!code) {
-
                 return;
-
             }
 
 
             await signIn.attemptFirstFactor({
-
                 strategy:
                     "reset_password_email_code",
 
-                code: code.trim()
-
+                code:
+                    code.trim()
             });
 
-
-            /*
-             * Yeni şifre.
-             */
 
             const newPassword =
                 prompt(
@@ -812,15 +740,11 @@ forgotPassword.addEventListener(
 
 
             if (!newPassword) {
-
                 return;
-
             }
 
 
-            if (
-                newPassword.length < 8
-            ) {
+            if (newPassword.length < 8) {
 
                 showMessage(
                     "Yeni şifre en az 8 karakter olmalı.",
@@ -832,10 +756,8 @@ forgotPassword.addEventListener(
 
 
             await signIn.resetPassword({
-
                 password:
                     newPassword
-
             });
 
 
@@ -844,10 +766,8 @@ forgotPassword.addEventListener(
             ) {
 
                 await window.Clerk.setActive({
-
                     session:
                         signIn.createdSessionId
-
                 });
 
 
@@ -857,17 +777,15 @@ forgotPassword.addEventListener(
                 );
 
 
-                setTimeout(function () {
+                setTimeout(() => {
 
                     window.location.href = "/";
 
                 }, 1000);
-
             }
 
-        }
 
-        catch (error) {
+        } catch (error) {
 
             console.error(
                 "Şifre sıfırlama hatası:",
@@ -882,7 +800,6 @@ forgotPassword.addEventListener(
                 "Şifre sıfırlama işlemi başarısız oldu.",
                 "error"
             );
-
         }
 
     }
